@@ -4,8 +4,9 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProductResource\Pages;
 use App\Filament\Resources\ProductResource\RelationManagers;
-use App\Models\Enum\StockStatus;
+use App\Models\Enum\ShippingClass;
 use App\Models\Product;
+use CodeWithDennis\FilamentSelectTree\SelectTree;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,6 +14,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Mansoor\FilamentVersionable\Table\RevisionsAction;
 
 class ProductResource extends Resource
 {
@@ -30,19 +32,21 @@ class ProductResource extends Resource
                 Forms\Components\TextInput::make('slug')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Select::make('category_id')
-                    ->relationship('category', 'name')
+                SelectTree::make('category_id')
+                    ->relationship('category', 'name', 'parent_id')
                     ->nullable(),
                 Forms\Components\TextInput::make('sale_price')
                     ->gt('production_cost')
+                    ->prefix('৳')
                     ->required()
                     ->numeric(),
                 Forms\Components\TextInput::make('production_cost')
                     ->lt('sale_price')
+                    ->prefix('৳')
                     ->required()
                     ->numeric(),
                 Forms\Components\Select::make('stock_status')
-                    ->options(StockStatus::class),
+                    ->options(ShippingClass::class),
                 Forms\Components\TextInput::make('stock')
                     ->numeric(),
                 Forms\Components\Checkbox::make('is_shipping_charge_applicable')
@@ -58,6 +62,8 @@ class ProductResource extends Resource
                     ->required(),
                 Forms\Components\KeyValue::make('production_cost_breakdown')
                     ->columnSpan(2)
+                    ->keyLabel('Title')
+                    ->valueLabel('Price')
                     ->required(),
                 Forms\Components\FileUpload::make('main_photo')
                     ->image()
@@ -91,17 +97,10 @@ class ProductResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('slug')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('category.name')
-                    ->numeric()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('sale_price')
+                    ->prefix('৳')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('production_cost')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('stock_status')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('stock')
                     ->numeric()
                     ->sortable(),
@@ -124,6 +123,7 @@ class ProductResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                RevisionsAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -148,6 +148,7 @@ class ProductResource extends Resource
             'create' => Pages\CreateProduct::route('/create'),
             'view' => Pages\ViewProduct::route('/{record}'),
             'edit' => Pages\EditProduct::route('/{record}/edit'),
+            'revisions' => Pages\ProductRevisions::route('/{record}/revisions'),
         ];
     }
 

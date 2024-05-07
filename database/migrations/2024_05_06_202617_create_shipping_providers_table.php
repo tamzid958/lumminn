@@ -14,6 +14,8 @@ return new class extends Migration {
             $table->id();
             $table->string('name');
             $table->string('slug')->unique();
+            $table->decimal('inside_dhaka_charge');
+            $table->decimal('outside_dhaka_charge');
             $table->json('meta')->nullable();
             $table->timestamps();
             $table->softDeletes();

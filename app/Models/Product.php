@@ -2,16 +2,19 @@
 
 namespace App\Models;
 
-use App\Models\Enum\StockStatus;
+use App\Models\Enum\ShippingClass;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Overtrue\LaravelVersionable\VersionStrategy;
+use Overtrue\LaravelVersionable\Versionable;
 
 class Product extends Model
 {
     use HasFactory;
     use SoftDeletes;
+    use Versionable;
 
     protected $fillable = [
         'name',
@@ -29,15 +32,19 @@ class Product extends Model
         'production_cost_breakdown'
     ];
 
+    protected $versionable = ['sale_price', 'production_cost', 'production_cost_breakdown'];
+
+    protected $versionStrategy = VersionStrategy::SNAPSHOT;
+
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class, 'category_id');
     }
 
-    protected function casts(): array|StockStatus
+    protected function casts(): array|ShippingClass
     {
         return [
-            'stock_status' => StockStatus::class,
+            'stock_status' => ShippingClass::class,
             'photos' => 'array',
             'meta' => 'array',
             'production_cost_breakdown' => 'array'

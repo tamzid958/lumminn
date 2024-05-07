@@ -14,6 +14,7 @@ class OrderItem extends Model
 
     protected $fillable = [
         'product_id',
+        'optional_product_id',
         'order_id',
         'quantity',
         'price',
@@ -23,6 +24,11 @@ class OrderItem extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class, 'product_id');
+    }
+
+    public function optionalProduct(): BelongsTo
+    {
+        return $this->belongsTo(OptionalProduct::class, 'optional_product_id');
     }
 
     public function order(): BelongsTo

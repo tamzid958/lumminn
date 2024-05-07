@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Enum\PayStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -15,6 +16,7 @@ class Order extends Model
 
     protected $fillable = [
         'total_amount',
+        'additional_amount',
         'shipping_amount',
         'pay_amount',
         'transaction_amount',
@@ -37,11 +39,6 @@ class Order extends Model
         return $this->hasMany(OrderItem::class);
     }
 
-    public function orderOptionalItems(): HasMany
-    {
-        return $this->hasMany(OrderOptionalItem::class);
-    }
-    
     public function shippingProvider(): BelongsTo
     {
         return $this->belongsTo(ShippingProvider::class, 'shipping_provider_id');
@@ -52,9 +49,10 @@ class Order extends Model
         return $this->belongsTo(PaymentProvider::class, 'payment_provider_id');
     }
 
-    protected function casts(): array
+    protected function casts(): array|PayStatus
     {
         return [
+            'pay_status' => PayStatus::class,
             'gateway_response' => 'array',
             'note' => 'array',
             'attachment' => 'array',

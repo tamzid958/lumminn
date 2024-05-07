@@ -14,6 +14,8 @@ class ShippingProvider extends Model
     protected $fillable = [
         'name',
         'slug',
+        'inside_dhaka_charge',
+        'outside_dhaka_charge',
         'meta'
     ];
 

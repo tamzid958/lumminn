@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ShippingProviderResource\Pages;
-use App\Filament\Resources\ShippingProviderResource\RelationManagers;
-use App\Models\ShippingProvider;
+use App\Filament\Resources\OptionalProductResource\Pages;
+use App\Filament\Resources\OptionalProductResource\RelationManagers;
+use App\Models\OptionalProduct;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,39 +13,27 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class ShippingProviderResource extends Resource
+class OptionalProductResource extends Resource
 {
-    protected static ?string $model = ShippingProvider::class;
+    protected static ?string $model = OptionalProduct::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Configuration';
-
-    public static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::count();
-    }
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
+                Forms\Components\TextInput::make('title')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('slug')
+                Forms\Components\TextInput::make('price')
                     ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('inside_dhaka_charge')
                     ->numeric()
-                    ->required()
                     ->prefix('৳'),
-                Forms\Components\TextInput::make('outside_dhaka_charge')
+                Forms\Components\TextInput::make('production_cost')
+                    ->required()
                     ->numeric()
-                    ->required()
                     ->prefix('৳'),
-                Forms\Components\KeyValue::make('meta')
-                    ->columnSpan(2)
-                    ->nullable(),
             ]);
     }
 
@@ -53,16 +41,15 @@ class ShippingProviderResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                Tables\Columns\TextColumn::make('title')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('slug')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('inside_dhaka_charge')
+                Tables\Columns\TextColumn::make('price')
                     ->prefix('৳')
-                    ->numeric(),
-                Tables\Columns\TextColumn::make('outside_dhaka_charge')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('production_cost')
                     ->prefix('৳')
-                    ->numeric(),
+                    ->numeric()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -102,10 +89,10 @@ class ShippingProviderResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListShippingProviders::route('/'),
-            'create' => Pages\CreateShippingProvider::route('/create'),
-            'view' => Pages\ViewShippingProvider::route('/{record}'),
-            'edit' => Pages\EditShippingProvider::route('/{record}/edit'),
+            'index' => Pages\ListOptionalProducts::route('/'),
+            'create' => Pages\CreateOptionalProduct::route('/create'),
+            'view' => Pages\ViewOptionalProduct::route('/{record}'),
+            'edit' => Pages\EditOptionalProduct::route('/{record}/edit'),
         ];
     }
 
