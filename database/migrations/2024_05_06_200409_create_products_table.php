@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -22,9 +21,9 @@ return new class extends Migration
             $table->string('stock_status');
             $table->integer('stock')->nullable();
             $table->string('main_photo');
-            $table->json('photos');
-            $table->json('meta');
-            $table->json('production_cost_breakdown');
+            $table->json('photos')->nullable();
+            $table->json('meta')->nullable();
+            $table->json('production_cost_breakdown')->nullable();
             $table->binary('is_shipping_charge_applicable')
                 ->default(true);
             $table->timestamps();

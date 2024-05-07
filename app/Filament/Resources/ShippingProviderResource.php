@@ -18,6 +18,12 @@ class ShippingProviderResource extends Resource
     protected static ?string $model = ShippingProvider::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationGroup = 'Configuration';
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
 
     public static function form(Form $form): Form
     {
@@ -31,7 +37,7 @@ class ShippingProviderResource extends Resource
                     ->maxLength(255),
                 Forms\Components\KeyValue::make('meta')
                     ->columnSpan(2)
-                    ->required(),
+                    ->nullable(),
             ]);
     }
 

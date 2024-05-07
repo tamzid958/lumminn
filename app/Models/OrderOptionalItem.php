@@ -4,23 +4,22 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class ShippingProvider extends Model
+class OrderOptionalItem extends Model
 {
     use HasFactory;
     use SoftDeletes;
 
     protected $fillable = [
-        'name',
-        'slug',
-        'meta'
+        'order_id',
+        'title',
+        'price',
     ];
 
-    protected function casts(): array
+    public function order(): BelongsTo
     {
-        return [
-            'meta' => 'array',
-        ];
+        return $this->belongsTo(Order::class, 'order_id');
     }
 }

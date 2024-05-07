@@ -12,8 +12,6 @@ enum StockStatus: string implements HasLabel
 
     public function getLabel(): ?string
     {
-        return $this->name;
-
         return match ($this) {
             self::InStock => 'In stock',
             self::OutOfStock => 'Out of stock',

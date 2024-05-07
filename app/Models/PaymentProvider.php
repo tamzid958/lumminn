@@ -14,9 +14,13 @@ class PaymentProvider extends Model
     protected $fillable = [
         'name',
         'slug',
+        'meta'
     ];
 
-    protected $casts = [
-        'meta' => 'array',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'meta' => 'array',
+        ];
+    }
 }

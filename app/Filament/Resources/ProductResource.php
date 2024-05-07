@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProductResource\Pages;
 use App\Filament\Resources\ProductResource\RelationManagers;
+use App\Models\Enum\StockStatus;
 use App\Models\Product;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -12,8 +13,6 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Models\Category;
-use App\Models\Enum\StockStatus;
 
 class ProductResource extends Resource
 {
@@ -48,7 +47,6 @@ class ProductResource extends Resource
                     ->numeric(),
                 Forms\Components\Checkbox::make('is_shipping_charge_applicable')
                     ->columnSpan(2)
-                    ->required()
                     ->default(true)
                     ->label('Apply Shipping Charge'),
                 Forms\Components\RichEditor::make('description')
@@ -62,11 +60,25 @@ class ProductResource extends Resource
                     ->columnSpan(2)
                     ->required(),
                 Forms\Components\FileUpload::make('main_photo')
+                    ->image()
+                    ->maxSize(1024)
+                    ->imageEditor()
                     ->columnSpan(2)
+                    ->disk('public')
+                    ->visibility('public')
                     ->required(),
                 Forms\Components\FileUpload::make('photos')
+                    ->image()
+                    ->maxSize(1024)
+                    ->maxFiles(5)
+                    ->imageEditor()
+                    ->reorderable()
+                    ->openable()
+                    ->downloadable()
                     ->columnSpan(2)
-                    ->multiple(),
+                    ->multiple()
+                    ->disk('public')
+                    ->visibility('public'),
 
             ]);
     }
@@ -88,16 +100,11 @@ class ProductResource extends Resource
                 Tables\Columns\TextColumn::make('production_cost')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('description')
-                    ->searchable(),
-                Tables\Columns\SelectColumn::make('stock_status')
+                Tables\Columns\TextColumn::make('stock_status')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('stock')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('main_photo')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('is_shipping_charge_applicable'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
