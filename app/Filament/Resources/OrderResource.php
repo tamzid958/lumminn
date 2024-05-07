@@ -248,6 +248,10 @@ class OrderResource extends Resource
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
+                Tables\Filters\SelectFilter::make('shipping_status')
+                    ->options(ShippingStatus::class),
+                Tables\Filters\SelectFilter::make('pay_status')
+                    ->options(PayStatus::class)
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
