@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Enum\ShippingClass;
+use App\Models\Enum\StockStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,6 +11,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Overtrue\LaravelVersionable\VersionStrategy;
 use Overtrue\LaravelVersionable\Versionable;
 
+/**
+ * @method static find(mixed $productId)
+ */
 class Product extends Model
 {
     use HasFactory;
@@ -41,10 +45,10 @@ class Product extends Model
         return $this->belongsTo(Category::class, 'category_id');
     }
 
-    protected function casts(): array|ShippingClass
+    protected function casts(): array|StockStatus
     {
         return [
-            'stock_status' => ShippingClass::class,
+            'stock_status' => StockStatus::class,
             'photos' => 'array',
             'meta' => 'array',
             'production_cost_breakdown' => 'array'

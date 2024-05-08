@@ -55,7 +55,8 @@ class OrderResource extends Resource
                         ->label('Mandatory')
                         ->minItems(1)
                         ->schema([
-                            Forms\Components\Select::make('product')
+                            Forms\Components\Select::make('id')
+                                ->label('Product')
                                 ->options(function (callable $get) {
                                     $product = Product::all();
                                     return $product->pluck('name', 'id');
@@ -79,7 +80,8 @@ class OrderResource extends Resource
                         ->label('Optional')
                         ->defaultItems(0)
                         ->schema([
-                            Forms\Components\Select::make('product')
+                            Forms\Components\Select::make('id')
+                                ->label('Product')
                                 ->options(function (callable $get) {
                                     $product = OptionalProduct::all();
                                     return $product->pluck('title', 'id');
@@ -146,7 +148,7 @@ class OrderResource extends Resource
                         ->disabled(),
                     PrettyJson::make('gateway_response')
                         ->columnSpanFull()
-                ]),
+                ])->columns(3),
 
                 Fieldset::make(
                     'Billing',
@@ -198,41 +200,27 @@ class OrderResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('total_amount')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('additional_amount')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('shipping_amount')
-                    ->numeric()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('name')
+                    ->searchable()
+                    ->copyable(),
+                Tables\Columns\TextColumn::make('phone_number')
+                    ->searchable()
+                    ->copyable(),
+                Tables\Columns\TextColumn::make('address')
+                    ->limit(30)
+                    ->copyable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('pay_amount')
                     ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('transaction_amount')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('pay_status')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('shipping_status')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('phone_number')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('address')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('shipping_id')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('shippingProvider.name')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('payment_id')
-                    ->searchable(),
+                    ->prefix('৳'),
                 Tables\Columns\TextColumn::make('paymentProvider.name')
-                    ->numeric()
-                    ->sortable(),
+                    ->numeric(),
+                Tables\Columns\TextColumn::make('pay_status')
+                    ->badge(),
+                Tables\Columns\TextColumn::make('shippingProvider.name')
+                    ->numeric(),
+                Tables\Columns\TextColumn::make('shipping_status')
+                    ->badge(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -264,7 +252,7 @@ class OrderResource extends Resource
                     Tables\Actions\RestoreBulkAction::make(),
                 ]),
                 ExportBulkAction::make()
-            ]);
+            ])->defaultSort('created_at', 'desc');
     }
 
     public static function getRelations(): array

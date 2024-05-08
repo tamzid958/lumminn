@@ -2,11 +2,12 @@
 
 namespace App\Models\Enum;
 
+use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
-enum ShippingStatus: string implements HasLabel
+enum ShippingStatus: string implements HasLabel, HasColor
 {
-    case OnHold = 'OnHold';
+    case OnHold = 'On Hold';
     case Dispatched = 'Dispatched';
     case Completed = 'Completed';
     case Cancelled = 'Cancelled';
@@ -14,12 +15,16 @@ enum ShippingStatus: string implements HasLabel
 
     public function getLabel(): ?string
     {
+        return $this->value;
+    }
+
+    public function getColor(): string|array|null
+    {
         return match ($this) {
-            self::OnHold => 'On Hold',
-            self::Dispatched => 'Dispatched',
-            self:: Completed => 'Completed',
-            self:: Cancelled => 'Cancelled',
-            self:: Returned => 'Returned'
+            self::OnHold => 'primary',
+            self::Dispatched => 'warning',
+            self::Completed => 'success',
+            self::Cancelled, self::Returned => 'danger',
         };
     }
 }

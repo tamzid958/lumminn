@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Mansoor\FilamentVersionable\Table\RevisionsAction;
 
 class OptionalProductResource extends Resource
 {
@@ -69,6 +70,7 @@ class OptionalProductResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                   RevisionsAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -93,6 +95,7 @@ class OptionalProductResource extends Resource
             'create' => Pages\CreateOptionalProduct::route('/create'),
             'view' => Pages\ViewOptionalProduct::route('/{record}'),
             'edit' => Pages\EditOptionalProduct::route('/{record}/edit'),
+            'revisions' => Pages\OptinalProductRevisions::route('/{record}/revisions'),
         ];
     }
 

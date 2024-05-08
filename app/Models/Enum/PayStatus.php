@@ -2,9 +2,10 @@
 
 namespace App\Models\Enum;
 
+use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
-enum PayStatus: string implements HasLabel
+enum PayStatus: string implements HasLabel, HasColor
 {
     case Pending = 'Pending';
     case Paid = 'Paid';
@@ -12,6 +13,15 @@ enum PayStatus: string implements HasLabel
 
     public function getLabel(): ?string
     {
-        return $this->name;
+        return $this->value;
+    }
+
+    public function getColor(): string|array|null
+    {
+        return match ($this) {
+            self::Pending => 'primary',
+            self::Paid => 'success',
+            self::Refunded => 'warning',
+        };
     }
 }

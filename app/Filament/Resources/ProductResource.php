@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ProductResource\Pages;
 use App\Filament\Resources\ProductResource\RelationManagers;
 use App\Models\Enum\ShippingClass;
+use App\Models\Enum\StockStatus;
 use App\Models\Product;
 use CodeWithDennis\FilamentSelectTree\SelectTree;
 use Filament\Forms;
@@ -33,6 +34,7 @@ class ProductResource extends Resource
                     ->required()
                     ->maxLength(255),
                 SelectTree::make('category_id')
+                    ->label('Category')
                     ->relationship('category', 'name', 'parent_id')
                     ->nullable(),
                 Forms\Components\TextInput::make('sale_price')
@@ -46,7 +48,7 @@ class ProductResource extends Resource
                     ->required()
                     ->numeric(),
                 Forms\Components\Select::make('stock_status')
-                    ->options(ShippingClass::class),
+                    ->options(StockStatus::class),
                 Forms\Components\TextInput::make('stock')
                     ->numeric(),
                 Forms\Components\Checkbox::make('is_shipping_charge_applicable')
@@ -104,6 +106,8 @@ class ProductResource extends Resource
                 Tables\Columns\TextColumn::make('stock')
                     ->numeric()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('stock_status')
+                    ->badge(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

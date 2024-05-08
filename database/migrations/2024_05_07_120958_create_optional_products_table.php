@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('optional_products', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->decimal('price');
+            $table->decimal('sale_price');
             $table->decimal('production_cost');
             $table->timestamps();
             $table->softDeletes();

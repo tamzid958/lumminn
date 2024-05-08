@@ -16,11 +16,11 @@ class OptionalProduct extends Model
 
     protected $fillable = [
         'title',
-        'price',
+        'sale_price',
         'production_cost',
     ];
 
-    protected $versionable = ['price', 'production_cost'];
+    protected $versionable = ['sale_price', 'production_cost'];
 
     protected $versionStrategy = VersionStrategy::SNAPSHOT;
 }

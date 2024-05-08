@@ -19,6 +19,7 @@ return new class extends Migration {
             $table->decimal('transaction_amount')->nullable();
             $table->string('pay_status');
             $table->string('shipping_status');
+            $table->string('shipping_class');
             $table->string('name');
             $table->string('phone_number');
             $table->string('address');
