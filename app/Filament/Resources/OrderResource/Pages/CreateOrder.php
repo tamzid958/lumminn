@@ -3,10 +3,6 @@
 namespace App\Filament\Resources\OrderResource\Pages;
 
 use App\Filament\Resources\OrderResource;
-use App\Models\Enum\ShippingClass;
-use App\Models\Order;
-use App\Models\OrderItem;
-use App\Models\Product;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;

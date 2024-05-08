@@ -4,7 +4,6 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProductResource\Pages;
 use App\Filament\Resources\ProductResource\RelationManagers;
-use App\Models\Enum\ShippingClass;
 use App\Models\Enum\StockStatus;
 use App\Models\Product;
 use CodeWithDennis\FilamentSelectTree\SelectTree;

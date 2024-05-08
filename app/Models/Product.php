@@ -2,14 +2,13 @@
 
 namespace App\Models;
 
-use App\Models\Enum\ShippingClass;
 use App\Models\Enum\StockStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Overtrue\LaravelVersionable\VersionStrategy;
 use Overtrue\LaravelVersionable\Versionable;
+use Overtrue\LaravelVersionable\VersionStrategy;
 
 /**
  * @method static find(mixed $productId)
