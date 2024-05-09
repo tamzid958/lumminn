@@ -4,9 +4,9 @@ namespace App\Factories\Shipping\Gateways;
 
 use App\Contracts\Shipping\ShippingGateway;
 
-class PathaoGateway implements ShippingGateway
+class PathaoGateway extends BaseShippingGateway implements ShippingGateway
 {
-    public function send(array $order)
+    public function send(array $order): void
     {
 
     }

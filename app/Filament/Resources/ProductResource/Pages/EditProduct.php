@@ -19,4 +19,10 @@ class EditProduct extends EditRecord
             Actions\RestoreAction::make(),
         ];
     }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        if ($data['stock_status'] === 'Unlimited') $data['stock'] = null;
+        return $data;
+    }
 }

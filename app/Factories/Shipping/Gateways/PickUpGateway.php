@@ -3,12 +3,15 @@
 namespace App\Factories\Shipping\Gateways;
 
 use App\Contracts\Shipping\ShippingGateway;
+use App\Models\Order;
 use App\Utils\StringUtil;
 
-class PickUpGateway implements ShippingGateway
+class PickUpGateway extends BaseShippingGateway implements ShippingGateway
 {
-    public function send(array $order): string
+    public function send(array $order): void
     {
-        return StringUtil::generateReadableString();
+        $order['shipping_id'] = StringUtil::generateReadableString();
+        $order['shipping_status'] = 'Dispatched';
+        parent::send($order);
     }
 }

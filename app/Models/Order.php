@@ -35,7 +35,6 @@ class Order extends Model
         'payment_provider_id',
         'note',
         'attachment',
-        'is_sent_to_shipping_provider'
     ];
 
     public function orderItems(): HasMany

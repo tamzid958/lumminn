@@ -52,9 +52,12 @@ class ProductResource extends Resource
                     ->required()
                     ->numeric(),
                 Forms\Components\Select::make('stock_status')
-                    ->options(StockStatus::class),
+                    ->options(StockStatus::class)
+                    ->required()
+                    ->reactive(),
                 Forms\Components\TextInput::make('stock')
-                    ->numeric(),
+                    ->numeric()
+                    ->hidden(fn($get) => $get('stock_status') === 'Unlimited'),
                 Forms\Components\Checkbox::make('is_shipping_charge_applicable')
                     ->columnSpan(2)
                     ->default(true)

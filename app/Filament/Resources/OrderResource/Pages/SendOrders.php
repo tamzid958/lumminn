@@ -3,7 +3,10 @@
 namespace App\Filament\Resources\OrderResource\Pages;
 
 use App\Filament\Resources\OrderResource;
+use App\Jobs\SendOrdersJob;
 use App\Models\Order;
+use App\Models\ShippingProvider;
+use App\Providers\ShippingServiceProvider;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Illuminate\Database\Eloquent\Builder;
@@ -20,22 +23,21 @@ class SendOrders extends ListRecords
 
     protected function getHeaderWidgets(): array
     {
-        return [
-        ];
+        return [];
     }
 
     // create a view
 
     protected function getTableQuery(): ?Builder
     {
-        return Order::query()->where('shipping_status', '=', 'On Hold');
+        return Order::query()->whereNull('shipping_id');
     }
 
 
     public function table(Table $table): Table
     {
         return $table
-            ->query(Order::query()->where('shipping_status', '=', 'On Hold'))
+            ->query(Order::query()->whereNull('shipping_id'))
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
@@ -68,7 +70,8 @@ class SendOrders extends ListRecords
             ->bulkActions([
                 Tables\Actions\BulkAction::make('send')->label('Send to Courier')
                     ->color('danger')
-                    ->action(function (Collection $records) use ($table): void {
+                    ->action(function (Collection $records): void {
+                        dispatch_sync(new SendOrdersJob($records->toArray()));
                     })
             ]);
     }

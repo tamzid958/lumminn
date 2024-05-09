@@ -30,7 +30,6 @@ return new class extends Migration {
             $table->integer('payment_provider_id');
             $table->json('note')->nullable();
             $table->json('attachment')->nullable();
-            $table->binary('is_sent_to_shipping_provider')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

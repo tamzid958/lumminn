@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\OrderResource\Pages;
 
 use App\Filament\Resources\OrderResource;
+use App\Providers\OrderServiceProvider;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\DB;
@@ -41,6 +42,26 @@ class EditOrder extends EditRecord
 
         $data['products'] = $mandatatoryOrderItems->map(fn($item) => (array)$item)->all();
         $data['optional_products'] = $optionalOrderItems->map(fn($item) => (array)$item)->all();
+
+        return $data;
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        $freeShipping = OrderServiceProvider::checkIfanyFreeShippingProduct($data, "edit");
+
+        $shipping_provider = DB::table('shipping_providers')->find($data['shipping_provider_id']);
+
+        if (!$freeShipping) {
+            $data['shipping_amount'] = match ($data['shipping_class']) {
+                'Inside Dhaka' => $shipping_provider->inside_dhaka_charge,
+                default => $shipping_provider->outside_dhaka_charge,
+            };
+        } else {
+            $data['shipping_amount'] = 0;
+        }
+
+        $data['pay_amount'] = $data['total_amount'] + $data['shipping_amount'] + $data['additional_amount'];
 
         return $data;
     }

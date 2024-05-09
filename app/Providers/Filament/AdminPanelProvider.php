@@ -11,6 +11,7 @@ use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Widgets;
 use GeoSot\FilamentEnvEditor\FilamentEnvEditorPlugin;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -62,6 +63,8 @@ class AdminPanelProvider extends PanelProvider
                 FilamentEnvEditorPlugin::make(),
                 FilamentSpatieLaravelHealthPlugin::make(),
                 FilamentJobsMonitorPlugin::make(),
-            ]);
+            ])
+            ->maxContentWidth(MaxWidth::Full)
+            ->sidebarFullyCollapsibleOnDesktop();
     }
 }
