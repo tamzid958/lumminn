@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use Filament\Facades\Filament;
+use Filament\Navigation\NavigationGroup;
 use Illuminate\Support\ServiceProvider;
 use Spatie\Health\Checks\Checks\DatabaseCheck;
 use Spatie\Health\Checks\Checks\DatabaseConnectionCountCheck;
@@ -28,6 +30,22 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Filament::serving(function () {
+            Filament::registerNavigationGroups([
+                NavigationGroup::make()
+                    ->label('Shop'),
+                NavigationGroup::make()
+                    ->label('Configuration')
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label('Settings')
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label('System')
+                    ->collapsed(),
+            ]);
+        });
+
         //
         Health::checks([
             OptimizedAppCheck::new(),

@@ -20,6 +20,10 @@ class OptionalProductResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $navigationGroup = 'Shop';
+
+    protected static ?int $navigationSort = 3;
+
     public static function form(Form $form): Form
     {
         return $form
@@ -27,7 +31,7 @@ class OptionalProductResource extends Resource
                 Forms\Components\TextInput::make('title')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('price')
+                Forms\Components\TextInput::make('sale_price')
                     ->required()
                     ->numeric()
                     ->prefix('৳'),
@@ -44,7 +48,7 @@ class OptionalProductResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('price')
+                Tables\Columns\TextColumn::make('sale_price')
                     ->prefix('৳')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('production_cost')

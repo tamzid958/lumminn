@@ -33,7 +33,9 @@ class PaymentProviderResource extends Resource
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('slug')
+                    ->regex('/^[a-z-]+$/i')
                     ->required()
+                    ->disabledOn("edit")
                     ->maxLength(255),
                 Forms\Components\KeyValue::make('meta')
                     ->columnSpan(2)

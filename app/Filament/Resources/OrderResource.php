@@ -15,6 +15,7 @@ use App\Models\ShippingProvider;
 use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -29,6 +30,10 @@ class OrderResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $navigationGroup = 'Shop';
+
+    protected static ?int $navigationSort = 4;
+
     public static function form(Form $form): Form
     {
         return $form
@@ -38,15 +43,18 @@ class OrderResource extends Resource
                 )->schema([
                     Forms\Components\TextInput::make('name')
                         ->required()
-                        ->maxLength(255),
+                        ->maxLength(255)
+                        ->disabled(fn(Get $get): ?bool => $get('shipping_status') !== 'On Hold'),
                     Forms\Components\TextInput::make('phone_number')
                         ->tel()
                         ->required()
-                        ->maxLength(255),
+                        ->maxLength(255)
+                        ->disabled(fn(Get $get): ?bool => $get('shipping_status') !== 'On Hold'),
                     Forms\Components\Textarea::make('address')
                         ->required()
                         ->columnSpan(2)
-                        ->maxLength(255),
+                        ->maxLength(255)
+                        ->disabled(fn(Get $get): ?bool => $get('shipping_status') !== 'On Hold'),
                 ]),
                 Fieldset::make(
                     'Order Items',
@@ -74,7 +82,8 @@ class OrderResource extends Resource
                         ->columns()
                         ->reorderable(false)
                         ->columnSpan(2)
-                        ->required(),
+                        ->required()
+                        ->disabled(fn(Get $get): ?bool => $get('shipping_status') !== 'On Hold'),
 
                     Forms\Components\Repeater::make('optional_products')
                         ->label('Optional')
@@ -100,6 +109,7 @@ class OrderResource extends Resource
                         ->reorderable(false)
                         ->columnSpan(2)
                         ->nullable()
+                        ->disabled(fn(Get $get): ?bool => $get('shipping_status') !== 'On Hold')
                 ]),
 
                 Fieldset::make(
@@ -111,11 +121,13 @@ class OrderResource extends Resource
                             $product = ShippingProvider::all();
                             return $product->pluck('name', 'id');
                         })
-                        ->required(),
+                        ->required()
+                        ->disabled(fn(Get $get): ?bool => $get('shipping_status') !== 'On Hold'),
                     Forms\Components\Select::make('shipping_class')
                         ->label("Class")
                         ->options(ShippingClass::class)
-                        ->required(),
+                        ->required()
+                        ->disabled(fn(Get $get): ?bool => $get('shipping_status') !== 'On Hold'),
                     Forms\Components\Select::make('shipping_status')
                         ->label("Status")
                         ->options(ShippingStatus::class)
@@ -124,7 +136,7 @@ class OrderResource extends Resource
                     Forms\Components\TextInput::make('shipping_id')
                         ->label('Identifier')
                         ->placeholder('will be generated')
-                        ->disabled(),
+                        ->disabledOn("create")
                 ]),
 
                 Fieldset::make(
@@ -145,7 +157,7 @@ class OrderResource extends Resource
                     Forms\Components\TextInput::make('payment_id')
                         ->label('Identifier')
                         ->placeholder('will be generated')
-                        ->disabled(),
+                        ->disabledOn("create"),
                     PrettyJson::make('gateway_response')
                         ->columnSpanFull()
                 ])->columns(3),
@@ -157,22 +169,26 @@ class OrderResource extends Resource
                         ->prefix('৳')
                         ->disabled()
                         ->placeholder('will be generated')
-                        ->numeric(),
+                        ->numeric()
+                        ->disabled(fn(Get $get): ?bool => $get('shipping_status') !== 'On Hold'),
                     Forms\Components\TextInput::make('shipping_amount')
                         ->prefix('৳')
                         ->disabled()
                         ->placeholder('will be generated')
-                        ->numeric(),
+                        ->numeric()
+                        ->disabled(fn(Get $get): ?bool => $get('shipping_status') !== 'On Hold'),
                     Forms\Components\TextInput::make('additional_amount')
                         ->prefix('৳')
                         ->required()
                         ->numeric()
-                        ->default(0),
+                        ->default(0)
+                        ->disabled(fn(Get $get): ?bool => $get('shipping_status') !== 'On Hold'),
                     Forms\Components\TextInput::make('pay_amount')
                         ->prefix('৳')
                         ->disabled()
                         ->placeholder('will be generated')
-                        ->numeric(),
+                        ->numeric()
+                        ->disabled(fn(Get $get): ?bool => $get('shipping_status') !== 'On Hold'),
                     Forms\Components\TextInput::make('transaction_amount')
                         ->prefix('৳')
                         ->disabled()
@@ -266,6 +282,7 @@ class OrderResource extends Resource
     {
         return [
             'index' => Pages\ListOrders::route('/'),
+            'send' => Pages\SendOrders::route('/send'),
             'create' => Pages\CreateOrder::route('/create'),
             'view' => Pages\ViewOrder::route('/{record}'),
             'edit' => Pages\EditOrder::route('/{record}/edit'),

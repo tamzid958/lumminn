@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\OrderResource\Pages;
 
 use App\Filament\Resources\OrderResource;
+use App\Providers\PaymentServiceProvider;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -10,7 +11,6 @@ use Illuminate\Support\Facades\DB;
 class CreateOrder extends CreateRecord
 {
     protected static string $resource = OrderResource::class;
-
 
     private function convertToOrderItems(array $data, string $tablename): array
     {
@@ -63,9 +63,9 @@ class CreateOrder extends CreateRecord
 
         $freeShipping = $this->checkIfanyFreeShippingProduct($data);
 
-        if (!$freeShipping) {
-            $shipping_provider = DB::table('shipping_providers')->find($data['shipping_provider_id']);
+        $shipping_provider = DB::table('shipping_providers')->find($data['shipping_provider_id']);
 
+        if (!$freeShipping) {
             $data['shipping_amount'] = match ($data['shipping_class']) {
                 'Inside Dhaka' => $shipping_provider->inside_dhaka_charge,
                 default => $shipping_provider->outside_dhaka_charge,
@@ -76,6 +76,8 @@ class CreateOrder extends CreateRecord
 
         $data['pay_amount'] = $data['total_amount'] + $data['shipping_amount'] + $data['additional_amount'];
 
+        $data['payment_id'] = PaymentServiceProvider::register($shipping_provider)->create()->generateTransaction($data);
+
         $record = static::getModel()::create([
             'total_amount' => $data['total_amount'],
             'additional_amount' => $data['additional_amount'],
@@ -84,6 +86,7 @@ class CreateOrder extends CreateRecord
             'pay_status' => $data['pay_status'],
             'shipping_status' => $data['shipping_status'],
             'shipping_class' => $data['shipping_class'],
+            'payment_id' => $data['payment_id'],
             'name' => $data['name'],
             'phone_number' => $data['phone_number'],
             'address' => $data['address'],

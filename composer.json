@@ -2,11 +2,16 @@
     "name": "laravel/laravel",
     "type": "project",
     "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
+    "keywords": [
+        "laravel",
+        "framework"
+    ],
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "ext-openssl": "*",
         "codewithdennis/filament-select-tree": "^3.1",
+        "croustibat/filament-jobs-monitor": "^2.4",
         "filament/filament": "^3.2",
         "filament/forms": "^3.2",
         "geo-sot/filament-env-editor": "^0.0.2",

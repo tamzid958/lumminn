@@ -33,8 +33,10 @@ class ShippingProviderResource extends Resource
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('slug')
+                    ->regex('/^[a-z-]+$/i')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->disabledOn("edit"),
                 Forms\Components\TextInput::make('inside_dhaka_charge')
                     ->numeric()
                     ->required()
