@@ -299,7 +299,7 @@ class OrderResource extends Resource
                             ->body('Please check notification after a while.')
                             ->success()
                             ->send();
-                    })->deselectRecordsAfterCompletion()
+                    })
             ])->defaultSort('created_at', 'desc');
     }
 
