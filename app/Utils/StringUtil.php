@@ -4,7 +4,7 @@ namespace App\Utils;
 
 class StringUtil
 {
-    static function generateReadableString($length = 7): string
+    static function generateReadableString($length = 2): string
     {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyz';
         $char_length = strlen($characters);

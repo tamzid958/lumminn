@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Exports\OrderExporter;
 use App\Filament\Resources\OrderResource\Pages;
 use App\Filament\Resources\OrderResource\RelationManagers;
 use App\Models\Enum\PayStatus;
@@ -26,8 +27,11 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use libphonenumber\PhoneNumberType;
 use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 use Novadaemon\FilamentPrettyJson\PrettyJson;
-use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
+use Filament\Tables\Actions\ExportBulkAction;
+use Illuminate\Support\Collection;
+use Spatie\LaravelPdf\Facades\Pdf;
+use Spatie\LaravelPdf\Enums\Format;
 
 class OrderResource extends Resource
 {
@@ -51,7 +55,7 @@ class OrderResource extends Resource
                         Forms\Components\TextInput::make('name')
                             ->required()
                             ->maxLength(255)
-                            ->disabled(fn(Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
+                            ->disabled(fn (Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
                                 $livewire instanceof EditRecord),
                         PhoneInput::make('phone_number')
                             ->onlyCountries(['bd'])
@@ -61,13 +65,13 @@ class OrderResource extends Resource
                                 lenient: true
                             )
                             ->required()
-                            ->disabled(fn(Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
+                            ->disabled(fn (Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
                                 $livewire instanceof EditRecord),
                         Forms\Components\Textarea::make('address')
                             ->required()
                             ->columnSpan(2)
                             ->maxLength(255)
-                            ->disabled(fn(Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
+                            ->disabled(fn (Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
                                 $livewire instanceof EditRecord),
                     ]),
                     Fieldset::make(
@@ -96,7 +100,7 @@ class OrderResource extends Resource
                             ->reorderable(false)
                             ->columnSpan(2)
                             ->required()
-                            ->disabled(fn(Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
+                            ->disabled(fn (Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
                                 $livewire instanceof EditRecord),
                         Forms\Components\Repeater::make('optional_products')
                             ->label('Optional')
@@ -121,7 +125,7 @@ class OrderResource extends Resource
                             ->reorderable(false)
                             ->columnSpan(2)
                             ->nullable()
-                            ->disabled(fn(Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
+                            ->disabled(fn (Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
                                 $livewire instanceof EditRecord),
                     ]),
 
@@ -135,13 +139,13 @@ class OrderResource extends Resource
                                 return $product->pluck('name', 'id');
                             })
                             ->required()
-                            ->disabled(fn(Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
+                            ->disabled(fn (Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
                                 $livewire instanceof EditRecord),
                         Forms\Components\Select::make('shipping_class')
                             ->label("Class")
                             ->options(ShippingClass::class)
                             ->required()
-                            ->disabled(fn(Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
+                            ->disabled(fn (Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
                                 $livewire instanceof EditRecord),
                         Forms\Components\Select::make('shipping_status')
                             ->label("Status")
@@ -163,7 +167,7 @@ class OrderResource extends Resource
                                 $product = PaymentProvider::all();
                                 return $product->pluck('name', 'id');
                             })
-                            ->disabled(fn(Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
+                            ->disabled(fn (Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
                                 $livewire instanceof EditRecord)
                             ->required(),
                         Forms\Components\Select::make('pay_status')
@@ -174,7 +178,7 @@ class OrderResource extends Resource
                         Forms\Components\TextInput::make('payment_id')
                             ->label('Identifier')
                             ->placeholder('will be generated if empty')
-                            ->disabled(fn(Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
+                            ->disabled(fn (Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
                                 $livewire instanceof EditRecord),
                         PrettyJson::make('gateway_response')
                             ->columnSpanFull()
@@ -199,7 +203,7 @@ class OrderResource extends Resource
                             ->required()
                             ->numeric()
                             ->default(0)
-                            ->disabled(fn(Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
+                            ->disabled(fn (Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
                                 $livewire instanceof EditRecord),
                         Forms\Components\TextInput::make('pay_amount')
                             ->prefix('৳')
@@ -226,7 +230,8 @@ class OrderResource extends Resource
                         ->multiple()
                         ->disk('public')
                         ->visibility('private')
-                ]);
+                ]
+            );
     }
 
     public static function table(Table $table): Table
@@ -283,24 +288,31 @@ class OrderResource extends Resource
                     Tables\Actions\ForceDeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
                 ]),
-                ExportBulkAction::make(),
-                Tables\Actions\BulkAction::make('send')->icon('heroicon-o-arrow-down-tray')->label('Download Invoice')
-                    ->color('success')
-                    ->action(function () {
-                        $packingReceipts = collect(!isset($records) ? [] : $records->toArray())->map(function ($order) {
+                ExportBulkAction::make()->exporter(OrderExporter::class)->chunkSize(500),
+                Tables\Actions\BulkAction::make('send')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->label('Download Invoice')
+                    ->action(function (Collection $records): void {
+                        $pdfName = time() . "-invoice";
+                        $packingReceipts =  collect($records->toArray())->map(function ($record) {
                             return [
-                                'name' => $order['name'],
-                                'phone' => $order['phone'],
-                                'address' => $order['address'],
-                                'id' => $order['id'],
-                                'shipping_id' => $order['shipping_id'],
-                                'due_bill' => 0
+                                'id' => $record['id'],
+                                'name' => $record['name'],
+                                'phone_number' => $record['phone_number'],
+                                'address' => $record['address'],
+                                'shipping_id' => $record['shipping_id'],
+                                'shipping_provider_name' => ShippingProvider::query()->find($record['shipping_provider_id'])->name,
+                                'due_amount' => PaymentProvider::query()->find($record['payment_provider_id'])->slug === 'cash-on-delivery' ? $record['pay_amount'] : 0,
                             ];
+                        });
 
-                        })->toArray();
+                        Pdf::view('components.download-invoice', ['packingReceipts' => $packingReceipts])
+                            ->format(Format::A4)
+                            ->disk('public')
+                            ->save($pdfName . '.pdf');
 
-                        return response('orders.download-invoice')->download();
-                    })->deselectRecordsAfterCompletion()
+                        redirect('storage/' . $pdfName . '.pdf');
+                    })
             ])->defaultSort('created_at', 'desc');
     }
 
@@ -316,7 +328,6 @@ class OrderResource extends Resource
         return [
             'index' => Pages\ListOrders::route('/'),
             'send' => Pages\SendOrders::route('/send'),
-            'download-invoice' => Pages\DownloadInvoice::route('/download-invoice'),
             'create' => Pages\CreateOrder::route('/create'),
             'view' => Pages\ViewOrder::route('/{record}'),
             'edit' => Pages\EditOrder::route('/{record}/edit'),
