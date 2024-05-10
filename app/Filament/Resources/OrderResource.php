@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Exports\OrderExporter;
 use App\Filament\Resources\OrderResource\Pages;
 use App\Filament\Resources\OrderResource\RelationManagers;
+use App\Jobs\GenerateInvoiceJob;
 use App\Models\Enum\PayStatus;
 use App\Models\Enum\ShippingClass;
 use App\Models\Enum\ShippingStatus;
@@ -30,8 +31,7 @@ use Novadaemon\FilamentPrettyJson\PrettyJson;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 use Filament\Tables\Actions\ExportBulkAction;
 use Illuminate\Support\Collection;
-use Spatie\LaravelPdf\Facades\Pdf;
-use Spatie\LaravelPdf\Enums\Format;
+use Filament\Notifications\Notification;
 
 class OrderResource extends Resource
 {
@@ -293,26 +293,13 @@ class OrderResource extends Resource
                     ->icon('heroicon-o-arrow-down-tray')
                     ->label('Download Invoice')
                     ->action(function (Collection $records): void {
-                        $pdfName = time() . "-invoice";
-                        $packingReceipts =  collect($records->toArray())->map(function ($record) {
-                            return [
-                                'id' => $record['id'],
-                                'name' => $record['name'],
-                                'phone_number' => $record['phone_number'],
-                                'address' => $record['address'],
-                                'shipping_id' => $record['shipping_id'],
-                                'shipping_provider_name' => ShippingProvider::query()->find($record['shipping_provider_id'])->name,
-                                'due_amount' => PaymentProvider::query()->find($record['payment_provider_id'])->slug === 'cash-on-delivery' ? $record['pay_amount'] : 0,
-                            ];
-                        });
-
-                        Pdf::view('components.download-invoice', ['packingReceipts' => $packingReceipts])
-                            ->format(Format::A4)
-                            ->disk('public')
-                            ->save($pdfName . '.pdf');
-
-                        redirect('storage/' . $pdfName . '.pdf');
-                    })
+                        dispatch(new GenerateInvoiceJob($records->toArray(), auth()->user()));
+                        Notification::make()
+                            ->title('Request sent successfully')
+                            ->body('Please check notification after a while.')
+                            ->success()
+                            ->send();
+                    })->deselectRecordsAfterCompletion()
             ])->defaultSort('created_at', 'desc');
     }
 

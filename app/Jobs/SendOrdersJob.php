@@ -44,36 +44,13 @@ class SendOrdersJob implements ShouldQueue
             ShippingServiceProvider::register($shipping_provider)->create()->send($dbOrder);
         }
 
-        $pdfName = time() . "-invoice.pdf";
-
-        $packingReceipts =  collect($this->orders)->map(function ($record) {
-            return [
-                'id' => $record['id'],
-                'name' => $record['name'],
-                'phone_number' => $record['phone_number'],
-                'address' => $record['address'],
-                'shipping_id' => $record['shipping_id'],
-                'shipping_provider_name' => ShippingProvider::query()->find($record['shipping_provider_id'])->name,
-                'due_amount' => PaymentProvider::query()->find($record['payment_provider_id'])->slug === 'cash-on-delivery' ? $record['pay_amount'] : 0,
-            ];
-        });
-
-        Pdf::view('components.download-invoice', ['packingReceipts' => $packingReceipts])
-            ->format(Format::A4)
-            ->disk('public')
-            ->save($pdfName);
-
         Notification::make()
-            ->title('Invoice generated')
-            ->icon('heroicon-o-document-text')
-            ->body("Download invoice and print it for packaging")
-            ->actions([
-                Action::make('Download')
-                    ->button()
-                    ->url(asset('storage/' . $pdfName), shouldOpenInNewTab: true)
-            ])
+            ->title('Sent to shipping provider')
+            ->icon('heroicon-o-paper-airplane')
+            ->body("Orders successfully sent to shipping provider")
             ->sendToDatabase($this->user);
-
+            
+        dispatch(new GenerateInvoiceJob($this->orders, $this->user))->delay(3);
         //
     }
 }

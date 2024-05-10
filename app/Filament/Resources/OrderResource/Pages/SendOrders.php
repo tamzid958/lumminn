@@ -11,6 +11,7 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Filament\Notifications\Notification;
 
 class SendOrders extends ListRecords
 {
@@ -58,6 +59,11 @@ class SendOrders extends ListRecords
                     ->color('danger')
                     ->action(function (Collection $records): void {
                         dispatch(new SendOrdersJob($records->toArray(), auth()->user()));
+                        Notification::make()
+                            ->title('Request sent successfully')
+                            ->body('Please check notification after a while.')
+                            ->success()
+                            ->send();
                         redirect('admin/orders/');
                     })
                     ->deselectRecordsAfterCompletion()
