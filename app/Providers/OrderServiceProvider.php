@@ -35,7 +35,7 @@ class OrderServiceProvider
     /**
      * @throws Exception
      */
-    public static function checkIfanyFreeShippingProduct(array $data, string $action): bool
+    public static function checkIfAnyFreeShippingProduct(array $data, string $action): bool
     {
         if ($action === "create") {
             $productIds = array_column($data['products'], 'id');

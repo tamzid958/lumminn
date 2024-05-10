@@ -2,8 +2,8 @@
 
 namespace App\Factories\Payment;
 
-use App\Contracts\Payment\PaymentGatewayFactory;
 use App\Contracts\Payment\PaymentGateway;
+use App\Contracts\Payment\PaymentGatewayFactory;
 use App\Factories\Payment\Gateways\CashOnDeliveryGateway;
 
 class CashOnDeliveryGatewayFactory implements PaymentGatewayFactory

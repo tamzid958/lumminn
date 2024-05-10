@@ -2,8 +2,6 @@
 
 namespace App\Providers\Filament;
 
-use Croustibat\FilamentJobsMonitor\FilamentJobsMonitorPlugin;
-use Croustibat\FilamentJobsMonitor\Resources\QueueMonitorResource;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -62,7 +60,6 @@ class AdminPanelProvider extends PanelProvider
             ->plugins([
                 FilamentEnvEditorPlugin::make(),
                 FilamentSpatieLaravelHealthPlugin::make(),
-                FilamentJobsMonitorPlugin::make(),
             ])
             ->maxContentWidth(MaxWidth::Full)
             ->sidebarFullyCollapsibleOnDesktop();

@@ -5,13 +5,11 @@ namespace App\Filament\Resources\OrderResource\Pages;
 use App\Filament\Resources\OrderResource;
 use App\Jobs\SendOrdersJob;
 use App\Models\Order;
-use App\Models\ShippingProvider;
-use App\Providers\ShippingServiceProvider;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Concerns\InteractsWithTable;
-use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables;
+use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
 class SendOrders extends ListRecords
@@ -19,25 +17,13 @@ class SendOrders extends ListRecords
     protected static string $resource = OrderResource::class;
 
     protected static string $view = 'filament.resources.order-resource.pages.send-orders';
+
     use InteractsWithTable;
-
-    protected function getHeaderWidgets(): array
-    {
-        return [];
-    }
-
-    // create a view
-
-    protected function getTableQuery(): ?Builder
-    {
-        return Order::query()->whereNull('shipping_id');
-    }
-
 
     public function table(Table $table): Table
     {
         return $table
-            ->query(Order::query()->whereNull('shipping_id'))
+            ->query(Order::query()->whereNull('shipping_id')->where('shipping_status', '=', 'On Hold'))
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
@@ -73,6 +59,20 @@ class SendOrders extends ListRecords
                     ->action(function (Collection $records): void {
                         dispatch_sync(new SendOrdersJob($records->toArray()));
                     })
+                    ->deselectRecordsAfterCompletion()
+                    ->requiresConfirmation()
             ]);
+    }
+
+    // create a view
+
+    protected function getHeaderWidgets(): array
+    {
+        return [];
+    }
+
+    protected function getTableQuery(): ?Builder
+    {
+        return Order::query()->whereNull('shipping_id')->where('shipping_status', '=', 'On Hold');
     }
 }

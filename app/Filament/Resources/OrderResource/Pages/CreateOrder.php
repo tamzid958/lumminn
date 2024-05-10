@@ -13,7 +13,6 @@ class CreateOrder extends CreateRecord
 {
     protected static string $resource = OrderResource::class;
 
-
     protected function handleRecordCreation(array $data): Model
     {
 
@@ -28,7 +27,7 @@ class CreateOrder extends CreateRecord
             return $carry + ($item['price'] * $item['quantity']);
         }, 0);
 
-        $freeShipping = OrderServiceProvider::checkIfanyFreeShippingProduct($data, "create");
+        $freeShipping = OrderServiceProvider::checkIfAnyFreeShippingProduct($data, "create");
 
         $shipping_provider = DB::table('shipping_providers')->find($data['shipping_provider_id']);
 
