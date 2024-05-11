@@ -42,10 +42,6 @@ class CreateOrder extends CreateRecord
 
         $data['pay_amount'] = $data['total_amount'] + $data['shipping_amount'] + $data['additional_amount'];
 
-        if (!$data['payment_id']) {
-            $data['payment_id'] = PaymentServiceProvider::register($shipping_provider)->create()->generateTransaction($data);
-        }
-
         $record = static::getModel()::create([
             'total_amount' => $data['total_amount'],
             'additional_amount' => $data['additional_amount'],
@@ -54,7 +50,6 @@ class CreateOrder extends CreateRecord
             'pay_status' => $data['pay_status'],
             'shipping_status' => $data['shipping_status'],
             'shipping_class' => $data['shipping_class'],
-            'payment_id' => $data['payment_id'],
             'name' => $data['name'],
             'phone_number' => $data['phone_number'],
             'address' => $data['address'],
@@ -77,6 +72,10 @@ class CreateOrder extends CreateRecord
         })->toArray();
 
         DB::table('order_items')->insert($orderItems);
+
+        $payment_provider = DB::table('payment_providers')->find($data['payment_provider_id']);
+
+        PaymentServiceProvider::register($payment_provider)->create()->generateTransaction($record->toArray());
 
         return $record;
     }

@@ -27,11 +27,11 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use libphonenumber\PhoneNumberType;
 use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
-use Novadaemon\FilamentPrettyJson\PrettyJson;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 use Filament\Tables\Actions\ExportBulkAction;
 use Illuminate\Support\Collection;
 use Filament\Notifications\Notification;
+use ValentinMorice\FilamentJsonColumn\FilamentJsonColumn;
 
 class OrderResource extends Resource
 {
@@ -180,7 +180,9 @@ class OrderResource extends Resource
                             ->placeholder('will be generated if empty')
                             ->disabled(fn (Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
                                 $livewire instanceof EditRecord),
-                        PrettyJson::make('gateway_response')
+                        FilamentJsonColumn::make('gateway_response')
+                            ->viewerOnly()
+                            ->editorHeight(200)
                             ->columnSpanFull()
                             ->disabled()
                     ])->columns(3),

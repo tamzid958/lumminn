@@ -4,14 +4,13 @@ namespace App\Factories\Payment\Gateways;
 
 
 use App\Contracts\Payment\PaymentGateway;
-use App\Utils\StringUtil;
+use App\Models\Order;
 
-class CashOnDeliveryGateway extends BasePaymentGateway implements PaymentGateway
+abstract class BasePaymentGateway implements PaymentGateway
 {
     public function generateTransaction(array $order): void
     {
-        $order['payment_id'] = StringUtil::generateReadableString();
-        parent::generateTransaction($order);
+        Order::query()->where('id', $order['id'])->update($order);
     }
 
     public function verify(string $invoice_id): void

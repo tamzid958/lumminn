@@ -1,13 +1,10 @@
 <?php
 
-use App\Http\Controllers\DownloadInvoiceController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get(
-    '/download-invoice',
-    [DownloadInvoiceController::class, 'download']
-)->name('invoices.pdf.download');
+
