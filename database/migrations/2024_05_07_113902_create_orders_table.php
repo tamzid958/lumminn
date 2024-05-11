@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -28,6 +29,7 @@ return new class extends Migration {
             $table->integer('shipping_provider_id');
             $table->string('payment_id')->nullable();
             $table->integer('payment_provider_id');
+            $table->string('invoice_id')->unique();
             $table->json('note')->nullable();
             $table->json('attachment')->nullable();
             $table->timestamps();

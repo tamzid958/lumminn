@@ -5,10 +5,11 @@ namespace App\Models\Enum;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
-enum PayStatus: string implements HasLabel, HasColor, \JsonSerializable
+enum PayStatus: string implements HasLabel, HasColor
 {
     case Pending = 'Pending';
     case Paid = 'Paid';
+    case Cancelled = 'Cancelled';
     case Refunded = 'Refunded';
 
     public function getLabel(): ?string
@@ -22,19 +23,7 @@ enum PayStatus: string implements HasLabel, HasColor, \JsonSerializable
             self::Pending => 'primary',
             self::Paid => 'success',
             self::Refunded => 'warning',
+            self::Cancelled => 'danger'
         };
-    }
-    public function getType(): string
-    {
-        return match ($this) {
-            PayStatus::Pending => 'Pending',
-            PayStatus::Paid => 'Paid',
-            PayStatus::Refunded => 'Refunded'
-        };
-    }
-
-    public function jsonSerialize(): mixed
-    {
-        return $this->getType();
     }
 }

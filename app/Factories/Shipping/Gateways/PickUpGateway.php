@@ -13,4 +13,8 @@ class PickUpGateway extends BaseShippingGateway implements ShippingGateway
 
         parent::send($order);
     }
+
+    public function check(array $order): void
+    {
+    }
 }

@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Ramsey\Uuid\Uuid;
 
 class Order extends Model
 {
@@ -35,6 +36,7 @@ class Order extends Model
         'payment_provider_id',
         'note',
         'attachment',
+        'invoice_id'
     ];
 
     public function orderItems(): HasMany
@@ -62,5 +64,14 @@ class Order extends Model
             'note' => 'array',
             'attachment' => 'array',
         ];
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            $model->invoice_id = (string) Uuid::uuid4();
+        });
     }
 }
