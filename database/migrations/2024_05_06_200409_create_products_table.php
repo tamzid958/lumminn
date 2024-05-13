@@ -22,6 +22,7 @@ return new class extends Migration {
             $table->integer('stock')->nullable();
             $table->string('main_photo');
             $table->json('photos')->nullable();
+            $table->string('video_link')->nullable();
             $table->json('meta')->nullable();
             $table->json('production_cost_breakdown')->nullable();
             $table->binary('is_shipping_charge_applicable')

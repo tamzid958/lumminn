@@ -31,6 +31,7 @@ class Product extends Model
         'is_shipping_charge_applicable',
         'main_photo',
         'photos',
+        'video_link',
         'meta',
         'production_cost_breakdown'
     ];
@@ -41,7 +42,7 @@ class Product extends Model
 
     public function category(): BelongsTo
     {
-        return $this->belongsTo(Category::class, 'category_id');
+        return $this->belongsTo(Category::class);
     }
 
     protected function casts(): array|StockStatus

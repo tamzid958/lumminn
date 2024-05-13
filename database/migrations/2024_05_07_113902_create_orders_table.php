@@ -17,7 +17,7 @@ return new class extends Migration
             $table->decimal('additional_amount');
             $table->decimal('shipping_amount');
             $table->decimal('pay_amount');
-            $table->decimal('transaction_amount')->nullable();
+            $table->decimal('discount_amount')->nullable();
             $table->string('pay_status');
             $table->string('shipping_status');
             $table->string('shipping_class');

@@ -1,4 +1,4 @@
-@extends('components.layouts.app', ['title' => 'Sunglasses and Eyewear'])
+@extends('components.layouts.app', ['title' => $product->name])
 
 
 @section('content')

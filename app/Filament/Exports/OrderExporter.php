@@ -26,8 +26,8 @@ class OrderExporter extends Exporter
             ExportColumn::make('total_amount'),
             ExportColumn::make('additional_amount'),
             ExportColumn::make('shipping_amount'),
+            ExportColumn::make('discount_amount'),
             ExportColumn::make('pay_amount'),
-            ExportColumn::make('transaction_amount'),
 
             ExportColumn::make('paymentProvider.name'),
             ExportColumn::make('payment_id'),

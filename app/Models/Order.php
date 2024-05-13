@@ -22,7 +22,7 @@ class Order extends Model
         'additional_amount',
         'shipping_amount',
         'pay_amount',
-        'transaction_amount',
+        'discount_amount',
         'pay_status',
         'shipping_status',
         'shipping_class',

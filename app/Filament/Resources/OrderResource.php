@@ -207,16 +207,18 @@ class OrderResource extends Resource
                             ->default(0)
                             ->disabled(fn (Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
                                 $livewire instanceof EditRecord),
+                        Forms\Components\TextInput::make('discount_amount')
+                                ->prefix('৳')
+                                ->numeric()
+                                ->default(0)
+                                ->disabled(fn (Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
+                                $livewire instanceof EditRecord),
                         Forms\Components\TextInput::make('pay_amount')
                             ->prefix('৳')
                             ->readOnly()
                             ->placeholder('will be generated')
                             ->numeric(),
-                        Forms\Components\TextInput::make('transaction_amount')
-                            ->prefix('৳')
-                            ->readOnly()
-                            ->placeholder('will be generated')
-                            ->numeric(),
+                       
                     ]),
                     Forms\Components\KeyValue::make('note')
                         ->keyLabel('Title')
