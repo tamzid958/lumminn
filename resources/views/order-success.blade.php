@@ -12,7 +12,7 @@
             <div class="text-center">
                 <h3 class="md:text-2xl text-base text-gray-900 font-semibold text-center">Order Placed!</h3>
                 <p class="text-gray-600 my-2">Thank you for placing an order.</p>
-                <p> Have a great day! </p>
+                <p> Your order is #{{ $order->id }} </p>
                 <div class="py-10 mt-5 text-center">
                     <a href="/" class="link-primary">
                         GO BACK

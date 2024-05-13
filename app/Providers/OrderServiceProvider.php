@@ -4,9 +4,23 @@ namespace App\Providers;
 
 use Exception;
 use Illuminate\Support\Facades\DB;
+use App\Models\Product;
 
 class OrderServiceProvider
 {
+    public static function convertToOrderItem(int $product_id, int $quantity): array
+    {
+
+        $product = Product::query()->find($product_id);
+
+        return [
+            'product_id' => $product->id,
+            'quantity' => $quantity,
+            'price' => $product->sale_price,
+            'production_cost' => $product->production_cost,
+        ];
+    }
+
     public static function convertToOrderItems(array $data, string $tablename): array
     {
 

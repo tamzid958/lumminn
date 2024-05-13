@@ -24,7 +24,7 @@
             <div class="gap-x-12 flex">
                 @foreach ($categories as $category)
                     <a href="/categories/{{ $category->slug }}"
-                        class="text-sm font-semibold leading-6">{{ $category->name }}</a>
+                        class="text-sm font-semibold leading-6 underline underline-offset-2">{{ $category->name }}</a>
                 @endforeach
             </div>
         </nav>
