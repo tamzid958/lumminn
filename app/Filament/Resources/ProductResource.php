@@ -60,7 +60,6 @@ class ProductResource extends Resource
                     ->hidden(fn($get) => $get('stock_status') === 'Unlimited'),
                 Forms\Components\Checkbox::make('is_shipping_charge_applicable')
                     ->columnSpan(2)
-                    ->default(true)
                     ->label('Apply Shipping Charge'),
                 Forms\Components\RichEditor::make('description')
                     ->columnSpan(2)
