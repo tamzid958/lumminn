@@ -2,9 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\Product;
 use Exception;
 use Illuminate\Support\Facades\DB;
-use App\Models\Product;
 
 class OrderServiceProvider
 {

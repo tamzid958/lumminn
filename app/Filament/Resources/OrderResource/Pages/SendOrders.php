@@ -5,13 +5,13 @@ namespace App\Filament\Resources\OrderResource\Pages;
 use App\Filament\Resources\OrderResource;
 use App\Jobs\SendOrdersJob;
 use App\Models\Order;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
-use Filament\Notifications\Notification;
 
 class SendOrders extends ListRecords
 {
@@ -68,7 +68,7 @@ class SendOrders extends ListRecords
                     })
                     ->deselectRecordsAfterCompletion()
                     ->requiresConfirmation()
-            ]);
+            ])->defaultSort('created_at', 'desc');
     }
 
     // create a view

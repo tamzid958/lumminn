@@ -2,17 +2,18 @@
 
 namespace App\Jobs;
 
+use App\Models\Invoice;
+use App\Models\PaymentProvider;
+use App\Models\ShippingProvider;
+use Filament\Notifications\Actions\Action;
+use Filament\Notifications\Notification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use App\Models\PaymentProvider;
-use Spatie\LaravelPdf\Facades\Pdf;
 use Spatie\LaravelPdf\Enums\Format;
-use App\Models\ShippingProvider;
-use Filament\Notifications\Notification;
-use Filament\Notifications\Actions\Action;
+use Spatie\LaravelPdf\Facades\Pdf;
 
 class GenerateInvoiceJob implements ShouldQueue
 {
@@ -20,6 +21,7 @@ class GenerateInvoiceJob implements ShouldQueue
 
     protected array $orders;
     protected $user;
+
     /**
      * Create a new job instance.
      */
@@ -28,6 +30,7 @@ class GenerateInvoiceJob implements ShouldQueue
         $this->orders = $orders;
         $this->user = $user;
     }
+
     /**
      * Execute the job.
      */
@@ -35,7 +38,7 @@ class GenerateInvoiceJob implements ShouldQueue
     {
         $pdfName = time() . "-invoice.pdf";
 
-        $packingReceipts =  collect($this->orders)->map(function ($record) {
+        $packingReceipts = collect($this->orders)->map(function ($record) {
             return [
                 'id' => $record['id'],
                 'name' => $record['name'],
@@ -51,6 +54,11 @@ class GenerateInvoiceJob implements ShouldQueue
             ->format(Format::A4)
             ->disk('public')
             ->save($pdfName);
+
+        Invoice::query()->create([
+            "name" => array_first($packingReceipts->toArray())['id'] . "-" . array_last($packingReceipts->toArray())['id'],
+            "file" => $pdfName
+        ]);
 
         Notification::make()
             ->title('Invoice generated')

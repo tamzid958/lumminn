@@ -18,20 +18,20 @@ use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\ExportBulkAction;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Collection;
 use libphonenumber\PhoneNumberType;
 use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
-use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
-use Filament\Tables\Actions\ExportBulkAction;
-use Illuminate\Support\Collection;
-use Filament\Notifications\Notification;
 use ValentinMorice\FilamentJsonColumn\FilamentJsonColumn;
+use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 class OrderResource extends Resource
 {
@@ -55,7 +55,7 @@ class OrderResource extends Resource
                         Forms\Components\TextInput::make('name')
                             ->required()
                             ->maxLength(255)
-                            ->disabled(fn (Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
+                            ->disabled(fn(Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
                                 $livewire instanceof EditRecord),
                         PhoneInput::make('phone_number')
                             ->onlyCountries(['bd'])
@@ -65,13 +65,13 @@ class OrderResource extends Resource
                                 lenient: true
                             )
                             ->required()
-                            ->disabled(fn (Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
+                            ->disabled(fn(Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
                                 $livewire instanceof EditRecord),
                         Forms\Components\Textarea::make('address')
                             ->required()
                             ->columnSpan(2)
                             ->maxLength(255)
-                            ->disabled(fn (Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
+                            ->disabled(fn(Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
                                 $livewire instanceof EditRecord),
                     ]),
                     Fieldset::make(
@@ -100,7 +100,7 @@ class OrderResource extends Resource
                             ->reorderable(false)
                             ->columnSpan(2)
                             ->required()
-                            ->disabled(fn (Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
+                            ->disabled(fn(Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
                                 $livewire instanceof EditRecord),
                         Forms\Components\Repeater::make('optional_products')
                             ->label('Optional')
@@ -125,7 +125,7 @@ class OrderResource extends Resource
                             ->reorderable(false)
                             ->columnSpan(2)
                             ->nullable()
-                            ->disabled(fn (Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
+                            ->disabled(fn(Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
                                 $livewire instanceof EditRecord),
                     ]),
 
@@ -139,13 +139,13 @@ class OrderResource extends Resource
                                 return $product->pluck('name', 'id');
                             })
                             ->required()
-                            ->disabled(fn (Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
+                            ->disabled(fn(Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
                                 $livewire instanceof EditRecord),
                         Forms\Components\Select::make('shipping_class')
                             ->label("Class")
                             ->options(ShippingClass::class)
                             ->required()
-                            ->disabled(fn (Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
+                            ->disabled(fn(Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
                                 $livewire instanceof EditRecord),
                         Forms\Components\Select::make('shipping_status')
                             ->label("Status")
@@ -167,7 +167,7 @@ class OrderResource extends Resource
                                 $product = PaymentProvider::all();
                                 return $product->pluck('name', 'id');
                             })
-                            ->disabled(fn (Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
+                            ->disabled(fn(Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
                                 $livewire instanceof EditRecord)
                             ->required(),
                         Forms\Components\Select::make('pay_status')
@@ -178,7 +178,7 @@ class OrderResource extends Resource
                         Forms\Components\TextInput::make('payment_id')
                             ->label('Identifier')
                             ->placeholder('will be generated if empty')
-                            ->disabled(fn (Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
+                            ->disabled(fn(Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
                                 $livewire instanceof EditRecord),
                         FilamentJsonColumn::make('gateway_response')
                             ->viewerOnly()
@@ -202,23 +202,27 @@ class OrderResource extends Resource
                             ->numeric(),
                         Forms\Components\TextInput::make('additional_amount')
                             ->prefix('৳')
-                            ->required()
                             ->numeric()
                             ->default(0)
-                            ->disabled(fn (Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
+                            ->disabled(fn(Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
                                 $livewire instanceof EditRecord),
                         Forms\Components\TextInput::make('discount_amount')
-                                ->prefix('৳')
-                                ->numeric()
-                                ->default(0)
-                                ->disabled(fn (Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
+                            ->prefix('৳')
+                            ->numeric()
+                            ->default(0)
+                            ->disabled(fn(Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
+                                $livewire instanceof EditRecord),
+                        Forms\Components\TextInput::make('advance_amount')
+                            ->prefix('৳')
+                            ->numeric()
+                            ->default(0)
+                            ->disabled(fn(Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
                                 $livewire instanceof EditRecord),
                         Forms\Components\TextInput::make('pay_amount')
                             ->prefix('৳')
                             ->readOnly()
                             ->placeholder('will be generated')
                             ->numeric(),
-                       
                     ]),
                     Forms\Components\KeyValue::make('note')
                         ->keyLabel('Title')

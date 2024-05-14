@@ -81,14 +81,11 @@ class EditOrder extends EditRecord
                 $data['shipping_amount'] = 0;
             }
 
-            $data['pay_amount'] = $data['total_amount'] + $data['shipping_amount'] + $data['additional_amount'] - $data['discount_amount'];
-
             $record->update([
                 'total_amount' => $data['total_amount'],
                 'additional_amount' => $data['additional_amount'],
                 'discount_amount' => $data['discount_amount'],
                 'shipping_amount' => $data['shipping_amount'],
-                'pay_amount' => $data['pay_amount'],
                 'pay_status' => $data['pay_status'],
                 'shipping_status' => $data['shipping_status'],
                 'shipping_class' => $data['shipping_class'],
@@ -115,7 +112,7 @@ class EditOrder extends EditRecord
 
             DB::table('order_items')->insert($orderItems);
         }
-        
+
         return $record;
     }
 

@@ -4,29 +4,31 @@ namespace App\Utils;
 
 class StringUtil
 {
-    static function isBanglaPhoneNumber($phoneNumber) {
+    static function convertBanglaToEnglishPhoneNumber($phoneNumber)
+    {
+
+        if (!StringUtil::isBanglaPhoneNumber($phoneNumber)) return $phoneNumber;
+        // Regular expression to match Bangla digits
+        $banglaDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+        $englishDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
+        // Convert Bangla digits to English digits
+        $phoneNumber = str_replace($banglaDigits, $englishDigits, $phoneNumber);
+
+        return $phoneNumber;
+    }
+
+    static function isBanglaPhoneNumber($phoneNumber)
+    {
         // Regular expression to match Bangla digits
         $banglaDigitsRegex = '/[০১২৩৪৫৬৭৮৯]/';
-    
+
         // Check if the phone number contains Bangla digits
         if (preg_match($banglaDigitsRegex, $phoneNumber)) {
             return true; // Contains Bangla digits
         } else {
             return false; // Does not contain Bangla digits
         }
-    }
-
-    static function convertBanglaToEnglishPhoneNumber($phoneNumber) {
-
-        if(!StringUtil::isBanglaPhoneNumber($phoneNumber)) return $phoneNumber;
-        // Regular expression to match Bangla digits
-        $banglaDigits = ['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
-        $englishDigits = ['0','1','2','3','4','5','6','7','8','9'];
-    
-        // Convert Bangla digits to English digits
-        $phoneNumber = str_replace($banglaDigits, $englishDigits, $phoneNumber);
-    
-        return $phoneNumber;
     }
 
     static function generateReadableString($length = 2): string

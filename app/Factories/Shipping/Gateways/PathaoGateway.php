@@ -9,6 +9,7 @@ class PathaoGateway extends BaseShippingGateway implements ShippingGateway
     public function send(array $order): void
     {
     }
+
     public function check(array $order): void
     {
     }

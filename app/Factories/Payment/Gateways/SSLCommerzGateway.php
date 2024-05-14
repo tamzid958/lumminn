@@ -26,9 +26,9 @@ class SSLCommerzGateway extends BasePaymentGateway implements PaymentGateway
                 'total_amount' => $order['pay_amount'],
                 'currency' => 'BDT',
                 'tran_id' => $order['invoice_id'],
-                'success_url' => env('APP_URL') . '/order/success/'. $order['invoice_id'],
-                'fail_url' => env('APP_URL') . '/order/fail-or-cancel/'. $order['invoice_id'],
-                'cancel_url' => env('APP_URL') . '/order/fail-or-cancel/'. $order['invoice_id'],
+                'success_url' => env('APP_URL') . '/order/success/' . $order['invoice_id'],
+                'fail_url' => env('APP_URL') . '/order/fail-or-cancel/' . $order['invoice_id'],
+                'cancel_url' => env('APP_URL') . '/order/fail-or-cancel/' . $order['invoice_id'],
                 'ipn_url' => env('APP_URL') . '/api/payment/sslcommerz/ipn',
                 'cus_name' => $order['name'],
                 'cus_email' => 'customer-bill@lumminn.com',
@@ -64,7 +64,7 @@ class SSLCommerzGateway extends BasePaymentGateway implements PaymentGateway
         $store_id = $meta['storeId'];
         $password = $meta['password'];
 
-        $response =  Http::get($baseUrl . '/validator/api/merchantTransIDvalidationAPI.php', [
+        $response = Http::get($baseUrl . '/validator/api/merchantTransIDvalidationAPI.php', [
             'tran_id' => $order['invoice_id'],
             'store_id' => $store_id,
             'store_passwd' => $password,
@@ -82,7 +82,7 @@ class SSLCommerzGateway extends BasePaymentGateway implements PaymentGateway
                     'PENDING' => 'Pending',
                     'FAILED' => 'Cancelled'
                 };
-                
+
                 $order['gateway_response'] = $body;
                 Order::query()->where('id', $order['id'])->update($order->toArray());
             } else {

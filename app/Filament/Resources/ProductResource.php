@@ -68,7 +68,7 @@ class ProductResource extends Resource
                     ->maxLength(255),
                 Forms\Components\KeyValue::make('meta')
                     ->columnSpan(2)
-                    ->required(),
+                    ->nullable(),
                 Forms\Components\KeyValue::make('production_cost_breakdown')
                     ->columnSpan(2)
                     ->keyLabel('Title')
@@ -142,7 +142,7 @@ class ProductResource extends Resource
                     Tables\Actions\ForceDeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
                 ]),
-            ]);
+            ])->defaultSort('created_at', 'desc');
     }
 
     public static function getRelations(): array

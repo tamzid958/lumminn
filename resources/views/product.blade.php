@@ -2,5 +2,5 @@
 
 
 @section('content')
-    <x-funnel-checkout :product=$product />
+    <x-funnel-checkout :product='$product'/>
 @endsection

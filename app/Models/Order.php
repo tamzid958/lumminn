@@ -22,6 +22,7 @@ class Order extends Model
         'additional_amount',
         'shipping_amount',
         'discount_amount',
+        'advance_amount',
         'pay_amount',
         'pay_status',
         'shipping_status',
@@ -38,6 +39,20 @@ class Order extends Model
         'attachment',
         'invoice_id'
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            $model->invoice_id = (string)Uuid::uuid4();
+            $model->pay_amount = ($model->total_amount + $model->shipping_amount + $model->additional_amount) - ($model->discount_amount + $model->advance_amount);
+        });
+
+        static::updating(function ($model) {
+            $model->pay_amount = ($model->total_amount + $model->shipping_amount + $model->additional_amount) - ($model->discount_amount + $model->advance_amount);
+        });
+    }
 
     public function orderItems(): HasMany
     {
@@ -64,14 +79,5 @@ class Order extends Model
             'note' => 'array',
             'attachment' => 'array',
         ];
-    }
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($model) {
-            $model->invoice_id = (string) Uuid::uuid4();
-        });
     }
 }
