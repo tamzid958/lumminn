@@ -21,4 +21,4 @@ jobs:
 
       - name: Deploy
         run: |
-          ssh ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} -p${{ secrets.SERVER_PORT }} 'bash -s' < ${{ github.workspace }}/.github/workflows/deploy.sh
+          ssh -p${{ secrets.SERVER_PORT }} lummdppj@${{ secrets.SERVER_IP }} 'bash -s' < ${{ github.workspace }}/.github/workflows/deploy.sh
