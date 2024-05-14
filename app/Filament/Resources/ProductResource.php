@@ -94,7 +94,10 @@ class ProductResource extends Resource
                     ->multiple()
                     ->disk('public')
                     ->visibility('public'),
-
+                    Forms\Components\TextInput::make('video_link')
+                    ->url()
+                    ->placeholder('YouTube link is acceptable')
+                    ->nullable()
             ]);
     }
 
