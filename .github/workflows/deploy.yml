@@ -18,8 +18,9 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa.pub
           ssh-keyscan -p ${{ secrets.SERVER_PORT }} ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
-
-      - name: Deploy
+      - name: Make deploy executable
         run: |
           chmod +x ${{ github.workspace }}/.github/workflows/deploy.sh
+      - name: Deploy
+        run: |
           ssh ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} -p${{ secrets.SERVER_PORT }} 'bash -s' < ${{ github.workspace }}/.github/workflows/deploy.sh
