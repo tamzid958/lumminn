@@ -39,6 +39,8 @@ class OrderController extends Controller
             'quantity' => 'required|numeric|min:1',
             'product_id' => 'required|numeric'
         ]);
+
+        try {
             $productId = $request->input('product_id');
             $shippingClass = $request->input('shipping_class');
             $paymentProvider = $request->input('payment_provider');
@@ -53,7 +55,7 @@ class OrderController extends Controller
             $order->additional_amount = 0;
             $order->discount_amount = 0;
 
-            if ($product->is_shipping_charge_applicable) {
+            if ($product->is_shipping_charge_applicable === 1) {
                 $shippingProviders = ShippingProvider::query()->where('slug', '<>', 'pickup');
 
                 $shipping_provider = match ($shippingClass) {
@@ -116,8 +118,10 @@ class OrderController extends Controller
                     // Handle the case accordingly, e.g., display an error message
                     return redirect('/order/fail-or-cancel/' . $createdOrder->invoice_id);
                 }
-            }        
-        
+            }
+        } catch (Exception $e) {
+            abort(500, 'Internal Server Error');
+        }
     }
 
     public function failOrCancel($invoice_id, Request $request)
