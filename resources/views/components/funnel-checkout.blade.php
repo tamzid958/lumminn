@@ -106,8 +106,8 @@
                         @endphp
 
                         <div id="slide-{{ $photo }}" class="carousel-item relative w-full rounded-md">
-                            <img src="{{ asset('storage/' . $photo) }}"
-                                class="w-full rounded-md object-contain h-full" />
+                            <img src="{{ asset('storage/' . $photo) }}" height="315"
+                                class="w-full rounded-md object-contain h-full mt-5 bg-base-300" />
                             <div
                                 class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
                                 <a href="#slide-{{ $adjacentStrings['previous'] }}" class="btn btn-circle">❮</a>
