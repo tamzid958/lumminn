@@ -12,6 +12,9 @@ git pull origin main
 # Install/update composer dependencies
 composer install --no-interaction
 
+# NPM install
+npm i
+
 # Build vite
 npm run build
 
