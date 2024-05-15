@@ -46,6 +46,13 @@ class OrderServiceProvider
         })->filter()->toArray();
     }
 
+    public static function checkIfFreeShippingProduct(int $product_id): bool {
+        return DB::table('products')
+        ->where('id', $product_id)
+        ->where('is_shipping_charge_applicable', false)
+        ->exists();
+    }
+
     /**
      * @throws Exception
      */
