@@ -45,8 +45,6 @@ class OrderController extends Controller
             $shippingClass = $request->input('shipping_class');
             $paymentProvider = $request->input('payment_provider');
 
-            $product = Product::query()->find($productId);
-
             $orderItem = OrderServiceProvider::convertToOrderItem($productId, $request->input('quantity'));
 
             $order = new Order();
@@ -57,18 +55,18 @@ class OrderController extends Controller
 
             $freeShipping =  OrderServiceProvider::checkIfFreeShippingProduct($productId);
             
+            $shippingProviders = ShippingProvider::query()->where('slug', '<>', 'pickup');
+
+            $shipping_provider = match ($shippingClass) {
+                "inside-dhaka" => $shippingProviders->where('inside_dhaka_charge', $shippingProviders->min('inside_dhaka_charge'))->first(),
+                default => $shippingProviders->where('outside_dhaka_charge', $shippingProviders->min('outside_dhaka_charge'))->first()
+            };
+
+            $order->shipping_provider_id = $shipping_provider['id'];
+
             if ($freeShipping) {
-                $order->shipping_amount = 0.0;
+                $order->shipping_amount = 0;
             } else {
-                $shippingProviders = ShippingProvider::query()->where('slug', '<>', 'pickup');
-
-                $shipping_provider = match ($shippingClass) {
-                    "inside-dhaka" => $shippingProviders->where('inside_dhaka_charge', $shippingProviders->min('inside_dhaka_charge'))->first(),
-                    default => $shippingProviders->where('outside_dhaka_charge', $shippingProviders->min('outside_dhaka_charge'))->first()
-                };
-
-                $order->shipping_provider_id = $shipping_provider['id'];
-
                 $order->shipping_amount = match ($shippingClass) {
                     "inside-dhaka" => $shipping_provider->inside_dhaka_charge,
                     default => $shipping_provider->outside_dhaka_charge
