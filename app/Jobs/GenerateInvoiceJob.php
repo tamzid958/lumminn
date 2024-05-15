@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Models\Invoice;
 use App\Models\PaymentProvider;
 use App\Models\ShippingProvider;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
 use Illuminate\Bus\Queueable;
@@ -12,8 +13,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Spatie\LaravelPdf\Enums\Format;
-use Spatie\LaravelPdf\Facades\Pdf;
 
 class GenerateInvoiceJob implements ShouldQueue
 {
@@ -50,10 +49,10 @@ class GenerateInvoiceJob implements ShouldQueue
             ];
         });
 
-        Pdf::view('components.download-invoice', ['packingReceipts' => $packingReceipts])
-            ->format(Format::A4)
-            ->disk('public')
-            ->save($pdfName);
+        PDF::loadView('components.download-invoice', ['packingReceipts' => $packingReceipts])
+            ->setPaper('a4')
+            ->setWarnings(false)
+            ->save($pdfName, "public");
 
         Invoice::query()->create([
             "name" => array_first($packingReceipts->toArray())['id'] . "-" . array_last($packingReceipts->toArray())['id'],
