@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\OrderResource\Widgets;
+namespace App\Filament\Resources\ProductResource\Widgets;
 
 use Illuminate\Support\Facades\DB;
 use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
@@ -30,6 +30,7 @@ class RevenueByProducts extends ApexChartWidget
         $products = DB::table('products')
             ->selectRaw('slug, sale_price, production_cost, (sale_price - production_cost) AS revenue')
             ->orderBy('revenue', 'desc')
+            ->take(10)
             ->get()
             ->toArray();
 

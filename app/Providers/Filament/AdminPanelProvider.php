@@ -4,8 +4,8 @@ namespace App\Providers\Filament;
 
 use App\Filament\Resources\OrderResource\Widgets\ExpenseByMonth;
 use App\Filament\Resources\OrderResource\Widgets\MonthlyExpenseIncome;
-use App\Filament\Resources\OrderResource\Widgets\RevenueByProducts;
 use App\Filament\Resources\OrderResource\Widgets\TotalSaleBasedOnMonth;
+use App\Filament\Resources\ProductResource\Widgets\RevenueByProducts;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
