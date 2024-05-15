@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Change to the project directory. 
+# Change to the project directory.
 cd ~/stagging.lumminn.com/lumminn
 
 # Pull the latest changes from the git repository
@@ -8,6 +8,9 @@ git pull origin main
 
 # Install/update composer dependencies
 composer install --no-interaction
+
+# Build vite
+npm run build
 
 # Run database migrations
 php artisan migrate --force
