@@ -94,6 +94,17 @@
                 menu.classList.add("hidden");
             }
         });
+
+        // Add event listener to detect clicks outside of the menu
+        document.body.addEventListener("click", function(event) {
+            const isClickInsideMenu = menu.contains(event.target);
+            const isMenuToggle = event.target === menuToggle;
+
+            if (!isClickInsideMenu && !isMenuToggle) {
+                menu.classList.add("hidden");
+                menuToggle.checked = false;
+            }
+        });
     });
 </script>
 

@@ -5,7 +5,6 @@ namespace App\Jobs;
 use App\Models\Invoice;
 use App\Models\PaymentProvider;
 use App\Models\ShippingProvider;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
 use Illuminate\Bus\Queueable;
@@ -13,6 +12,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Elibyy\TCPDF\Facades\TCPDF;
+use TCPDF_FONTS;
 
 class GenerateInvoiceJob implements ShouldQueue
 {
@@ -35,8 +36,7 @@ class GenerateInvoiceJob implements ShouldQueue
      */
     public function handle(): void
     {
-        $pdfName = time() . "-invoice.pdf";
-
+       
         $packingReceipts = collect($this->orders)->map(function ($record) {
             return [
                 'id' => $record['id'],
@@ -49,25 +49,34 @@ class GenerateInvoiceJob implements ShouldQueue
             ];
         });
 
-        PDF::loadView('components.download-invoice', ['packingReceipts' => $packingReceipts])
-            ->setPaper('a4')
-            ->setWarnings(false)
-            ->setOptions(["font_dir", public_path('/fonts')])
-            ->save($pdfName, "public");
+        $filename =  time() . "-invoice.pdf";
+
+        $view = view('components.download-invoice', ['packingReceipts' => $packingReceipts]);
+        $html = $view->render();
+        $pdf = new TCPDF;
+
+        $bengali = TCPDF_FONTS::addTTFfont(storage_path('/fonts/bengali.ttf'));
+
+        // use the font
+        $pdf::SetFont($bengali, '', 14, '', false);
+
+        $pdf::AddPage();
+        $pdf::writeHTML($html, true, false, true, false, '');
+        $pdf::Output(public_path('storage') .'/'. $filename, 'F');
 
         Invoice::query()->create([
             "name" => array_first($packingReceipts->toArray())['id'] . "-" . array_last($packingReceipts->toArray())['id'],
-            "file" => $pdfName
+            "file" => $filename
         ]);
 
         Notification::make()
             ->title('Invoice generated')
             ->icon('heroicon-o-document-text')
-            ->body("Download " . $pdfName . " and print it for packaging")
+            ->body("Download " . $filename . " and print it for packaging")
             ->actions([
                 Action::make('Download')
                     ->button()
-                    ->url(asset('storage/' . $pdfName), shouldOpenInNewTab: true)
+                    ->url(asset('storage/' . $filename), shouldOpenInNewTab: true)
             ])
             ->sendToDatabase($this->user);
     }
