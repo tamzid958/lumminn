@@ -2,8 +2,13 @@
 <html>
 <head>
     <style>
+        @font-face {
+            font-family: 'bengali';
+            src: url({{ storage_path('fonts\bengali.ttf') }}) format("truetype");
+        }
+
         body {
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-family: bengali, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
         }
 
         .text-gray-600 {
