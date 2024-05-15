@@ -105,7 +105,8 @@
                             $adjacentStrings = getAdjacentStrings($product->photos, $photo);
                         @endphp
 
-                        <div id="slide-{{ $photo }}" class="carousel-item relative w-full rounded-md">
+                        <div id="slide-{{ $photo }}" class="carousel-item relative w-full rounded-md"
+                            style="height: 315px">
                             <img src="{{ asset('storage/' . $photo) }}" height="315"
                                 class="w-full rounded-md object-contain h-full mt-5 bg-base-300" />
                             <div
