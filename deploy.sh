@@ -4,7 +4,7 @@
 pm2 stop queue-worker
 
 # Change to the project directory.
-cd ~/stagging.lumminn.com/lumminn
+cd ~/public_html/lumminn
 
 # Pull the latest changes from the git repository
 git pull origin main
