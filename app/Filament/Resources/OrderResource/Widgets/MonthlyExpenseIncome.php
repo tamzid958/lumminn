@@ -125,9 +125,9 @@ class MonthlyExpenseIncome extends ApexChartWidget
             // Get the order revenue for the current day
             $orderRevenue = Order::query()
                 ->join('order_items', 'orders.id', '=', 'order_items.order_id')
-                ->selectRaw('SUM(total_amount + advance_amount) AS total_revenue')
+                ->selectRaw('SUM(orders.total_amount + orders.additional_amount - orders.discount_amount) AS total_revenue')
                 ->selectRaw('SUM(production_cost) AS total_production_cost')
-                ->selectRaw('(SUM(orders.total_amount + orders.advance_amount) - SUM(production_cost)) AS net_revenue')
+                ->selectRaw('(SUM(orders.total_amount + orders.additional_amount - orders.discount_amount) - SUM(production_cost)) AS net_revenue')
                 ->where('orders.pay_status', '=', 'Paid')
                 ->whereBetween('orders.created_at', [$startDate, $endDate])
                 ->first();
