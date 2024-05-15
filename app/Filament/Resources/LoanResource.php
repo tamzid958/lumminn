@@ -36,7 +36,7 @@ class LoanResource extends Resource
                 Forms\Components\DatePicker::make('withdraw_date')
                     ->required(),
                 Forms\Components\DatePicker::make('return_date')
-                    ->required(),
+                    ->nullable(),
             ]);
     }
 

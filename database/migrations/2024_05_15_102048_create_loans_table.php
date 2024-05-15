@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->string('reason');
             $table->decimal('amount');
             $table->date('withdraw_date');
-            $table->date('return_date');
+            $table->date('return_date')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
