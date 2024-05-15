@@ -55,7 +55,9 @@ class OrderController extends Controller
             $order->additional_amount = 0;
             $order->discount_amount = 0;
 
-            if ($product->is_shipping_charge_applicable === 1) {
+            if (!$product->is_shipping_charge_applicable) {
+                $order->shipping_amount = 0;
+            } else {
                 $shippingProviders = ShippingProvider::query()->where('slug', '<>', 'pickup');
 
                 $shipping_provider = match ($shippingClass) {
@@ -69,8 +71,6 @@ class OrderController extends Controller
                     "inside-dhaka" => $shipping_provider->inside_dhaka_charge,
                     default => $shipping_provider->outside_dhaka_charge
                 };
-            } else {
-                $order->shipping_amount = 0;
             }
 
            
