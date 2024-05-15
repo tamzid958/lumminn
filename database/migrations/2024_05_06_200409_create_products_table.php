@@ -25,7 +25,7 @@ return new class extends Migration {
             $table->string('video_link')->nullable();
             $table->json('meta')->nullable();
             $table->json('production_cost_breakdown')->nullable();
-            $table->binary('is_shipping_charge_applicable')->nullable();
+            $table->tinyInteger('is_shipping_charge_applicable')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });

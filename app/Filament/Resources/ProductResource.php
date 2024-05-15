@@ -64,7 +64,7 @@ class ProductResource extends Resource
                 Forms\Components\RichEditor::make('description')
                     ->columnSpan(2)
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(5000),
                 Forms\Components\KeyValue::make('meta')
                     ->columnSpan(2)
                     ->nullable(),
