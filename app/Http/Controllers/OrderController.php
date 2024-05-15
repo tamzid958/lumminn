@@ -58,7 +58,7 @@ class OrderController extends Controller
             $freeShipping =  OrderServiceProvider::checkIfFreeShippingProduct($productId);
             
             if ($freeShipping) {
-                $order->shipping_amount = 0;
+                $order->shipping_amount = 0.0;
             } else {
                 $shippingProviders = ShippingProvider::query()->where('slug', '<>', 'pickup');
 
