@@ -1,5 +1,8 @@
 #!/bin/sh
 
+#Stop queue job worker
+pm2 stop queue-worker
+
 # Change to the project directory.
 cd ~/stagging.lumminn.com/lumminn
 
@@ -29,3 +32,6 @@ php artisan view:cache
 
 # Clear and cache events
 php artisan event:cache
+
+#Stop queue job worker
+pm2 start queue-worker
