@@ -34,7 +34,7 @@
 @if ($product)
     <form action="/order/create" method="POST">
         @csrf
-        <div class="grid sm:px-10 lg:grid-cols-2 lg:px-20 xl:px-32 max-w-7xl mx-auto rounded-md card bg-base-200">
+        <div class="grid sm:px-10 lg:grid-cols-2 lg:px-20 xl:px-32 max-w-7xl mx-auto rounded-md card bg-base-200 pb-4">
             <div class="px-4 pt-8">
                 <p class="text-xl font-medium">Order Summary</p>
                 <p class="text-gray-500">Check your items. And select a suitable shipping method.</p>
@@ -285,10 +285,10 @@
                     </div>
                 </div>
                 <button type="submit"
-                    class="mt-4 mb-8 w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white">Place
+                    class="mt-4 mb-6 w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white">Place
                     Order
                 </button>
-                <img src="{{ asset('checkout.png') }}" class="mx-auto w-full" />
+                <img src="{{ asset('checkout.png') }}" class="mx-auto h-12" />
             </div>
         </div>
     </form>
