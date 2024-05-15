@@ -52,6 +52,7 @@ class GenerateInvoiceJob implements ShouldQueue
         PDF::loadView('components.download-invoice', ['packingReceipts' => $packingReceipts])
             ->setPaper('a4')
             ->setWarnings(false)
+            ->setOptions('font_dir', public_path('/fonts'))
             ->save($pdfName, "public");
 
         Invoice::query()->create([
