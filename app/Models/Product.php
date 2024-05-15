@@ -51,7 +51,8 @@ class Product extends Model
             'stock_status' => StockStatus::class,
             'photos' => 'array',
             'meta' => 'array',
-            'production_cost_breakdown' => 'array'
+            'production_cost_breakdown' => 'array',
+            'is_shipping_charge_applicable' => 'boolean'
         ];
     }
 }
