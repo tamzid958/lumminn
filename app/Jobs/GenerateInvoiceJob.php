@@ -35,7 +35,7 @@ class GenerateInvoiceJob implements ShouldQueue
      */
     public function handle(): void
     {
-       
+       try{
         $packingReceipts = collect($this->orders)->map(function ($record) {
             return [
                 'id' => $record['id'],
@@ -69,5 +69,12 @@ class GenerateInvoiceJob implements ShouldQueue
                     ->url(asset('storage/' . $filename), shouldOpenInNewTab: true)
             ])
             ->sendToDatabase($this->user);
+        }  catch (\Exception $e){
+            Notification::make()
+            ->title('Invoice generation failed')
+            ->icon('heroicon-o-document-text')
+            ->body("Check failed jobs table to see error logs")
+            ->sendToDatabase($this->user);
+        }
     }
 }

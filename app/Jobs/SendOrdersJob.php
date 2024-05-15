@@ -33,18 +33,26 @@ class SendOrdersJob implements ShouldQueue
      */
     public function handle(): void
     {
-        foreach ($this->orders as $order) {
-            $dbOrder = Order::query()->find($order['id'])->toArray();
-            $shipping_provider = ShippingProvider::query()->find($order['shipping_provider_id']);
+        try{
+            foreach ($this->orders as $order) {
+                $dbOrder = Order::query()->find($order['id'])->toArray();
+                $shipping_provider = ShippingProvider::query()->find($order['shipping_provider_id']);
 
-            ShippingServiceProvider::register($shipping_provider)->create()->send($dbOrder);
+                ShippingServiceProvider::register($shipping_provider)->create()->send($dbOrder);
+            }
+
+            Notification::make()
+                ->title('Sent to shipping provider')
+                ->icon('heroicon-o-paper-airplane')
+                ->body("Orders successfully sent to shipping provider")
+                ->sendToDatabase($this->user);
+        } catch (\Exception $e){
+            Notification::make()
+                ->title('Sent to shipping provider failed')
+                ->icon('heroicon-o-document-text')
+                ->body("Check failed jobs table to see error logs")
+                ->sendToDatabase($this->user);
         }
-
-        Notification::make()
-            ->title('Sent to shipping provider')
-            ->icon('heroicon-o-paper-airplane')
-            ->body("Orders successfully sent to shipping provider")
-            ->sendToDatabase($this->user);
 
         dispatch(new GenerateInvoiceJob($this->orders, $this->user))->delay(3);
         //
