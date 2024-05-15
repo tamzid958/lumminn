@@ -33,7 +33,11 @@ class InvestmentResource extends Resource
                     ->maxLength(255)
                     ->columnSpanFull(),
                 Forms\Components\DatePicker::make('investment_date')
-                    ->required(),
+                    ->required()
+                    ->native(false)
+                    ->weekStartsOnSunday()
+                    ->closeOnDateSelection()
+                    ->maxDate(now()),
             ]);
     }
 

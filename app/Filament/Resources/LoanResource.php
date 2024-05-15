@@ -34,9 +34,17 @@ class LoanResource extends Resource
                     ->maxLength(255)
                     ->columnSpanFull(),
                 Forms\Components\DatePicker::make('withdraw_date')
-                    ->required(),
+                    ->required()
+                    ->native(false)
+                    ->weekStartsOnSunday()
+                    ->closeOnDateSelection()
+                    ->maxDate(now()),
                 Forms\Components\DatePicker::make('return_date')
-                    ->nullable(),
+                    ->nullable()
+                    ->native(false)
+                    ->weekStartsOnSunday()
+                    ->closeOnDateSelection()
+                    ->maxDate(now()),
             ]);
     }
 
