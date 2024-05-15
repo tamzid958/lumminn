@@ -12,8 +12,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Elibyy\TCPDF\Facades\TCPDF;
-use TCPDF_FONTS;
+use Mccarlosen\LaravelMpdf\Facades\LaravelMpdf;
 
 class GenerateInvoiceJob implements ShouldQueue
 {
@@ -50,19 +49,10 @@ class GenerateInvoiceJob implements ShouldQueue
         });
 
         $filename =  time() . "-invoice.pdf";
-
-        $view = view('components.download-invoice', ['packingReceipts' => $packingReceipts]);
-        $html = $view->render();
-        $pdf = new TCPDF;
-
-        $bengali = TCPDF_FONTS::addTTFfont(storage_path('/fonts/bengali.ttf'));
-
-        // use the font
-        $pdf::SetFont($bengali, '', 14, '', false);
-
-        $pdf::AddPage();
-        $pdf::writeHTML($html, true, false, true, false, '');
-        $pdf::Output(public_path('storage') .'/'. $filename, 'F');
+        
+        LaravelMpdf::loadView('components.download-invoice', 
+        ['packingReceipts' => $packingReceipts])
+        ->save(public_path('storage') .'/'. $filename);
 
         Invoice::query()->create([
             "name" => array_first($packingReceipts->toArray())['id'] . "-" . array_last($packingReceipts->toArray())['id'],

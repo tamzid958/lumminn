@@ -67,7 +67,7 @@
             @foreach ($packingReceipts as $receipt)
                 <table style="border-style: solid;margin-top:8px;margin-bottom: 8px; width: 100%;">
                     <tr>
-                        <td style="width: 50%; display:flex; align-items:center; justify-content:center;">
+                        <td style="width: 50%; ">
                             <p style="padding-left: 8px">
                                 <span class="text-gray-600 uppercase font-size-14">Customer</span>
                                 <br>
@@ -80,7 +80,7 @@
                                     style="font-family: bengali">{{ $receipt['address'] }}</span>
                             </p>
                         </td>
-                        <td style="width: 50%; display:flex; align-items:center; justify-content:center;">
+                        <td style="width: 50%;">
                             <p style="padding-left: 8px">
                                 <span class="text-gray-600 uppercase font-size-14">Order #{{ $receipt['id'] }}</span>
                                 <br>
