@@ -86,6 +86,7 @@ class EditOrder extends EditRecord
                 'additional_amount' => $data['additional_amount'],
                 'discount_amount' => $data['discount_amount'],
                 'shipping_amount' => $data['shipping_amount'],
+                'advance_amount' => $data['advance_amount'],
                 'pay_status' => $data['pay_status'],
                 'shipping_status' => $data['shipping_status'],
                 'shipping_class' => $data['shipping_class'],
