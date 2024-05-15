@@ -24,7 +24,30 @@
                     <img class="h-14 w-auto" src="{{ asset('logo.light.png') }}" alt="Lumminn">
                 </a>
             </div>
-            <div class="gap-x-12 flex">
+
+            <div class="mobile-menu lg:hidden relative">
+                <input type="checkbox" id="menu-toggle" class="hidden">
+                <label for="menu-toggle" class="menu-icon block cursor-pointer px-4 py-2">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16m-7 6h7"></path>
+                    </svg>
+                </label>
+                <div
+                    class="menu hidden absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-base-100 ring-1 ring-black ring-opacity-5 z-20">
+                    <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="menu-button"
+                        tabindex="-1">
+                        @foreach ($categories as $category)
+                            <a href="/categories/{{ $category->slug }}"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-base-300 hover:text-gray-900 rounded-md"
+                                role="menuitem">{{ $category->name }}</a>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="gap-x-12 md:flex hidden">
                 @foreach ($categories as $category)
                     <a href="/categories/{{ $category->slug }}"
                         class="text-sm font-semibold leading-6 underline underline-offset-2">{{ $category->name }}</a>
@@ -59,5 +82,19 @@
         </nav>
     </footer>
 </main>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const menuToggle = document.getElementById("menu-toggle");
+        const menu = document.querySelector(".menu");
+
+        menuToggle.addEventListener("change", function() {
+            if (this.checked) {
+                menu.classList.remove("hidden");
+            } else {
+                menu.classList.add("hidden");
+            }
+        });
+    });
+</script>
 
 </html>

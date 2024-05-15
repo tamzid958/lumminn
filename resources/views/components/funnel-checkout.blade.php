@@ -39,41 +39,42 @@
                 <p class="text-xl font-medium">Order Summary</p>
                 <p class="text-gray-500">Check your items. And select a suitable shipping method.</p>
                 <div class="mt-8 space-y-3 rounded-lg border bg-base-300 px-2 py-3 sm:px-6">
-                    <div class="flex flex-row rounded-lg bg-base-400">
-                        <img class="m-2 h-28 w-32 rounded-md border object-cover object-center"
-                            src="{{ asset('storage/' . $product->main_photo) }}" alt="" />
-                        <div class="flex w-full flex-col px-4 py-4">
-                            <span class="font-semibold">{{ $product->name }}</span>
-                            <p class="text-lg font-bold my-1">৳ {{ $product->sale_price }}</p>
-                            <div class="max-w-xs rounded-md w-fit p-1 border-black border-solid border-2">
-                                <div class="relative flex items-center">
-                                    <button type="button" id="decrement-button"
-                                        data-input-counter-decrement="counter-input"
-                                        class="flex-shrink-0 bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-5 w-5 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
-                                        <svg class="w-2.5 h-2.5 text-gray-900 dark:text-white" aria-hidden="true"
-                                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
-                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                                stroke-width="2" d="M1 1h16" />
-                                        </svg>
-                                    </button>
+                    <div class="flex md:flex-row flex-col rounded-lg bg-base-400 justify-between">
+                        <div class="flex flex-row">
+                            <img class="m-2 h-28 w-32 rounded-md border object-cover object-center"
+                                src="{{ asset('storage/' . $product->main_photo) }}" alt="" />
+                            <div class="flex w-full flex-col px-4 py-4">
+                                <span class="font-semibold">{{ $product->name }}</span>
+                                <p class="text-lg font-bold my-1">৳ {{ $product->sale_price }}</p>
+                                <div class="max-w-xs rounded-md w-fit p-1 border-black border-solid border-2">
+                                    <div class="relative flex items-center">
+                                        <button type="button" id="decrement-button"
+                                            data-input-counter-decrement="counter-input"
+                                            class="flex-shrink-0 bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-5 w-5 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+                                            <svg class="w-2.5 h-2.5 text-gray-900 dark:text-white" aria-hidden="true"
+                                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
+                                                <path stroke="currentColor" stroke-linecap="round"
+                                                    stroke-linejoin="round" stroke-width="2" d="M1 1h16" />
+                                            </svg>
+                                        </button>
 
-                                    <input type="text" name="quantity" id="counter-input" data-input-counter
-                                        class="flex-shrink-0 text-gray-900 border-0 bg-transparent text-sm font-normal focus:outline-none focus:ring-0 max-w-[2.5rem] text-center"
-                                        placeholder="" value="1" required />
-                                    <button type="button" id="increment-button"
-                                        data-input-counter-increment="counter-input"
-                                        class="flex-shrink-0 bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-5 w-5 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
-                                        <svg class="w-2.5 h-2.5 text-gray-900 dark:text-white" aria-hidden="true"
-                                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
-                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                                stroke-width="2" d="M9 1v16M1 9h16" />
-                                        </svg>
-                                    </button>
+                                        <input type="text" name="quantity" id="counter-input" data-input-counter
+                                            class="flex-shrink-0 text-gray-900 border-0 bg-transparent text-sm font-normal focus:outline-none focus:ring-0 max-w-[2.5rem] text-center"
+                                            placeholder="" value="1" required />
+                                        <button type="button" id="increment-button"
+                                            data-input-counter-increment="counter-input"
+                                            class="flex-shrink-0 bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-5 w-5 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+                                            <svg class="w-2.5 h-2.5 text-gray-900 dark:text-white" aria-hidden="true"
+                                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                                                <path stroke="currentColor" stroke-linecap="round"
+                                                    stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16" />
+                                            </svg>
+                                        </button>
+                                    </div>
                                 </div>
+
                             </div>
-
                         </div>
-
                         <a class="btn my-auto" onclick="see_description.showModal()">Description</a>
                         <dialog id="see_description" class="modal">
                             <div class="modal-box">
@@ -119,7 +120,7 @@
                 </div>
 
             </div>
-            <div class="-mt-20 px-4 pt-8 lg:mt-0">
+            <div class="mt-8 px-4 pt-8 lg:mt-0">
                 <p class="text-xl font-medium">Payment Details</p>
                 <p class="text-gray-500">Complete your order by providing your payment details.</p>
                 <div class="">
