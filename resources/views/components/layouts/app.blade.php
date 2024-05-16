@@ -34,7 +34,6 @@
             <div class="flex lg:flex-1">
                 <a href='{{ route('home') }}' class="-m-1.5 p-1.5">
                     <span class="sr-only">Lumminn</span>
-                    <img class="h-14 w-auto dark:hidden" src="{{ asset('logo.dark.png') }}" alt="Lumminn">
                     <img class="h-14 w-auto" src="{{ asset('logo.light.png') }}" alt="Lumminn">
                 </a>
             </div>
