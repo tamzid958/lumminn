@@ -37,25 +37,25 @@ class Metrics extends BaseWidget
 
         return [
             Stat::make('Total Investment', NumberUtil::number_shorten($totalInvestment))
-            ->description('Increment of Investment')
-            ->descriptionIcon('heroicon-o-arrow-trending-up')
-            ->chart($invesmentArray)
-            ->extraAttributes(['title' => '৳'. $totalInvestment])
-            ->color('info'),
+                ->chart($invesmentArray)
+                ->description('Increment of Investment')
+                ->descriptionIcon('heroicon-o-arrow-trending-up')
+                ->extraAttributes(['title' => '৳'. $totalInvestment])
+                ->color('info'),
 
             Stat::make('Total Expense', NumberUtil::number_shorten($totalExpense))
-            ->chart($expenseArray)
-            ->description('Decrement of Investment')
-            ->descriptionIcon('heroicon-o-arrow-trending-down')
-            ->extraAttributes(['title' => '৳'. $totalExpense])
-            ->color('danger'),
+                ->chart($expenseArray)
+                ->description('Increment of Expense')
+                ->descriptionIcon('heroicon-o-arrow-trending-up')
+                ->extraAttributes(['title' => '৳'. $totalExpense])
+                ->color('danger'),
 
             Stat::make('Total Revenue', NumberUtil::number_shorten($totalRevenue))
-            ->description('Increment of Revenue')
-            ->descriptionIcon('heroicon-o-arrow-trending-up')
-            ->chart($revenueArray)
-            ->extraAttributes(['title' => '৳'. $totalRevenue])
-            ->color('success'),
+                ->chart($revenueArray)
+                ->description('Increment of Revenue')
+                ->descriptionIcon('heroicon-o-arrow-trending-up')
+                ->extraAttributes(['title' => '৳'. $totalRevenue])
+                ->color('success'),
         ];
     }
 }
