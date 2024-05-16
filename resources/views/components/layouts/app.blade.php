@@ -32,10 +32,10 @@
     <header>
         <nav class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-6" aria-label="Global">
             <div class="flex lg:flex-1">
-                <a href={{ route('home') }} class="-m-1.5 p-1.5">
-                <span class="sr-only">Lumminn</span>
-                <img class="h-14 w-auto dark:hidden" src="{{ asset('logo.dark.png') }}" alt="Lumminn">
-                <img class="h-14 w-auto" src="{{ asset('logo.light.png') }}" alt="Lumminn">
+                <a href='{{ route('home') }}' class="-m-1.5 p-1.5">
+                    <span class="sr-only">Lumminn</span>
+                    <img class="h-14 w-auto dark:hidden" src="{{ asset('logo.dark.png') }}" alt="Lumminn">
+                    <img class="h-14 w-auto" src="{{ asset('logo.light.png') }}" alt="Lumminn">
                 </a>
             </div>
 
