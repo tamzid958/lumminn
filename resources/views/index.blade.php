@@ -1,6 +1,6 @@
 @extends('components.layouts.app', [
     'title' => 'Sunglasses and Eyewear',
-    'description' => "See and feel with us",
+ // 'description' => "See and feel with us",
     'main_photo' => "landing_page_cover.png",
     'robots' => true,
 ])
