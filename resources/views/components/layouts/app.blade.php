@@ -70,9 +70,9 @@
         </nav>
     </header>
 
-    <body class="mb-auto">
-    @yield('content')
-    </body>
+    <main class="mb-auto">
+        @yield('content')
+    </main>
 
     <footer class="footer items-center p-4 bg-neutral text-neutral-content mt-5 flex justify-between">
         <aside class="items-center grid-flow-col">
