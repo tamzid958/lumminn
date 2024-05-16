@@ -2,6 +2,7 @@
     'title' => $product->name,
     'description' => $product->description,
     'main_photo' => $product->main_photo,
+    'robots' => true,
 ])
 
 
