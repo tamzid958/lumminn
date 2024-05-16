@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Models\Order;
 use App\Models\ShippingProvider;
 use App\Providers\ShippingServiceProvider;
+use Exception;
 use Filament\Notifications\Notification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -16,15 +17,15 @@ class SendOrdersJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected array $orders;
+    protected array $orderIds;
     protected $user;
 
     /**
      * Create a new job instance.
      */
-    public function __construct(array $orders, $user)
+    public function __construct(array $orderIds, $user)
     {
-        $this->orders = $orders;
+        $this->orderIds = $orderIds;
         $this->user = $user;
     }
 
@@ -33,10 +34,10 @@ class SendOrdersJob implements ShouldQueue
      */
     public function handle(): void
     {
-        try{
-            foreach ($this->orders as $order) {
-                $dbOrder = Order::query()->find($order['id'])->toArray();
-                $shipping_provider = ShippingProvider::query()->find($order['shipping_provider_id']);
+        try {
+            foreach ($this->orderIds as $orderId) {
+                $dbOrder = Order::query()->find($orderId)->toArray();
+                $shipping_provider = ShippingProvider::query()->find($dbOrder['shipping_provider_id']);
 
                 ShippingServiceProvider::register($shipping_provider)->create()->send($dbOrder);
             }
@@ -46,7 +47,7 @@ class SendOrdersJob implements ShouldQueue
                 ->icon('heroicon-o-paper-airplane')
                 ->body("Orders successfully sent to shipping provider")
                 ->sendToDatabase($this->user);
-        } catch (\Exception $e){
+        } catch (Exception $e) {
             Notification::make()
                 ->title('Sent to shipping provider failed')
                 ->icon('heroicon-o-document-text')
@@ -54,7 +55,7 @@ class SendOrdersJob implements ShouldQueue
                 ->sendToDatabase($this->user);
         }
 
-        dispatch(new GenerateInvoiceJob($this->orders, $this->user))->delay(3);
+        dispatch(new GenerateInvoiceJob($this->orderIds, $this->user))->delay(3);
         //
     }
 }
