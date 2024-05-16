@@ -6,6 +6,7 @@ use App\Filament\Resources\OrderResource\Widgets\ExpenseByMonth;
 use App\Filament\Resources\OrderResource\Widgets\MonthlyExpenseIncome;
 use App\Filament\Resources\OrderResource\Widgets\TotalSaleBasedOnMonth;
 use App\Filament\Resources\ProductResource\Widgets\RevenueByProducts;
+use App\Filament\Widgets\Metrics;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -45,10 +46,12 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
+                Metrics::class,
                 MonthlyExpenseIncome::class,
                 TotalSaleBasedOnMonth::class,
                 ExpenseByMonth::class,
                 RevenueByProducts::class,
+                
             ])
             ->middleware([
                 EncryptCookies::class,

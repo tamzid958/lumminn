@@ -30,7 +30,7 @@ class RevenueByProducts extends ApexChartWidget
         $products = DB::table('products')
             ->selectRaw('slug, sale_price, production_cost, (sale_price - production_cost) AS revenue')
             ->orderBy('revenue', 'desc')
-            ->limit(10)
+            ->limit(5)
             ->get()
             ->toArray();
 
@@ -81,7 +81,7 @@ class RevenueByProducts extends ApexChartWidget
             ],
             'plotOptions' => [
                 'bar' => [
-                    'horizontal' => true,
+                    'horizontal' => false,
                     'columnWidth' => '55%',
                     'endingShape' => 'rounded',
                     'borderRadiusApplication' => 'end',
