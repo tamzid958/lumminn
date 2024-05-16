@@ -2,9 +2,9 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-theme="lemonade">
 @php
     $categories = App\Models\Category::query()->where('parent_id', '=', null)->get();
-    $facebook_page_link = App\Models\BasicConfiguration::query()
-        ->where('config_key', '=', 'facebook_page_link')
-        ->first()->config_value;
+    $facebook_page_link =
+        App\Models\BasicConfiguration::query()->where('config_key', '=', 'facebook_page_link')->first()->config_value ??
+        null;
 @endphp
 
 <head>
@@ -13,6 +13,20 @@
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <title>Lumminn | {{ $title ?? 'Page Title' }}</title>
+    <meta property="og:title" content="Lumminn | {{ $title ?? 'Page Title' }}">
+
+    @isset($robots)
+        <meta name="robots" content="index, follow" />
+    @endisset
+
+    @isset($description)
+        <meta name="description" content={{ $description }}>
+        <meta property="og:description" content={{ $description }}>
+    @endisset
+
+    @isset($main_photo)
+        <meta property="og:image" content="{{ asset('storage/' . $main_photo) }}">
+    @endisset
 </head>
 <main class="flex flex-col h-screen justify-between">
     <header>
@@ -71,14 +85,16 @@
             <p>Copyright © 2024 - All right reserved</p>
         </aside>
         <nav class="grid-flow-col gap-4 md:place-self-center md:justify-self-end">
-            <a href="{{ $facebook_page_link }}" target="_blank">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                    class="fill-current">
-                    <path
-                        d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z">
-                    </path>
-                </svg>
-            </a>
+            @isset($facebook_page_link)
+                <a href="{{ $facebook_page_link }}" target="_blank">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        class="fill-current">
+                        <path
+                            d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z">
+                        </path>
+                    </svg>
+                </a>
+            @endisset
         </nav>
     </footer>
 </main>
