@@ -50,9 +50,9 @@ class Metrics extends BaseWidget
                 ->extraAttributes(['title' => '৳'. $totalExpense])
                 ->color('danger'),
 
-            Stat::make('Total Revenue', NumberUtil::number_shorten($totalRevenue))
+            Stat::make('Total Sell', NumberUtil::number_shorten($totalRevenue))
                 ->chart($revenueArray)
-                ->description('Increment of Revenue')
+                ->description('Increment of Sell')
                 ->descriptionIcon('heroicon-o-arrow-trending-up')
                 ->extraAttributes(['title' => '৳'. $totalRevenue])
                 ->color('success'),
