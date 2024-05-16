@@ -1,6 +1,10 @@
 @extends('components.layouts.app', ['title' => 'Order Successful'])
 
-
+@php
+    $messenger_link =
+        App\Models\BasicConfiguration::query()->where('config_key', '=', 'messenger_link')->first()->config_value ??
+        null;
+@endphp
 @section('content')
     <div class="bg-base-300 h-96 w-11/12 flex justify-center items-center mx-auto rounded-md">
         <div class="p-6 mx-auto rounded-md">
@@ -13,7 +17,14 @@
                 <h3 class="md:text-2xl text-base text-gray-900 font-semibold text-center">Order Placed!</h3>
                 <p class="text-gray-600 my-2">Thank you for placing an order.</p>
                 <p> Your order is #{{ $order->id }} </p>
-                <div class="py-10 mt-5 text-center">
+                @isset($messenger_link)
+                    <div class="py-3 text-center">
+                        <a href="{{  $messenger_link }}" class="btn btn-secondary" target="_blank">
+                            Want to add power to the glasses?
+                        </a>
+                    </div>
+                @endisset
+                <div class="py-2 mt-5 text-center">
                     <a href="/" class="link-primary">
                         GO BACK
                     </a>
