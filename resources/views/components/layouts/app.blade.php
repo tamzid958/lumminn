@@ -20,8 +20,8 @@
     @endisset
 
     @isset($description)
-        <meta name="description" content={{ $description }}>
-        <meta property="og:description" content={{ $description }}>
+        <meta name="description" content={{ substr(strip_tags($description), 55) }}>
+        <meta property="og:description" content={{ substr(strip_tags($description), 55) }}>
     @endisset
 
     @isset($main_photo)
