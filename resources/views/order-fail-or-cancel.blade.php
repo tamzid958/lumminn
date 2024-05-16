@@ -2,7 +2,7 @@
 
 
 @section('content')
-    <div class="bg-base-300 h-96 w-11/12 flex justify-center items-center mx-auto rounded-md">
+    <div class="lg:px-20 xl:px-32 max-w-7xl mx-auto rounded-md card bg-base-200 pb-4">
         <div class="p-6 mx-auto rounded-md">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" id="Cancel" class="w-16 h-16 mx-auto my-6">
                 <path

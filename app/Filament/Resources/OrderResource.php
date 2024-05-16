@@ -5,7 +5,6 @@ namespace App\Filament\Resources;
 use App\Filament\Exports\OrderExporter;
 use App\Filament\Resources\OrderResource\Pages;
 use App\Filament\Resources\OrderResource\RelationManagers;
-use App\Jobs\GenerateInvoiceJob;
 use App\Models\Enum\PayStatus;
 use App\Models\Enum\ShippingClass;
 use App\Models\Enum\ShippingStatus;
@@ -18,7 +17,6 @@ use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
-use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
@@ -30,6 +28,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
 use libphonenumber\PhoneNumberType;
 use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
+use Mccarlosen\LaravelMpdf\Facades\LaravelMpdf;
 use ValentinMorice\FilamentJsonColumn\FilamentJsonColumn;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
@@ -289,6 +288,31 @@ class OrderResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('download-invoice')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->label("Invoice")
+                    ->action(function (Order $record) {
+
+                        $pdf = LaravelMpdf::loadView('components.download-invoice',
+                            ['packingReceipts' => [[
+                                'id' => $record['id'],
+                                'name' => $record['name'],
+                                'phone_number' => $record['phone_number'],
+                                'address' => $record['address'],
+                                'shipping_id' => $record['shipping_id'],
+                                'shipping_provider_name' => ShippingProvider::query()->find($record['shipping_provider_id'])->name,
+                                'due_amount' => PaymentProvider::query()->find($record['payment_provider_id'])->slug === 'cash-on-delivery' ? $record['pay_amount'] : 0,
+                            ]]]);
+
+                        $pdfContent = $pdf->output();
+
+                        return response()->streamDownload(function () use ($pdfContent) {
+                            echo $pdfContent;
+                        },
+                            $record['invoice_id'] ?? $record['id'] . ".pdf",
+                            ['Content-Type' => 'application/pdf']
+                        );
+                    })
             ])
             ->bulkActions(actions: [
                 Tables\Actions\BulkActionGroup::make([
@@ -300,13 +324,28 @@ class OrderResource extends Resource
                 Tables\Actions\BulkAction::make('send')
                     ->icon('heroicon-o-arrow-down-tray')
                     ->label('Download Invoice')
-                    ->action(function (Collection $records): void {
-                        dispatch(new GenerateInvoiceJob($records->toArray(), auth()->user()));
-                        Notification::make()
-                            ->title('Request sent successfully')
-                            ->body('Please check notification after a while.')
-                            ->success()
-                            ->send();
+                    ->action(function (Collection $records) {
+                        $pdf = LaravelMpdf::loadView('components.download-invoice',
+                            ['packingReceipts' => collect($records->toArray())->map(function ($record) {
+                                return [
+                                    'id' => $record['id'],
+                                    'name' => $record['name'],
+                                    'phone_number' => $record['phone_number'],
+                                    'address' => $record['address'],
+                                    'shipping_id' => $record['shipping_id'],
+                                    'shipping_provider_name' => ShippingProvider::query()->find($record['shipping_provider_id'])->name,
+                                    'due_amount' => PaymentProvider::query()->find($record['payment_provider_id'])->slug === 'cash-on-delivery' ? $record['pay_amount'] : 0,
+                                ];
+                            })]);
+
+                        $pdfContent = $pdf->output();
+
+                        return response()->streamDownload(function () use ($pdfContent) {
+                            echo $pdfContent;
+                        },
+                            "Invoice.pdf",
+                            ['Content-Type' => 'application/pdf']
+                        );
                     })
             ])->defaultSort('created_at', 'desc');
     }

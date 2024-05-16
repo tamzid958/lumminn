@@ -58,7 +58,7 @@ class SendOrders extends ListRecords
                 Tables\Actions\BulkAction::make('send')->label('Send to Courier')
                     ->color('danger')
                     ->action(function (Collection $records): void {
-                        dispatch(new SendOrdersJob($records->toArray(), auth()->user()));
+                        dispatch(new SendOrdersJob(array_map(fn($obj) => $obj['id'], $records->toArray()), auth()->user()));
                         Notification::make()
                             ->title('Request sent successfully')
                             ->body('Please check notification after a while.')
