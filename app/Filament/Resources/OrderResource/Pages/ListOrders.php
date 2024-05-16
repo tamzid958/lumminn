@@ -11,6 +11,11 @@ class ListOrders extends ListRecords
 {
     protected static string $resource = OrderResource::class;
 
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::where('shipping_status', '=', 'On Hold')::count();
+    }
+
     protected function getHeaderActions(): array
     {
         return [
