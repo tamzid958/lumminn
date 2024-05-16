@@ -31,8 +31,7 @@ class AdminPanelProvider extends PanelProvider
     {
         return $panel
             ->default()
-            ->databaseNotifications()
-            ->databaseNotificationsPolling('10s')
+            ->spa()
             ->id('admin')
             ->path('admin')
             ->login()
@@ -71,6 +70,10 @@ class AdminPanelProvider extends PanelProvider
                 FilamentApexChartsPlugin::make()
             ])
             ->maxContentWidth(MaxWidth::Full)
-            ->sidebarFullyCollapsibleOnDesktop();
+            ->sidebarFullyCollapsibleOnDesktop()
+            ->unsavedChangesAlerts()
+            ->databaseTransactions()
+            ->databaseNotifications()
+            ->databaseNotificationsPolling('10s');
     }
 }
