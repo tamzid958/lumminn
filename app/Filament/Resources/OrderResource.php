@@ -42,6 +42,11 @@ class OrderResource extends Resource
 
     protected static ?int $navigationSort = 4;
 
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::where('shipping_status', '=', 'On Hold')->count();
+    }
+
     public static function form(Form $form): Form
     {
         return $form
