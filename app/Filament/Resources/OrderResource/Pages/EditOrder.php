@@ -3,12 +3,14 @@
 namespace App\Filament\Resources\OrderResource\Pages;
 
 use App\Filament\Resources\OrderResource;
+use App\Models\Order;
 use App\Models\OrderItem;
 use App\Providers\OrderServiceProvider;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class EditOrder extends EditRecord
 {
@@ -19,7 +21,11 @@ class EditOrder extends EditRecord
         return [
             Actions\ViewAction::make(),
             Actions\DeleteAction::make(),
-            Actions\ForceDeleteAction::make(),
+            Actions\ForceDeleteAction::make()->after(function (Order $record) {
+                if ($record->attachment) {
+                    foreach ($record->attachment as $ph) Storage::disk('public')->delete($ph);
+                }
+            }),
             Actions\RestoreAction::make(),
         ];
     }

@@ -17,7 +17,7 @@ class BasicConfigurationResource extends Resource
 {
     protected static ?string $model = BasicConfiguration::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-adjustments-horizontal';
 
     protected static ?string $navigationGroup = 'Configuration';
 

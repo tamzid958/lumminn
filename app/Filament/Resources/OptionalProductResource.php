@@ -18,7 +18,7 @@ class OptionalProductResource extends Resource
 {
     protected static ?string $model = OptionalProduct::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-squares-plus';
 
     protected static ?string $navigationGroup = 'Shop';
 
