@@ -4,6 +4,8 @@ namespace App\Providers\Filament;
 
 use App\Filament\Resources\OrderResource\Widgets\ExpenseByMonth;
 use App\Filament\Resources\OrderResource\Widgets\MonthlyExpenseIncome;
+use App\Filament\Resources\OrderResource\Widgets\PayStatusCount;
+use App\Filament\Resources\OrderResource\Widgets\ShippingStatusCount;
 use App\Filament\Resources\OrderResource\Widgets\TotalSaleBasedOnMonth;
 use App\Filament\Resources\ProductResource\Widgets\RevenueByProducts;
 use App\Filament\Widgets\Metrics;
@@ -35,7 +37,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->colors([
-                'primary' => Color::Lime,
+                'primary' => Color::Indigo,
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
@@ -49,7 +51,8 @@ class AdminPanelProvider extends PanelProvider
                 TotalSaleBasedOnMonth::class,
                 ExpenseByMonth::class,
                 RevenueByProducts::class,
-                
+                ShippingStatusCount::class,
+                PayStatusCount::class,
             ])
             ->middleware([
                 EncryptCookies::class,
