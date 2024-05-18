@@ -20,6 +20,10 @@
     RewriteRule ^ index.php [L]
 </IfModule>
 
-<IfModule LiteSpeed>
+<IfModule Litespeed> 
+    CacheEngine on
+</IfModule>
+
+<IfModule Litespeed>
    CacheLookup on
 </IfModule>

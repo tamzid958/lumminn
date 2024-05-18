@@ -7,7 +7,6 @@ use App\Filament\Resources\OrderResource\Widgets\MonthlyExpenseIncome;
 use App\Filament\Resources\OrderResource\Widgets\TotalSaleBasedOnMonth;
 use App\Filament\Resources\ProductResource\Widgets\RevenueByProducts;
 use App\Filament\Widgets\Metrics;
-use App\Http\Middleware\PermanentCache;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -62,7 +61,6 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
-                PermanentCache::class,
             ])
             ->authMiddleware([
                 Authenticate::class,
