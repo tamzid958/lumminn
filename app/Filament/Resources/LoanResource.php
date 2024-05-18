@@ -19,6 +19,8 @@ class LoanResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-banknotes';
 
+    protected static ?string $navigationGroup = 'Accounts';
+
     public static function form(Form $form): Form
     {
         return $form

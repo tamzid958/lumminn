@@ -6,6 +6,8 @@ use App\Models\Product;
 use App\Models\ShippingProvider;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Illuminate\Support\Number;
+use Illuminate\Support\Facades\Lang;
 
 class ProductController extends Controller
 {
@@ -18,6 +20,8 @@ class ProductController extends Controller
 
     public function calculate(Request $request)
     {
+        $locale = app()->getLocale();
+
         // Validate the request
         $request->validate([
             'quantity' => 'required|integer|min:1|max:10',
@@ -38,25 +42,25 @@ class ProductController extends Controller
         $subTotal = $quantity * $product->sale_price;
 
         if (!$product->is_shipping_charge_applicable) {
-            $shipping_charge = 'Free Delivery';
-            $total = "৳ " . $subTotal;
+            $shipping_charge = Lang::get('free_delivery', locale: $locale);
+            $total = Number::currency($subTotal, in: 'BDT', locale: $locale);
         } else {
             $shipping_charge = match ($shipping_class) {
-                'inside-dhaka' => "৳ " . $inside_dhaka_max_charge,
-                'outside-dhaka' => "৳ " . $outside_dhaka_max_charge,
-                default => 'will be calculated'
+                'inside-dhaka' => Number::currency($inside_dhaka_max_charge, in: 'BDT', locale: $locale),
+                'outside-dhaka' => Number::currency($outside_dhaka_max_charge, in: 'BDT', locale: $locale) ,
+                default => Lang::get('will_be_calculated', locale: $locale)
             };
             $total = match ($shipping_class) {
-                'inside-dhaka' => "৳ " . ($subTotal + $inside_dhaka_max_charge),
-                'outside-dhaka' => "৳ " . ($subTotal + $outside_dhaka_max_charge),
-                default => 'will be calculated'
+                'inside-dhaka' => Number::currency($subTotal + $inside_dhaka_max_charge, in: 'BDT', locale: $locale),
+                'outside-dhaka' => Number::currency($subTotal + $outside_dhaka_max_charge, in: 'BDT', locale: $locale),
+                default => Lang::get('will_be_calculated', locale: $locale)
             };
         }
 
 
         // Return the total price as a JSON response
         return response()->json([
-            'sub_total' => $subTotal,
+            'sub_total' => Number::currency($subTotal, in: 'BDT', locale: $locale),
             'shipping_charge' => $shipping_charge,
             'total' => $total
         ]);

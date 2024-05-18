@@ -35,13 +35,12 @@ class AppServiceProvider extends ServiceProvider
                 NavigationGroup::make()
                     ->label('Shop'),
                 NavigationGroup::make()
+                    ->label('Accounts'),
+                NavigationGroup::make()
                     ->label('Configuration')
                     ->collapsed(),
                 NavigationGroup::make()
                     ->label('Settings')
-                    ->collapsed(),
-                NavigationGroup::make()
-                    ->label('System')
                     ->collapsed(),
             ]);
         });

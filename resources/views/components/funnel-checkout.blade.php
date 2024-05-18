@@ -1,5 +1,7 @@
 @php
     use App\Models\BasicConfiguration;
+    use Illuminate\Support\Number;
+    $locale = app()->getLocale();
 
     try {
         $is_online_payment_enabled = BasicConfiguration::query()
@@ -36,8 +38,8 @@
         @csrf
         <div class="grid sm:px-10 lg:grid-cols-2 lg:px-20 xl:px-32 max-w-7xl mx-auto rounded-md card bg-base-200 pb-4">
             <div class="px-4 pt-8">
-                <p class="text-xl font-medium">Order Summary</p>
-                <p class="text-gray-500">Check your items. And select a suitable shipping method.</p>
+                <p class="text-xl font-medium">{{ __('order.title') }}</p>
+                <p class="text-gray-500">{{ __('order.summary') }}</p>
                 <div class="mt-8 space-y-3 rounded-lg border bg-base-300 px-2 py-3 sm:px-6">
                     <div class="flex md:flex-row flex-col rounded-lg bg-base-400 justify-between">
                         <div class="flex flex-row">
@@ -45,7 +47,8 @@
                                 src="{{ asset('storage/' . $product->main_photo) }}" alt="{{ $product->name }}" />
                             <div class="flex w-full flex-col px-4 py-4">
                                 <span class="font-semibold">{{ $product->name }}</span>
-                                <p class="text-lg font-bold my-1">৳ {{ $product->sale_price }}</p>
+                                <p class="text-lg font-bold my-1">
+                                    {{ Number::currency($product->sale_price, in: 'BDT', locale: $locale) }}</p>
                                 <div class="max-w-xs rounded-md w-fit p-1 border-black border-solid border-2">
                                     <div class="relative flex items-center">
                                         <button type="button" id="decrement-button"
@@ -75,14 +78,14 @@
 
                             </div>
                         </div>
-                        <a class="btn my-auto" onclick="see_description.showModal()">Description</a>
+                        <a class="btn my-auto" onclick="see_description.showModal()">{{ __('description') }}</a>
                         <dialog id="see_description" class="modal">
                             <div class="modal-box">
                                 <h3 class="font-bold text-lg">{!! $product->name !!}</h3>
                                 <p class="py-4">{!! $product->description !!}</p>
                                 <div class="modal-action">
                                     <div method="dialog">
-                                        <a class="btn" onclick="see_description.close()">Close</a>
+                                        <a class="btn" onclick="see_description.close()">{{ __('close') }}</a>
                                     </div>
                                 </div>
                             </div>
@@ -121,18 +124,18 @@
 
             </div>
             <div class="mt-8 px-4 pt-8 lg:mt-0">
-                <p class="text-xl font-medium">Payment Details</p>
-                <p class="text-gray-500">Complete your order by providing your payment details.</p>
+                <p class="text-xl font-medium">{{ __('payment.title') }}</p>
+                <p class="text-gray-500">{{ __('payment.summary') }}</p>
                 <div class="">
                     <input type="hidden" id="product_id" name="product_id" value="{{ $product->id }}">
                     <div class="flex justify-between mt-8 mb-2">
-                        <label for="name" class="block text-sm font-medium">Full Name</label>
+                        <label for="name" class="block text-sm font-medium">{{ __('full_name') }}</label>
                         <x-field-error :name="'name'" />
                     </div>
                     <div class="relative">
                         <input type="text" id="name" name="name"
                             class="@error('name') is-invalid border-red-600 @enderror w-full rounded-md border px-4 py-3 pl-11 text-sm uppercase shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500"
-                            placeholder="Your full name here" />
+                            placeholder="{{ __('full_name_placeholder') }}" />
                         <div class="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -142,14 +145,14 @@
                         </div>
                     </div>
                     <div class="flex justify-between mt-4 mb-2">
-                        <label for="phone_number" class="block text-sm font-medium">Phone Number</label>
+                        <label for="phone_number" class="block text-sm font-medium">{{ __('phone_number') }}</label>
                         <x-field-error :name="'phone_number'" />
                     </div>
 
                     <div class="relative">
                         <input type="tel" id="phone_number" name="phone_number"
-                            class="w-full rounded-md border @error('phone_number') is-invalid border-red-600 @enderror px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500"
-                            placeholder="+8801521203280" />
+                            class="w-full rounded-md border uppercase @error('phone_number') is-invalid border-red-600 @enderror px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500"
+                            placeholder="{{ __('phone_number_placeholder') }}" />
                         <div class="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
 
                             <svg fill="#000000" class="h-4 w-4 text-gray-400" version="1.1" id="Capa_1"
@@ -189,13 +192,13 @@
                     </div>
 
                     <div class="flex justify-between mt-4 mb-2">
-                        <label for="address" class="block text-sm font-medium">Address</label>
+                        <label for="address" class="block text-sm font-medium">{{ __('address') }}</label>
                         <x-field-error :name="'address'" />
                     </div>
                     <div class="relative">
                         <input type="text" id="address" name="address"
                             class="w-full rounded-md border @error('address') is-invalid border-red-600 @enderror px-4 py-3 pl-11 text-sm uppercase shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500"
-                            placeholder="Enter your street address" />
+                            placeholder="{{ __('address_placeholder') }}" />
                         <div class="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
                             <svg class="h-4 w-4 text-gray-400 icon" viewBox="0 0 1024 1024" fill="#000000"
                                 version="1.1" xmlns="http://www.w3.org/2000/svg">
@@ -207,7 +210,7 @@
                     </div>
 
                     <div class="flex justify-between mt-8 mb-2 items-center">
-                        <p class="text-lg font-medium">Shipping Methods</p>
+                        <p class="text-lg font-medium">{{ __('shipping_methods') }}</p>
                         <x-field-error :name="'shipping_class'" />
                     </div>
                     <ul class="grid w-full gap-6 md:grid-cols-2">
@@ -217,8 +220,8 @@
                             <label for="inside-dhaka"
                                 class="@error('shipping_class') is-invalid border-red-600 @enderror peer-checked:border-2 peer-checked:border-gray-700 peer-checked:bg-base-300 bg-white flex cursor-pointer select-none rounded-lg border p-4">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Inside Dhaka</div>
-                                    <div class="w-full">1-2 Days</div>
+                                    <div class="w-full text-lg font-semibold">{{ __('inside_dhaka') }}</div>
+                                    <div class="w-full">{{ __('1-2days') }}</div>
                                 </div>
                             </label>
                         </li>
@@ -228,14 +231,14 @@
                             <label for="outside-dhaka"
                                 class="@error('shipping_class') is-invalid border-red-600 @enderror peer-checked:border-2 peer-checked:border-gray-700 peer-checked:bg-base-300 bg-white flex cursor-pointer select-none rounded-lg border p-4">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Outside Dhaka</div>
-                                    <div class="w-full">2-3 Days</div>
+                                    <div class="w-full text-lg font-semibold">{{ __('outside_dhaka') }}</div>
+                                    <div class="w-full">{{ __('2-3days') }}</div>
                                 </div>
                             </label>
                         </li>
                     </ul>
                     <div class="flex justify-between mt-8 mb-2 items-center">
-                        <p class="text-lg font-medium">Payment Methods</p>
+                        <p class="text-lg font-medium">{{ __('payment_methods') }}</p>
                         <x-field-error :name="'payment_provider'" />
                     </div>
                     <ul class="grid w-full gap-6 md:grid-cols-2">
@@ -246,7 +249,7 @@
                             <label for="cash-on-delivery"
                                 class="@error('payment_provider') is-invalid border-red-600 @enderror peer-checked:border-2 peer-checked:border-gray-700 peer-checked:bg-base-300 bg-white flex cursor-pointer select-none rounded-lg border p-4">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Cash on Delivery</div>
+                                    <div class="w-full text-lg font-semibold">{{ __('cash_on_delivery') }}</div>
                                 </div>
                             </label>
                         </li>
@@ -257,7 +260,7 @@
                                 <label for="online-payment"
                                     class="@error('payment_provider') is-invalid border-red-600 @enderror peer-checked:border-2 peer-checked:border-gray-700 peer-checked:bg-base-300 bg-white flex cursor-pointer select-none rounded-lg border p-4">
                                     <div class="block">
-                                        <div class="w-full text-lg font-semibold">Online Payment</div>
+                                        <div class="w-full text-lg font-semibold">{{ __('online_payment') }}</div>
                                     </div>
                                 </label>
                             </li>
@@ -268,26 +271,26 @@
                     <!-- Total -->
                     <div class="mt-6 border-t border-b py-2">
                         <div class="flex items-center justify-between">
-                            <p class="text-sm font-medium text-gray-900">Subtotal</p>
+                            <p class="text-sm font-medium text-gray-900">{{ __('subtotal') }}</p>
                             <p class="font-semibold text-gray-900" id='sub_total'>৳ {{ $product->sale_price }}</p>
                         </div>
                         <div class="flex items-center justify-between">
-                            <p class="text-sm font-medium text-gray-900">Shipping</p>
+                            <p class="text-sm font-medium text-gray-900">{{ __('shipping') }}</p>
                             <p class="font-semibold text-gray-900" id='shipping_charge'>
-                                {{ $product->is_shipping_charge_applicable ? 'will be calculated' : 'Free Delivery' }}
+                                {{ __($product->is_shipping_charge_applicable ? 'will_be_calculated' : 'free_delivery') }}
                             </p>
                         </div>
                     </div>
                     <div class="mt-6 flex items-center justify-between">
-                        <p class="text-sm font-medium text-gray-900">Total</p>
+                        <p class="text-sm font-medium text-gray-900">{{ __('total') }}</p>
                         <p class="text-2xl font-semibold text-gray-900" id='total'>
-                            {{ $product->is_shipping_charge_applicable ? 'will be calculated' : $product->sale_price }}
+                            {{ $product->is_shipping_charge_applicable ? __('will_be_calculated') : Number::currency($product->sale_price, in: 'BDT', locale: $locale) }}
                         </p>
                     </div>
                 </div>
                 <button type="submit"
-                    class="mt-4 mb-6 w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white">Place
-                    Order
+                    class="mt-4 mb-6 w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white">
+                    {{ __('place_order') }}
                 </button>
                 <img src="{{ asset('checkout.png') }}" class="mx-auto h-12" />
             </div>
@@ -337,7 +340,7 @@
                     let shippingChargeElement = document.getElementById('shipping_charge');
                     let totalElement = document.getElementById('total');
 
-                    subTotalElement.textContent = '৳ ' + response.data.sub_total.toFixed(2);
+                    subTotalElement.textContent = response.data.sub_total;
                     shippingChargeElement.textContent = response.data.shipping_charge;
                     totalElement.textContent = response.data.total;
 

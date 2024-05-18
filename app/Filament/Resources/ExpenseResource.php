@@ -19,6 +19,8 @@ class ExpenseResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-credit-card';
 
+    protected static ?string $navigationGroup = 'Accounts';
+
     public static function form(Form $form): Form
     {
         return $form
