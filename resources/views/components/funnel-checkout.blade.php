@@ -124,8 +124,8 @@
 
             </div>
             <div class="mt-8 px-4 pt-8 lg:mt-0">
-                <p class="text-xl font-medium">{{ __('payment.title') }}</p>
-                <p class="text-gray-500">{{ __('payment.summary') }}</p>
+                <p class="text-xl font-medium">{{ __('personal.title') }}</p>
+                <p class="text-gray-500">{{ __('personal.summary') }}</p>
                 <div class="">
                     <input type="hidden" id="product_id" name="product_id" value="{{ $product->id }}">
                     <div class="flex justify-between mt-8 mb-2">
@@ -218,7 +218,7 @@
                             <input type="radio" id="inside-dhaka" name="shipping_class" value="inside-dhaka"
                                 class="hidden peer" />
                             <label for="inside-dhaka"
-                                class="@error('shipping_class') is-invalid border-red-600 @enderror peer-checked:border-2 peer-checked:border-gray-700 peer-checked:bg-base-300 bg-white flex cursor-pointer select-none rounded-lg border p-4">
+                                class="peer-checked:border-2 peer-checked:border-gray-700 peer-checked:bg-base-300 bg-white flex cursor-pointer select-none rounded-lg border p-4 border-blue-800">
                                 <div class="block">
                                     <div class="w-full text-lg font-semibold">{{ __('inside_dhaka') }}</div>
                                     <div class="w-full">{{ __('1-2days') }}</div>
@@ -229,7 +229,7 @@
                             <input type="radio" id="outside-dhaka" name="shipping_class" value="outside-dhaka"
                                 class="hidden peer" checked>
                             <label for="outside-dhaka"
-                                class="@error('shipping_class') is-invalid border-red-600 @enderror peer-checked:border-2 peer-checked:border-gray-700 peer-checked:bg-base-300 bg-white flex cursor-pointer select-none rounded-lg border p-4">
+                                class="peer-checked:border-2 peer-checked:border-gray-700 peer-checked:bg-base-300 bg-white flex cursor-pointer select-none rounded-lg border p-4 border-blue-800">
                                 <div class="block">
                                     <div class="w-full text-lg font-semibold">{{ __('outside_dhaka') }}</div>
                                     <div class="w-full">{{ __('2-3days') }}</div>
@@ -247,7 +247,7 @@
                                 value="cash-on-delivery" class="hidden peer"
                                 checked="@if ($is_online_payment_enabled !== 'yes') true @else false @endif" />
                             <label for="cash-on-delivery"
-                                class="@error('payment_provider') is-invalid border-red-600 @enderror peer-checked:border-2 peer-checked:border-gray-700 peer-checked:bg-base-300 bg-white flex cursor-pointer select-none rounded-lg border p-4">
+                                class="peer-checked:border-2 peer-checked:border-gray-700 peer-checked:bg-base-300 bg-white flex cursor-pointer select-none rounded-lg border p-4 border-blue-800">
                                 <div class="block">
                                     <div class="w-full text-lg font-semibold">{{ __('cash_on_delivery') }}</div>
                                 </div>
@@ -258,7 +258,7 @@
                                 <input type="radio" id="online-payment" name="payment_provider"
                                     value="online-payment" class="hidden peer" checked>
                                 <label for="online-payment"
-                                    class="@error('payment_provider') is-invalid border-red-600 @enderror peer-checked:border-2 peer-checked:border-gray-700 peer-checked:bg-base-300 bg-white flex cursor-pointer select-none rounded-lg border p-4">
+                                    class="peer-checked:border-2 peer-checked:border-gray-700 peer-checked:bg-base-300 bg-white flex cursor-pointer select-none rounded-lg border p-4 border-blue-800">
                                     <div class="block">
                                         <div class="w-full text-lg font-semibold">{{ __('online_payment') }}</div>
                                     </div>
