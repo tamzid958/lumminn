@@ -54,7 +54,7 @@ class PayStatusCount extends ApexChartWidget
         return [
             'chart' => [
                 'type' => 'donut',
-                'height' => 275,
+                'height' => 300,
             ],
             'series' => array_values($statusCounts),
             'labels' => array_keys($statusCounts),

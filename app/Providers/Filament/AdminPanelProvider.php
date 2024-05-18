@@ -73,7 +73,7 @@ class AdminPanelProvider extends PanelProvider
                 FilamentApexChartsPlugin::make()
             ])
             ->maxContentWidth(MaxWidth::Full)
-            ->sidebarFullyCollapsibleOnDesktop()
+            ->sidebarCollapsibleOnDesktop()
             ->unsavedChangesAlerts()
             ->databaseTransactions()
             ->databaseNotifications()

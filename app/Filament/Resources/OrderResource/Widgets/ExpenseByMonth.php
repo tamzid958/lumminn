@@ -78,7 +78,7 @@ class ExpenseByMonth extends ApexChartWidget
         return [
             'chart' => [
                 'type' => 'line',
-                'height' => 290,
+                'height' => 300,
             ],
             'series' => [
                 [
