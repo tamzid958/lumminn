@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [IndexController::class, 'index'])->name('home');
 
-Route::middleware([('Iscache:max-age=31536000;public;esi=on')])->group(function () {
+Route::middleware([('lscache:max-age=31536000;public;esi=on')])->group(function () {
     Route::get('/categories/{slug}', [CategoryController::class, 'products']);
     Route::get('/products/{slug}', [ProductController::class, 'view']);
     Route::post('/order/create', [OrderController::class, 'create']);
