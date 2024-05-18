@@ -42,7 +42,7 @@
                     <div class="flex md:flex-row flex-col rounded-lg bg-base-400 justify-between">
                         <div class="flex flex-row">
                             <img class="m-2 h-28 w-32 rounded-md border object-cover object-center"
-                                src="{{ asset('storage/' . $product->main_photo) }}" alt="" />
+                                src="{{ asset('storage/' . $product->main_photo) }}" alt="{{ $product->name }}" />
                             <div class="flex w-full flex-col px-4 py-4">
                                 <span class="font-semibold">{{ $product->name }}</span>
                                 <p class="text-lg font-bold my-1">৳ {{ $product->sale_price }}</p>
