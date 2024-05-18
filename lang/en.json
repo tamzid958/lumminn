@@ -26,5 +26,12 @@
     "buy_now": "Buy now",
     "free_delivery": "Free delivery",
     "will_be_calculated": "will be calculated",
-    "copyright": "Copyright © 2024 - All right reserved"
+    "copyright": "Copyright © 2024 - All right reserved",
+    "thanks_after_order": "Thank you for placing an order.",
+    "your_order_is": "Your order is",
+    "want_to_add_power": "Want to add power to the glasses?",
+    "go_back": "GO BACK",
+    "order_failed": "Order Place Failed!",
+    "try_again": "Please try again.",
+    "order_placed": "Order Placed!"
 }

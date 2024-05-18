@@ -11,11 +11,11 @@
                 <path fill="none" d="M0 0h48v48H0z"></path>
             </svg>
             <div class="text-center">
-                <h3 class="md:text-2xl text-base text-gray-900 font-semibold text-center">Order Place Failed!</h3>
-                <p class="text-gray-600 my-2">Please try again.</p>
+                <h3 class="md:text-2xl text-base text-gray-900 font-semibold text-center">{{ __('order_failed') }}</h3>
+                <p class="text-gray-600 my-2">{{ __('try_again') }}</p>
                 <div class="py-10 mt-5 text-center">
                     <a href="/" class="link-primary">
-                        GO BACK
+                        {{ __('go_back') }}
                     </a>
                 </div>
             </div>

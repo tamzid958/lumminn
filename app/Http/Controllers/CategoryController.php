@@ -12,7 +12,7 @@ class CategoryController extends Controller
     {
 
         $category = Category::where('slug', $slug)->first();
-        $products = Product::query()->where('category_id', $category->id)->orderBy('created_at', "desc")->cursorPaginate(15);
+        $products = Product::query()->where('category_id', $category->id)->orderBy('created_at', "desc")->cursorPaginate(6);
         return view('products-by-category', compact('products', 'category'));
     }
 }
