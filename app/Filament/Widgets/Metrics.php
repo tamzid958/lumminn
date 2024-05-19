@@ -27,13 +27,23 @@ class Metrics extends BaseWidget
         $invesmentArray = $investments->pluck('total')->toArray();
         $totalInvestment = array_sum($invesmentArray);
 
-        $revenues = Order::selectRaw('EXTRACT(YEAR FROM created_at) as year, EXTRACT(MONTH FROM created_at) as month, SUM(total_amount + additional_amount - discount_amount) as total')
+        $totalSales = Order::selectRaw('EXTRACT(YEAR FROM created_at) as year, EXTRACT(MONTH FROM created_at) as month, SUM(total_amount + additional_amount - discount_amount) as total')
         ->where('pay_status', '=', 'Paid')
         ->groupBy('year', 'month')
         ->get();
 
-        $revenueArray = $revenues->pluck('total')->toArray();
-        $totalRevenue = array_sum($revenueArray);
+        $totalSaleArray = $totalSales->pluck('total')->toArray();
+        $totalSale = array_sum($totalSaleArray);
+
+        $totalGrossProfits = Order::join('order_items', 'orders.id', '=', 'order_items.order_id')
+        ->selectRaw('EXTRACT(YEAR FROM orders.created_at) as year, EXTRACT(MONTH FROM orders.created_at) as month, 
+        (SUM(orders.total_amount + orders.additional_amount - orders.discount_amount) - SUM(production_cost)) AS net_revenue')
+        ->where('orders.pay_status', '=', 'Paid')
+        ->groupBy('year', 'month')
+        ->get();
+
+        $totalGrossProfitArray = $totalGrossProfits->pluck('net_revenue')->toArray();
+        $totalGrossProfit = array_sum($totalGrossProfitArray);
 
         return [
             Stat::make('Total Investment', NumberUtil::number_shorten($totalInvestment))
@@ -50,11 +60,18 @@ class Metrics extends BaseWidget
                 ->extraAttributes(['title' => '৳'. $totalExpense])
                 ->color('danger'),
 
-            Stat::make('Total Sale', NumberUtil::number_shorten($totalRevenue))
-                ->chart($revenueArray)
+            Stat::make('Total Sale', NumberUtil::number_shorten($totalSale))
+                ->chart($totalSaleArray)
                 ->description('Increment of Sale')
                 ->descriptionIcon('heroicon-o-arrow-trending-up')
-                ->extraAttributes(['title' => '৳'. $totalRevenue])
+                ->extraAttributes(['title' => '৳'. $totalSale])
+                ->color('success'),
+
+            Stat::make('Gross Profit', NumberUtil::number_shorten($totalGrossProfit))
+                ->chart($totalGrossProfitArray)
+                ->description('Increment of Gross Profit')
+                ->descriptionIcon('heroicon-o-arrow-trending-up')
+                ->extraAttributes(['title' => '৳'. $totalGrossProfit])
                 ->color('success'),
         ];
     }
