@@ -63,7 +63,7 @@
 
                                         <input type="text" name="quantity" id="counter-input" data-input-counter
                                             class="flex-shrink-0 text-gray-900 border-0 bg-transparent text-sm font-normal focus:outline-none focus:ring-0 max-w-[2.5rem] text-center"
-                                            placeholder="" value="1" required />
+                                            placeholder="" value="1" required readonly />
                                         <button type="button" id="increment-button"
                                             data-input-counter-increment="counter-input"
                                             class="flex-shrink-0 bg-gray-700 hover:bg-gray-600 border-gray-600 inline-flex items-center justify-center border rounded-md h-5 w-5 focus:ring-gray-700 focus:ring-2 focus:outline-none">
