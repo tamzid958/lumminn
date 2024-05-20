@@ -3,7 +3,6 @@
 namespace App\Providers;
 
 use App\Models\Product;
-use Exception;
 use Illuminate\Support\Facades\DB;
 
 class OrderServiceProvider
@@ -46,35 +45,21 @@ class OrderServiceProvider
         })->filter()->toArray();
     }
 
-    public static function checkIfFreeShippingProduct(int $product_id): bool {
-        return DB::table('products')
-        ->where('id', $product_id)
-        ->where('is_shipping_charge_applicable', false)
-        ->exists();
+    public static function checkIfFreeShippingProduct(int $product_id): bool
+    {
+        return Product::query()
+            ->where('id', $product_id)
+            ->where('is_shipping_charge_applicable', false)
+            ->exists();
     }
 
-    /**
-     * @throws Exception
-     */
-    public static function checkIfAnyFreeShippingProduct(array $data, string $action): bool
+    public static function checkIfAnyFreeShippingProduct(array $data): bool
     {
-        if ($action === "create") {
-            $productIds = array_column($data['products'], 'id');
+        $productIds = array_column($data['products'], 'id');
 
-            return DB::table('products')
-                    ->whereIn('id', $productIds)
-                    ->where('is_shipping_charge_applicable', false)
-                    ->count() > 0;
-        } else if ($action === "edit") {
-            return DB::table('order_items')
-                    ->join('products', 'order_items.product_id', '=', 'products.id')
-                    ->where('order_items.order_id', $data['id'])
-                    ->whereNotNull('order_items.product_id')
-                    ->where('products.is_shipping_charge_applicable', false)
-                    ->count() > 0;
-        } else {
-            throw new Exception("undefined action");
-        }
-
+        return Product::query()
+                ->whereIn('id', $productIds)
+                ->where('is_shipping_charge_applicable', false)
+                ->count() > 0;
     }
 }

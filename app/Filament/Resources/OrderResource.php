@@ -60,7 +60,8 @@ class OrderResource extends Resource
                             ->required()
                             ->maxLength(255)
                             ->disabled(fn(Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
-                                $livewire instanceof EditRecord),
+                                $livewire instanceof EditRecord)
+                            ->columnSpan(1),
                         PhoneInput::make('phone_number')
                             ->onlyCountries(['bd'])
                             ->validateFor(
@@ -70,14 +71,16 @@ class OrderResource extends Resource
                             )
                             ->required()
                             ->disabled(fn(Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
-                                $livewire instanceof EditRecord),
+                                $livewire instanceof EditRecord)
+                            ->columnSpan(1),
                         Forms\Components\Textarea::make('address')
                             ->required()
                             ->columnSpan(2)
                             ->maxLength(255)
                             ->disabled(fn(Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
-                                $livewire instanceof EditRecord),
-                    ]),
+                                $livewire instanceof EditRecord)
+                            ->columnSpanFull(),
+                    ])->columnSpanFull(),
                     Fieldset::make(
                         'Order Items',
                     )->schema([
@@ -241,7 +244,6 @@ class OrderResource extends Resource
                         ->columnSpan(2)
                         ->multiple()
                         ->disk('public')
-                        ->visibility('private')
                 ]
             );
     }
@@ -267,6 +269,11 @@ class OrderResource extends Resource
                     ->numeric(),
                 Tables\Columns\TextColumn::make('shipping_status')
                     ->badge(),
+                Tables\Columns\ImageColumn::make('attachment')
+                    ->disk('public')
+                    ->circular()
+                    ->stacked()
+                    ->limitedRemainingText(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

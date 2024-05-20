@@ -74,7 +74,7 @@ class EditOrder extends EditRecord
                 return $carry + ($item['price'] * $item['quantity']);
             }, 0);
 
-            $freeShipping = OrderServiceProvider::checkIfAnyFreeShippingProduct($data, "edit");
+            $freeShipping = OrderServiceProvider::checkIfAnyFreeShippingProduct($data);
 
             $shipping_provider = DB::table('shipping_providers')->find($data['shipping_provider_id']);
 

@@ -60,7 +60,8 @@ class ProductResource extends Resource
                     ->hidden(fn($get) => $get('stock_status') !== 'In Stock'),
                 Forms\Components\Checkbox::make('is_shipping_charge_applicable')
                     ->columnSpan(2)
-                    ->label('Apply Shipping Charge'),
+                    ->label('Apply Shipping Charge')
+                    ->default(true),
                 Forms\Components\RichEditor::make('description')
                     ->columnSpan(2)
                     ->required()
@@ -105,6 +106,9 @@ class ProductResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\ImageColumn::make('main_photo')
+                    ->disk('public')
+                    ->circular(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('slug')
