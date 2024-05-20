@@ -249,7 +249,7 @@
                             <label for="cash-on-delivery"
                                 class="peer-checked:border-2 peer-checked:border-gray-700 peer-checked:bg-base-300 bg-white flex cursor-pointer select-none rounded-lg border p-4 border-blue-800">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">{{ __('cash_on_delivery') }}</div>
+                                    <div class="w-full text-base font-semibold">{{ __('cash_on_delivery') }}</div>
                                 </div>
                             </label>
                         </li>
@@ -260,7 +260,7 @@
                                 <label for="online-payment"
                                     class="peer-checked:border-2 peer-checked:border-gray-700 peer-checked:bg-base-300 bg-white flex cursor-pointer select-none rounded-lg border p-4 border-blue-800">
                                     <div class="block">
-                                        <div class="w-full text-lg font-semibold">{{ __('online_payment') }}</div>
+                                        <div class="w-full text-base font-semibold">{{ __('online_payment') }}</div>
                                     </div>
                                 </label>
                             </li>
