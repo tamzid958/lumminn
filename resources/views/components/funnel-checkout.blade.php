@@ -213,7 +213,7 @@
                         <p class="text-lg font-medium">{{ __('shipping_methods') }}</p>
                         <x-field-error :name="'shipping_class'" />
                     </div>
-                    <ul class="grid w-full gap-6 md:grid-cols-2">
+                    <ul class="grid w-full gap-6 grid-cols-2">
                         <li>
                             <input type="radio" id="inside-dhaka" name="shipping_class" value="inside-dhaka"
                                 class="hidden peer" />
@@ -241,7 +241,7 @@
                         <p class="text-lg font-medium">{{ __('payment_methods') }}</p>
                         <x-field-error :name="'payment_provider'" />
                     </div>
-                    <ul class="grid w-full gap-6 md:grid-cols-2">
+                    <ul class="grid w-full gap-6 grid-cols-2">
                         <li>
                             <input type="radio" id="cash-on-delivery" name="payment_provider"
                                 value="cash-on-delivery" class="hidden peer"
