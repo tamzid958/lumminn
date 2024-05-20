@@ -16,7 +16,7 @@
     <style>
         @font-face {
             font-family: "bengali";
-            src: url({{ public_path('fonts/bengali.ttf') }}) format("truetype");
+            src: url({{ storage_path('fonts/bengali.ttf') }}) format("truetype");
         }
 
         @if($locale == "bn")
