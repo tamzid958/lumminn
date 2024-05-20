@@ -4,9 +4,12 @@ namespace App\Providers\Filament;
 
 use App\Filament\Resources\OrderResource\Widgets\ExpenseByMonth;
 use App\Filament\Resources\OrderResource\Widgets\MonthlyExpenseIncome;
+use App\Filament\Resources\OrderResource\Widgets\PayStatusCount;
+use App\Filament\Resources\OrderResource\Widgets\ShippingStatusCount;
 use App\Filament\Resources\OrderResource\Widgets\TotalSaleBasedOnMonth;
 use App\Filament\Resources\ProductResource\Widgets\RevenueByProducts;
 use App\Filament\Widgets\Metrics;
+use App\Http\Middleware\LocaleMiddleware;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -15,7 +18,6 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\MaxWidth;
-use GeoSot\FilamentEnvEditor\FilamentEnvEditorPlugin;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -32,12 +34,11 @@ class AdminPanelProvider extends PanelProvider
     {
         return $panel
             ->default()
-            ->spa()
             ->id('admin')
             ->path('admin')
             ->login()
             ->colors([
-                'primary' => Color::Blue,
+                'primary' => Color::Indigo,
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
@@ -51,7 +52,8 @@ class AdminPanelProvider extends PanelProvider
                 TotalSaleBasedOnMonth::class,
                 ExpenseByMonth::class,
                 RevenueByProducts::class,
-                
+                ShippingStatusCount::class,
+                PayStatusCount::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -63,17 +65,17 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                LocaleMiddleware::class
             ])
             ->authMiddleware([
                 Authenticate::class,
             ])
             ->plugins([
-                FilamentEnvEditorPlugin::make(),
                 FilamentSpatieLaravelHealthPlugin::make(),
                 FilamentApexChartsPlugin::make()
             ])
             ->maxContentWidth(MaxWidth::Full)
-            ->sidebarFullyCollapsibleOnDesktop()
+            ->sidebarCollapsibleOnDesktop()
             ->unsavedChangesAlerts()
             ->databaseTransactions()
             ->databaseNotifications()

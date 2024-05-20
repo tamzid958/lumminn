@@ -20,7 +20,7 @@ class ProductResource extends Resource
 {
     protected static ?string $model = Product::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-squares-2x2';
 
     protected static ?string $navigationGroup = 'Shop';
 
@@ -57,7 +57,7 @@ class ProductResource extends Resource
                     ->reactive(),
                 Forms\Components\TextInput::make('stock')
                     ->numeric()
-                    ->hidden(fn($get) => $get('stock_status') === 'Unlimited'),
+                    ->hidden(fn($get) => $get('stock_status') !== 'In Stock'),
                 Forms\Components\Checkbox::make('is_shipping_charge_applicable')
                     ->columnSpan(2)
                     ->label('Apply Shipping Charge'),

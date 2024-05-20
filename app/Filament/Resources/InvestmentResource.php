@@ -17,7 +17,9 @@ class InvestmentResource extends Resource
 {
     protected static ?string $model = Investment::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-wallet';
+
+    protected static ?string $navigationGroup = 'Accounts';
 
     public static function form(Form $form): Form
     {
@@ -81,7 +83,7 @@ class InvestmentResource extends Resource
                     Tables\Actions\ForceDeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
                 ]),
-            ]);
+            ])->defaultSort('created_at', 'desc');
     }
 
     public static function getRelations(): array
