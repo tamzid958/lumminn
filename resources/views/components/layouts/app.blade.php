@@ -21,7 +21,7 @@
 
         @if($locale == "bn")
             html {
-            font-family: "web-bengali", serif;
+            font-family: web-bengali, serif;
         }
         @endif
     </style>
