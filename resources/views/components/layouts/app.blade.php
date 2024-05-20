@@ -14,14 +14,9 @@
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
-        @font-face {
-            font-family: "bengali";
-            src: url({{ storage_path('fonts/bengali.ttf') }}) format("truetype");
-        }
-
         @if($locale == "bn")
             html {
-            font-family: bengali, serif;
+            font-family: web-bengali, serif;
         }
         @endif
     </style>
