@@ -15,13 +15,13 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         @font-face {
-            font-family: "web-bengali";
-            src: url({{ public_path('fonts/web-bengali.ttf') }}) format("truetype");
+            font-family: "bengali";
+            src: url({{ public_path('fonts/bengali.ttf') }}) format("truetype");
         }
 
         @if($locale == "bn")
             html {
-            font-family: web-bengali, serif;
+            font-family: bengali, serif;
         }
         @endif
     </style>
