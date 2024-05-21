@@ -213,7 +213,7 @@
                         <p class="text-lg font-medium">{{ __('shipping_methods') }}</p>
                         <x-field-error :name="'shipping_class'" />
                     </div>
-                    <ul class="grid w-full gap-6 md:grid-cols-2">
+                    <ul class="grid w-full gap-6 grid-cols-2">
                         <li>
                             <input type="radio" id="inside-dhaka" name="shipping_class" value="inside-dhaka"
                                 class="hidden peer" />
@@ -241,7 +241,7 @@
                         <p class="text-lg font-medium">{{ __('payment_methods') }}</p>
                         <x-field-error :name="'payment_provider'" />
                     </div>
-                    <ul class="grid w-full gap-6 md:grid-cols-2">
+                    <ul class="grid w-full gap-6 grid-cols-2">
                         <li>
                             <input type="radio" id="cash-on-delivery" name="payment_provider"
                                 value="cash-on-delivery" class="hidden peer"
@@ -249,7 +249,7 @@
                             <label for="cash-on-delivery"
                                 class="peer-checked:border-2 peer-checked:border-gray-700 peer-checked:bg-base-300 bg-white flex cursor-pointer select-none rounded-lg border p-4 border-blue-800">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">{{ __('cash_on_delivery') }}</div>
+                                    <div class="w-full text-base font-semibold">{{ __('cash_on_delivery') }}</div>
                                 </div>
                             </label>
                         </li>
@@ -260,7 +260,7 @@
                                 <label for="online-payment"
                                     class="peer-checked:border-2 peer-checked:border-gray-700 peer-checked:bg-base-300 bg-white flex cursor-pointer select-none rounded-lg border p-4 border-blue-800">
                                     <div class="block">
-                                        <div class="w-full text-lg font-semibold">{{ __('online_payment') }}</div>
+                                        <div class="w-full text-base font-semibold">{{ __('online_payment') }}</div>
                                     </div>
                                 </label>
                             </li>
