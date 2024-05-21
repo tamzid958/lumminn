@@ -26,6 +26,8 @@ class SendOrders extends ListRecords
         return $table
             ->query(Order::query()->where('shipping_status', '=', 'On Hold'))
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->numeric(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
                     ->copyable(),

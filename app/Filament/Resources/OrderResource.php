@@ -252,6 +252,8 @@ class OrderResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->numeric(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
                     ->copyable(),
