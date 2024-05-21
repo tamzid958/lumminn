@@ -10,7 +10,9 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote')->hourly();
 
 Schedule::job(new CheckDeliveryStatusJob)
-    ->everyThirtyMinutes()
+    ->everyThreeHours()
+    ->timezone('Asia/Dhaka')
+    ->between('7:00', '23:00')
     ->before(fn () => dump('CheckDeliveryStatusJob Started'))
     ->after(fn () => dump('CheckDeliveryStatusJob Finished'))
     ->withoutOverlapping();
