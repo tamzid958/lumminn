@@ -11,7 +11,6 @@ Artisan::command('inspire', function () {
 
 Schedule::job(new CheckDeliveryStatusJob)
     ->everyThirtyMinutes()
-    ->between('7:00', '22:00')
     ->before(fn () => dump('CheckDeliveryStatusJob Started'))
     ->after(fn () => dump('CheckDeliveryStatusJob Finished'))
     ->withoutOverlapping();
