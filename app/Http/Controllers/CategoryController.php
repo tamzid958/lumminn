@@ -17,7 +17,6 @@ class CategoryController extends Controller
         ->where('products.category_id', $category->id)
         ->leftJoin('order_items', 'order_items.product_id', '=', 'products.id')
         ->select('products.*', DB::raw('COALESCE(SUM(order_items.quantity), 0) as total_sold'))
-        ->groupBy('products.id')
         ->orderBy('total_sold', 'desc')
         ->cursorPaginate(6);
         return view('products-by-category', compact('products', 'category'));
