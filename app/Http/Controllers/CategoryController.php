@@ -18,7 +18,6 @@ class CategoryController extends Controller
         ->leftJoin('order_items', 'order_items.product_id', '=', 'products.id')
         ->having('products.category_id', $category->id)
         ->groupBy('products.id')
-        ->having(DB::raw('SUM(order_items.quantity)'), '>', 0)
         ->orderBy('total_sold', 'desc')
         ->cursorPaginate(6);
         return view('products-by-category', compact('products', 'category'));
