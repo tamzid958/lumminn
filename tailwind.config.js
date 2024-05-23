@@ -6,9 +6,8 @@ export default {
         "./app/View/Components/**/**/*.php",
         "./app/Livewire/**/**/*.php",
         './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
-
         // Add mary
-        "./vendor/robsontenorio/mary/src/View/Components/**/*.php",
+        "./vendor/robsontenorio/mary/src/View/Components/**/*.php",  
     ],
     theme: {
         extend: {},

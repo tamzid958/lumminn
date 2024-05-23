@@ -11,6 +11,8 @@
     "phone_number_placeholder": "11 digit phone number here",
     "address": "Address",
     "address_placeholder": "Home address here",
+    "quantity": "How many pieces do you want?",
+    "pcs": "pcs",
     "shipping_methods": "Shipping Methods",
     "inside_dhaka": "Inside Dhaka",
     "1-2days": "1-2 Days",

@@ -24,7 +24,7 @@ class SendOrders extends ListRecords
     public function table(Table $table): Table
     {
         return $table
-            ->query(Order::query()->where('shipping_status', '=', 'On Hold'))
+            ->query(Order::query()->where('shipping_status', '=', 'On Hold')->where('is_confirmed', '=', true))
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->numeric(),
@@ -82,6 +82,6 @@ class SendOrders extends ListRecords
 
     protected function getTableQuery(): ?Builder
     {
-        return Order::query()->where('shipping_status', '=', 'On Hold');
+        return Order::query()->where('shipping_status', '=', 'On Hold')->where('is_confirmed', '=', true);
     }
 }

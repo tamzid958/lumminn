@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Discount;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\PaymentProvider;
 use App\Models\Product;
 use App\Models\ShippingProvider;
+use App\Providers\DiscountProvider;
 use App\Providers\OrderServiceProvider;
 use App\Providers\PaymentServiceProvider;
 use App\Utils\StringUtil;
@@ -36,7 +38,7 @@ class OrderController extends Controller
             'address' => 'required|string',
             'shipping_class' => 'required|string',
             'payment_provider' => 'required|string',
-            'quantity' => 'required|numeric|min:1',
+            'quantity' => 'required|numeric|min:1|max:5',
             'product_id' => 'required|numeric'
         ]);
 
@@ -49,9 +51,11 @@ class OrderController extends Controller
 
             $order = new Order();
 
+            $product = Product::query()->find($productId);
+
             $order->total_amount = $orderItem['price'] * $orderItem['quantity'];
             $order->additional_amount = 0;
-            $order->discount_amount = 0;
+            $order->discount_amount = DiscountProvider::discountAmount($product, $orderItem['quantity']);
 
             $freeShipping =  OrderServiceProvider::checkIfFreeShippingProduct($productId);
             

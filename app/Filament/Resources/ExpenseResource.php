@@ -29,6 +29,7 @@ class ExpenseResource extends Resource
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('amount')
+                    ->prefix('৳')
                     ->required()
                     ->numeric(),
                 Forms\Components\Textarea::make('description')
@@ -53,10 +54,11 @@ class ExpenseResource extends Resource
                 Tables\Columns\TextColumn::make('description')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('amount')
+                    ->prefix('৳')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('expense_date')
-                    ->dateTime()
+                    ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->dateTime()

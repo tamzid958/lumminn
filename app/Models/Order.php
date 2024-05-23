@@ -37,7 +37,8 @@ class Order extends Model
         'payment_provider_id',
         'note',
         'attachment',
-        'invoice_id'
+        'invoice_id',
+        'is_confirmed'
     ];
 
     protected static function boot()
@@ -78,6 +79,7 @@ class Order extends Model
             'gateway_response' => 'array',
             'note' => 'array',
             'attachment' => 'array',
+            'is_confirmed' => 'boolean'
         ];
     }
 }

@@ -32,7 +32,11 @@
         }
     }
 
+    $after_discount_price = \App\Providers\DiscountProvider::priceAfterDiscount($product);
+
 @endphp
+
+
 @if ($product)
     <form action="/order/create" method="POST">
         @csrf
@@ -42,43 +46,31 @@
                 <p class="text-gray-500">{{ __('order.summary') }}</p>
                 <div class="mt-8 space-y-3 rounded-lg border bg-base-300 px-2 py-3 sm:px-6">
                     <div class="flex md:flex-row flex-col rounded-lg bg-base-400 justify-between">
-                        <div class="flex flex-row">
+                        <div class="flex flex-row items-center">
                             <img class="m-2 h-28 w-32 rounded-md border object-cover object-center"
                                 src="{{ asset('storage/' . $product->main_photo) }}" alt="{{ $product->name }}" />
                             <div class="flex w-full flex-col px-4 py-4">
                                 <span class="font-semibold">{{ $product->name }}</span>
-                                <p class="text-lg font-bold my-1">
-                                    {{ Number::currency($product->sale_price, in: 'BDT', locale: $locale) }}</p>
-                                <div class="max-w-xs rounded-md w-fit p-1 border-black border-solid border-2">
-                                    <div class="relative flex items-center">
-                                        <button type="button" id="decrement-button"
-                                            data-input-counter-decrement="counter-input"
-                                            class="flex-shrink-0 bg-gray-700 hover:bg-gray-600 border-gray-600 inline-flex items-center justify-center border rounded-md h-5 w-5 focus:ring-gray-700 focus:ring-2 focus:outline-none">
-                                            <svg class="w-2.5 h-2.5 text-white" aria-hidden="true"
-                                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
-                                                <path stroke="currentColor" stroke-linecap="round"
-                                                    stroke-linejoin="round" stroke-width="2" d="M1 1h16" />
-                                            </svg>
-                                        </button>
-
-                                        <input type="text" name="quantity" id="counter-input" data-input-counter
-                                            class="flex-shrink-0 text-gray-900 border-0 bg-transparent text-sm font-normal focus:outline-none focus:ring-0 max-w-[2.5rem] text-center"
-                                            placeholder="" value="1" required readonly />
-                                        <button type="button" id="increment-button"
-                                            data-input-counter-increment="counter-input"
-                                            class="flex-shrink-0 bg-gray-700 hover:bg-gray-600 border-gray-600 inline-flex items-center justify-center border rounded-md h-5 w-5 focus:ring-gray-700 focus:ring-2 focus:outline-none">
-                                            <svg class="w-2.5 h-2.5 text-white" aria-hidden="true"
-                                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
-                                                <path stroke="currentColor" stroke-linecap="round"
-                                                    stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16" />
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </div>
+                                @if ($after_discount_price >= $product->sale_price)
+                                    <p class="text-lg font-bold my-1">
+                                        {{ Number::currency($product->sale_price, in: 'BDT', locale: $locale) }}
+                                    </p>
+                                @else
+                                    <p class="my-1">
+                                        <span class="text-lg font-bold text-red-800">
+                                            {{ Number::currency($after_discount_price, in: 'BDT', locale: $locale) }}
+                                        </span>
+                                        <br>
+                                        <span class="text-base line-through">
+                                            {{ Number::currency($product->sale_price, in: 'BDT', locale: $locale) }}
+                                        </span>
+                                    </p>
+                                @endif
 
                             </div>
                         </div>
-                        <a class="btn my-auto" onclick="see_description.showModal()">{{ __('description') }}</a>
+                        <a class="btn btn-neutral my-auto"
+                            onclick="see_description.showModal()">{{ __('description') }}</a>
                         <dialog id="see_description" class="modal">
                             <div class="modal-box">
                                 <h3 class="font-bold text-lg">{!! $product->name !!}</h3>
@@ -110,9 +102,9 @@
                         @endphp
 
                         <div id="slide-{{ $photo }}" class="carousel-item relative w-full rounded-md"
-                            style="height: 315px">
-                            <img src="{{ asset('storage/' . $photo) }}" height="315"
-                                class="w-full rounded-md object-contain h-full mt-5 bg-base-300" />
+                            style="height: 355px">
+                            <img src="{{ asset('storage/' . $photo) }}"
+                                class="w-full rounded-md object-contain h-full p-2 mt-5 bg-base-300" />
                             <div
                                 class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
                                 <a href="#slide-{{ $adjacentStrings['previous'] }}" class="btn btn-circle">❮</a>
@@ -209,6 +201,39 @@
                         </div>
                     </div>
 
+                    <div class="w-full mx-auto">
+                        <div class="flex justify-between mt-4 mb-2">
+                            <label for="quantity" class="block text-sm font-medium">{{ __('quantity') }}</label>
+                            <x-field-error :name="'quantity'" />
+                        </div>
+                        <div class="relative">
+                            <select id="quantity" name="quantity"
+                                class="w-full rounded-md border @error('quantity') is-invalid border-red-600 @enderror px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500 appearance-none">
+                                @foreach (range(1, 5) as $number)
+                                    <option value="{{ $number }}"
+                                        @if ($number === 1) selected @endif>
+                                        {{ Number::format($number, locale: $locale) }} {{ __('pcs') }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
+                                <svg class="w-5 h-5 text-gray-400 opacity-50" viewBox="0 0 100 100"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="19" y="18.92" width="60" height="16" rx="4"
+                                        ry="4" />
+                                    <rect x="19" y="40.92" width="27" height="16" rx="4"
+                                        ry="4" />
+                                    <rect x="19" y="62.92" width="27" height="16" rx="4"
+                                        ry="4" />
+                                    <rect x="52" y="40.92" width="27" height="16" rx="4"
+                                        ry="4" />
+                                    <rect x="52" y="62.92" width="27" height="16" rx="4"
+                                        ry="4" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="flex justify-between mt-8 mb-2 items-center">
                         <p class="text-lg font-medium">{{ __('shipping_methods') }}</p>
                         <x-field-error :name="'shipping_class'" />
@@ -292,7 +317,6 @@
                     class="mt-4 mb-6 w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white">
                     {{ __('place_order') }}
                 </button>
-                <img src="{{ asset('checkout.png') }}" class="mx-auto h-12" />
             </div>
         </div>
     </form>
@@ -302,32 +326,17 @@
             calculate();
         });
 
-        document.getElementById('increment-button').addEventListener('click', function() {
-            let input = document.getElementById('counter-input');
-            let value = parseInt(input.value, 10);
-            value = isNaN(value) ? 0 : value;
-            value = Math.min(10, value + 1);
-            input.value = value;
-            calculate();
-        });
-
-        document.getElementById('decrement-button').addEventListener('click', function() {
-            let input = document.getElementById('counter-input');
-            let value = parseInt(input.value, 10);
-            value = isNaN(value) ? 0 : value;
-            value = Math.max(1, value - 1); // Ensure minimum value is 1
-            input.value = value;
-            calculate();
-        });
-
         let shippingClassRadios = document.getElementsByName('shipping_class');
         shippingClassRadios.forEach(function(radio) {
             radio.addEventListener('change', calculate);
         });
 
+        var quantity = document.getElementById('quantity');
+        quantity.addEventListener('change', calculate);
+
         function calculate() {
             let productId = document.getElementById('product_id').value;
-            let quantity = document.getElementById('counter-input').value;
+            let quantity = document.getElementById('quantity').value;
             let shipping_class = document.querySelector('input[name="shipping_class"]:checked')?.value;
 
             axios.post("/product/calculate", {
@@ -335,15 +344,16 @@
                     shipping_class: shipping_class,
                     quantity: quantity,
                 })
-                .then(function(response) {
+                .then(function({
+                    data
+                }) {
                     let subTotalElement = document.getElementById('sub_total');
                     let shippingChargeElement = document.getElementById('shipping_charge');
                     let totalElement = document.getElementById('total');
 
-                    subTotalElement.textContent = response.data.sub_total;
-                    shippingChargeElement.textContent = response.data.shipping_charge;
-                    totalElement.textContent = response.data.total;
-
+                    subTotalElement.textContent = data.sub_total;
+                    shippingChargeElement.textContent = data.shipping_charge;
+                    totalElement.textContent = data.total;
                 })
                 .catch(function(error) {
                     console.error(error);

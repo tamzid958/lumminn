@@ -29,6 +29,7 @@ class InvestmentResource extends Resource
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('amount')
+                    ->prefix('৳')
                     ->required()
                     ->numeric(),
                 Forms\Components\TextInput::make('description')
@@ -50,6 +51,7 @@ class InvestmentResource extends Resource
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('amount')
+                    ->prefix('৳')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('description')

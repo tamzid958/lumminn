@@ -4,8 +4,72 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0b7db66aedc6ba5f96c4bd543f3ed4ee",
+    "content-hash": "5e6035caeefa976ef50adff657fe1970",
     "packages": [
+        {
+            "name": "andrewdwallo/filament-selectify",
+            "version": "v2.0.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/andrewdwallo/filament-selectify.git",
+                "reference": "8d83fdc9c06f14a04060076ed9d809e6363abfc4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/andrewdwallo/filament-selectify/zipball/8d83fdc9c06f14a04060076ed9d809e6363abfc4",
+                "reference": "8d83fdc9c06f14a04060076ed9d809e6363abfc4",
+                "shasum": ""
+            },
+            "require": {
+                "filament/forms": "^3.0",
+                "php": "^8.1",
+                "spatie/laravel-package-tools": "^1.15.0"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.0",
+                "nunomaduro/collision": "^7.9",
+                "orchestra/testbench": "^8.0",
+                "pestphp/pest": "^2.0",
+                "pestphp/pest-plugin-arch": "^2.0",
+                "pestphp/pest-plugin-laravel": "^2.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Wallo\\FilamentSelectify\\FilamentSelectifyServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Wallo\\FilamentSelectify\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Andrew Wallo",
+                    "email": "andrewdwallo@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "This is my package filament-selectify",
+            "homepage": "https://github.com/andrewdwallo/filament-selectify",
+            "keywords": [
+                "andrewdwallo",
+                "filament-selectify",
+                "laravel"
+            ],
+            "support": {
+                "issues": "https://github.com/andrewdwallo/filament-selectify/issues",
+                "source": "https://github.com/andrewdwallo/filament-selectify/tree/v2.0.7"
+            },
+            "time": "2024-02-26T03:11:42+00:00"
+        },
         {
             "name": "anourvalar/eloquent-serialize",
             "version": "1.2.22",
@@ -10522,6 +10586,64 @@
                 "source": "https://github.com/webmozarts/assert/tree/1.11.0"
             },
             "time": "2022-06-03T18:03:27+00:00"
+        },
+        {
+            "name": "yebor974/filament-renew-password",
+            "version": "1.2.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/yebor974/filament-renew-password.git",
+                "reference": "39b89cd9c5ce1b411d164265006efc6f820fb0c9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/yebor974/filament-renew-password/zipball/39b89cd9c5ce1b411d164265006efc6f820fb0c9",
+                "reference": "39b89cd9c5ce1b411d164265006efc6f820fb0c9",
+                "shasum": ""
+            },
+            "require": {
+                "filament/filament": "^3.0",
+                "illuminate/contracts": "^10.0|^11.0",
+                "illuminate/support": "^10.0|^11.0",
+                "illuminate/validation": "^10.0|^11.0",
+                "php": "^8.1",
+                "spatie/laravel-package-tools": "^1.16"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Yebor974\\Filament\\RenewPassword\\FilamentRenewPasswordServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Yebor974\\Filament\\RenewPassword\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Julien BOYER",
+                    "email": "contact@julienboyer.re"
+                }
+            ],
+            "description": "Package for manage recurring renew password",
+            "keywords": [
+                "filament",
+                "laravel",
+                "password",
+                "renew"
+            ],
+            "support": {
+                "issues": "https://github.com/yebor974/filament-renew-password/issues",
+                "source": "https://github.com/yebor974/filament-renew-password/tree/1.2.2"
+            },
+            "time": "2024-04-29T10:08:24+00:00"
         },
         {
             "name": "ysfkaya/filament-phone-input",
