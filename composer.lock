@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d947923c155b0a5856c1f1ac04074ed1",
+    "content-hash": "724d287c293d31119ce6e123dcdcc8f8",
     "packages": [
         {
             "name": "andrewdwallo/filament-selectify",
@@ -13858,7 +13858,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.0",
+        "php": "^8.2",
         "ext-calendar": "*",
         "ext-openssl": "*"
     },
