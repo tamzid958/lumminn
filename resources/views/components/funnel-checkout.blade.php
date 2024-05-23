@@ -38,7 +38,7 @@
 
 
 @if ($product)
-    <form action="/order/create" method="POST">
+    <form action="/order/create" method="POST" id="create-order">
         @csrf
         <div class="grid sm:px-10 lg:grid-cols-2 lg:px-20 xl:px-32 max-w-7xl mx-auto rounded-md card bg-base-200 pb-4">
             <div class="px-4 pt-8">
@@ -313,7 +313,7 @@
                         </p>
                     </div>
                 </div>
-                <button type="submit"
+                <button type="submit" id="submit-create-order"
                     class="mt-4 mb-6 w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white">
                     {{ __('place_order') }}
                 </button>
@@ -324,6 +324,10 @@
     <script>
         document.addEventListener("DOMContentLoaded", function(event) {
             calculate();
+        });
+
+        document.getElementById("create-order").addEventListener("submit", function(event) {
+            document.getElementById("submit-create-order").disabled = true;
         });
 
         let shippingClassRadios = document.getElementsByName('shipping_class');
