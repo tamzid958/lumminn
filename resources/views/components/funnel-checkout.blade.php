@@ -208,7 +208,7 @@
                         </div>
                         <div class="relative">
                             <select id="quantity" name="quantity"
-                                class="w-full rounded-md border @error('quantity') is-invalid border-red-600 @enderror px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500 appearance-none">
+                                class="w-full rounded-md border @error('quantity') is-invalid border-red-600 @enderror px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500 appearance-none bg-white">
                                 @foreach (range(1, 5) as $number)
                                     <option value="{{ $number }}"
                                         @if ($number === 1) selected @endif>
