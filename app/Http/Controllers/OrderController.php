@@ -42,7 +42,7 @@ class OrderController extends Controller
             'product_id' => 'required|numeric'
         ]);
 
-        try {
+      
             $productId = $request->input('product_id');
             $shippingClass = $request->input('shipping_class');
             $paymentProvider = $request->input('payment_provider');
@@ -123,9 +123,7 @@ class OrderController extends Controller
                     return redirect('/order/fail-or-cancel/' . $createdOrder->invoice_id);
                 }
             }
-        } catch (Exception $e) {
-            abort(500, 'Internal Server Error');
-        }
+    
     }
 
     public function failOrCancel($invoice_id, Request $request)
