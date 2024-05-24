@@ -55,6 +55,7 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('id')
                     ->numeric(),
                 Tables\Columns\TextColumn::make('name')
+                    ->description(fn(Order $record): string => $record->address)
                     ->searchable()
                     ->copyable(),
                 Tables\Columns\TextColumn::make('phone_number')
@@ -95,7 +96,8 @@ class OrderResource extends Resource
                     ->options(ShippingStatus::class),
                 Tables\Filters\SelectFilter::make('pay_status')
                     ->options(PayStatus::class),
-                Tables\Filters\TernaryFilter::make('is_confirmed'),
+                Tables\Filters\TernaryFilter::make('is_confirmed')
+                    ->label('Confirmation'),
                 DateRangeFilter::make('created_at')
                     ->autoApply()
                     ->withIndicator()
