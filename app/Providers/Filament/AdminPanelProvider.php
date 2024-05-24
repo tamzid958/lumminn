@@ -10,6 +10,7 @@ use App\Filament\Resources\OrderResource\Widgets\TotalSaleBasedOnMonth;
 use App\Filament\Resources\OrderResource\Widgets\ShippingClassRatio;
 use App\Filament\Widgets\Metrics;
 use App\Http\Middleware\LocaleMiddleware;
+use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -78,7 +79,8 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->plugins([
                 FilamentSpatieLaravelHealthPlugin::make(),
-                FilamentApexChartsPlugin::make()
+                FilamentApexChartsPlugin::make(),
+                FilamentShieldPlugin::make()
             ])
             ->maxContentWidth(MaxWidth::Full)
             ->sidebarCollapsibleOnDesktop()

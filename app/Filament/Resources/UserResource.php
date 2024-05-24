@@ -19,6 +19,9 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-user-circle';
 
+    protected static ?string $navigationGroup = 'User Management';
+
+
     public static function form(Form $form): Form
     {
         return $form
@@ -36,6 +39,13 @@ class UserResource extends Resource
                     ->required()
                     ->maxLength(255)
                     ->hiddenOn(['view', 'edit']),
+                Forms\Components\Select::make('roles')
+                    ->relationship('roles', 'name')
+                    ->searchable()
+                    ->multiple()
+                    ->preload()
+                    ->columnSpanFull()
+                    ->required()
             ]);
     }
 

@@ -12,6 +12,7 @@
         "ext-calendar": "*",
         "ext-openssl": "*",
         "andrewdwallo/filament-selectify": "*",
+        "bezhansalleh/filament-shield": "^3.2",
         "carlos-meneses/laravel-mpdf": "^2.1",
         "codewithdennis/filament-select-tree": "^3.1",
         "filament/filament": "^3.2",
