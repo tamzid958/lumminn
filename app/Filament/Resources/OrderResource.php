@@ -56,6 +56,7 @@ class OrderResource extends Resource
                     ->numeric(),
                 Tables\Columns\TextColumn::make('name')
                     ->description(fn(Order $record): string => $record->address)
+                    ->wrap()
                     ->searchable()
                     ->copyable(),
                 Tables\Columns\TextColumn::make('phone_number')
