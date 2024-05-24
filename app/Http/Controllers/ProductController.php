@@ -36,7 +36,7 @@ class ProductController extends Controller
         $shipping_class = $request->input('shipping_class');
 
         $product = Product::query()->find($product_id);
-        
+
         $inside_dhaka_max_charge = ShippingProvider::query()->max('inside_dhaka_charge');
         $outside_dhaka_max_charge = ShippingProvider::query()->max('outside_dhaka_charge');
 

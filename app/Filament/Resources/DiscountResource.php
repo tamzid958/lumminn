@@ -52,14 +52,14 @@ class DiscountResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('product.name')
-                ->label('Product'),
+                    ->label('Product'),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('type')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('value')
                     ->numeric(),
-                Tables\Columns\ToggleColumn::make('active'),  
+                Tables\Columns\ToggleColumn::make('active'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

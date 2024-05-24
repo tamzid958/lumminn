@@ -5,8 +5,8 @@ namespace App\Models;
 use App\Models\Enum\DiscountType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Discount extends Model
 {
@@ -20,7 +20,7 @@ class Discount extends Model
         return $this->hasOne(Product::class, "id", "product_id");
     }
 
-    protected function casts():  array
+    protected function casts(): array
     {
         return [
             'type' => DiscountType::class,
