@@ -43,7 +43,7 @@
         <div class="grid sm:px-10 lg:grid-cols-2 lg:px-20 xl:px-32 max-w-7xl mx-auto rounded-md card bg-base-200 pb-4">
             <div class="px-4 pt-8">
                 <p class="text-xl font-medium">{{ __('order.title') }}</p>
-                <p class="text-gray-500">{{ __('order.summary') }}</p>
+                <p class="text-neutral">{{ __('order.summary') }}</p>
                 <div class="mt-8 space-y-3 rounded-lg border bg-base-300 px-2 py-3 sm:px-6">
                     <div class="flex md:flex-row flex-col rounded-lg bg-base-400 justify-between">
                         <div class="flex flex-row items-center">
@@ -57,7 +57,7 @@
                                     </p>
                                 @else
                                     <p class="my-1">
-                                        <span class="text-lg font-bold text-red-800">
+                                        <span class="text-lg font-bold text-primary">
                                             {{ Number::currency($after_discount_price, in: 'BDT', locale: $locale) }}
                                         </span>
                                         <br>
@@ -117,7 +117,7 @@
             </div>
             <div class="mt-8 px-4 pt-8 lg:mt-0">
                 <p class="text-xl font-medium">{{ __('personal.title') }}</p>
-                <p class="text-gray-500">{{ __('personal.summary') }}</p>
+                <p class="text-neutral">{{ __('personal.summary') }}</p>
                 <div class="">
                     <input type="hidden" id="product_id" name="product_id" value="{{ $product->id }}">
                     <div class="flex justify-between mt-8 mb-2">
@@ -126,7 +126,7 @@
                     </div>
                     <div class="relative">
                         <input type="text" id="name" name="name"
-                            class="@error('name') is-invalid border-red-600 @enderror w-full rounded-md border px-4 py-3 pl-11 text-sm uppercase shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500"
+                            class="@error('name') is-invalid border-error @enderror w-full rounded-md border px-4 py-3 pl-11 text-sm uppercase shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500"
                             placeholder="{{ __('full_name_placeholder') }}" />
                         <div class="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none"
@@ -143,7 +143,7 @@
 
                     <div class="relative">
                         <input type="tel" id="phone_number" name="phone_number"
-                            class="w-full rounded-md border uppercase @error('phone_number') is-invalid border-red-600 @enderror px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500"
+                            class="w-full rounded-md border uppercase @error('phone_number') is-invalid border-error @enderror px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500"
                             placeholder="{{ __('phone_number_placeholder') }}" />
                         <div class="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
 
@@ -189,7 +189,7 @@
                     </div>
                     <div class="relative">
                         <input type="text" id="address" name="address"
-                            class="w-full rounded-md border @error('address') is-invalid border-red-600 @enderror px-4 py-3 pl-11 text-sm uppercase shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500"
+                            class="w-full rounded-md border @error('address') is-invalid border-error @enderror px-4 py-3 pl-11 text-sm uppercase shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500"
                             placeholder="{{ __('address_placeholder') }}" />
                         <div class="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
                             <svg class="h-4 w-4 text-gray-400 icon" viewBox="0 0 1024 1024" fill="#000000"
@@ -208,7 +208,7 @@
                         </div>
                         <div class="relative">
                             <select id="quantity" name="quantity"
-                                class="w-full rounded-md border @error('quantity') is-invalid border-red-600 @enderror px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500 appearance-none bg-white">
+                                class="w-full rounded-md border @error('quantity') is-invalid border-red-600 @enderror px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500 appearance-none bg-ghost">
                                 @foreach (range(1, 5) as $number)
                                     <option value="{{ $number }}"
                                         @if ($number === 1) selected @endif>
@@ -243,9 +243,10 @@
                             <input type="radio" id="inside-dhaka" name="shipping_class" value="inside-dhaka"
                                 class="hidden peer" />
                             <label for="inside-dhaka"
-                                class="peer-checked:border-2 peer-checked:border-gray-700 peer-checked:bg-base-300 bg-white flex cursor-pointer select-none rounded-lg border p-4 border-blue-800">
-                                <div class="block">
-                                    <div class="w-full text-lg font-semibold">{{ __('inside_dhaka') }}</div>
+                                class="peer-checked:border-2 peer-checked:border-neutral peer-checked:bg-secondary bg-ghost  flex cursor-pointer select-none rounded-lg border p-4 border-primary">
+                                <div class="block peer-checked:text-secondary-content text-ghost-content">
+                                    <div class="w-full text-lg font-semibold">
+                                        {{ __('inside_dhaka') }}</div>
                                     <div class="w-full">{{ __('1-2days') }}</div>
                                 </div>
                             </label>
@@ -254,9 +255,10 @@
                             <input type="radio" id="outside-dhaka" name="shipping_class" value="outside-dhaka"
                                 class="hidden peer" checked>
                             <label for="outside-dhaka"
-                                class="peer-checked:border-2 peer-checked:border-gray-700 peer-checked:bg-base-300 bg-white flex cursor-pointer select-none rounded-lg border p-4 border-blue-800">
-                                <div class="block">
-                                    <div class="w-full text-lg font-semibold">{{ __('outside_dhaka') }}</div>
+                                class="peer-checked:border-2 peer-checked:border-neutral peer-checked:bg-secondary bg-ghost flex cursor-pointer select-none rounded-lg border p-4 border-primary">
+                                <div class="block peer-checked:text-secondary-content text-ghost-content">
+                                    <div class="w-full text-lg font-semibold">
+                                        {{ __('outside_dhaka') }}</div>
                                     <div class="w-full">{{ __('2-3days') }}</div>
                                 </div>
                             </label>
@@ -272,8 +274,8 @@
                                 value="cash-on-delivery" class="hidden peer"
                                 checked="@if ($is_online_payment_enabled !== 'yes') true @else false @endif" />
                             <label for="cash-on-delivery"
-                                class="peer-checked:border-2 peer-checked:border-gray-700 peer-checked:bg-base-300 bg-white flex cursor-pointer select-none rounded-lg border p-4 border-blue-800">
-                                <div class="block">
+                                class="peer-checked:border-2 peer-checked:border-neutral peer-checked:bg-secondary bg-ghost flex cursor-pointer select-none rounded-lg border p-4 border-primary">
+                                <div class="block peer-checked:text-secondary-content text-ghost-content">
                                     <div class="w-full text-base font-semibold">{{ __('cash_on_delivery') }}</div>
                                 </div>
                             </label>
@@ -283,8 +285,8 @@
                                 <input type="radio" id="online-payment" name="payment_provider"
                                     value="online-payment" class="hidden peer" checked>
                                 <label for="online-payment"
-                                    class="peer-checked:border-2 peer-checked:border-gray-700 peer-checked:bg-base-300 bg-white flex cursor-pointer select-none rounded-lg border p-4 border-blue-800">
-                                    <div class="block">
+                                    class="peer-checked:border-2 peer-checked:border-neutral peer-checked:bg-secondary bg-ghost flex cursor-pointer select-none rounded-lg border p-4 border-primary">
+                                    <div class="block peer-checked:text-secondary-content text-ghost-content">
                                         <div class="w-full text-base font-semibold">{{ __('online_payment') }}</div>
                                     </div>
                                 </label>
@@ -294,27 +296,27 @@
 
 
                     <!-- Total -->
-                    <div class="mt-6 border-t border-b py-2">
+                    <div class="mt-6 border-t border-b border-secondary py-2">
                         <div class="flex items-center justify-between">
-                            <p class="text-sm font-medium text-gray-900">{{ __('subtotal') }}</p>
-                            <p class="font-semibold text-gray-900" id='sub_total'>৳ {{ $product->sale_price }}</p>
+                            <p class="text-sm font-medium text-neutral">{{ __('subtotal') }}</p>
+                            <p class="font-semibold text-neutral" id='sub_total'>৳ {{ $product->sale_price }}</p>
                         </div>
                         <div class="flex items-center justify-between">
-                            <p class="text-sm font-medium text-gray-900">{{ __('shipping') }}</p>
-                            <p class="font-semibold text-gray-900" id='shipping_charge'>
+                            <p class="text-sm font-medium text-neutral">{{ __('shipping') }}</p>
+                            <p class="font-semibold text-neutral" id='shipping_charge'>
                                 {{ __($product->is_shipping_charge_applicable ? 'will_be_calculated' : 'free_delivery') }}
                             </p>
                         </div>
                     </div>
                     <div class="mt-6 flex items-center justify-between">
-                        <p class="text-sm font-medium text-gray-900">{{ __('total') }}</p>
-                        <p class="text-2xl font-semibold text-gray-900" id='total'>
+                        <p class="text-sm font-medium text-neutral">{{ __('total') }}</p>
+                        <p class="text-2xl font-semibold text-neutral" id='total'>
                             {{ $product->is_shipping_charge_applicable ? __('will_be_calculated') : Number::currency($product->sale_price, in: 'BDT', locale: $locale) }}
                         </p>
                     </div>
                 </div>
-                <button type="submit" id="submit-create-order"
-                    class="mt-4 mb-6 w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white">
+                <button type="submit" id="submit-create-order" class="mt-4 mb-6 btn btn-block btn-neutral">
+                    <span class=" loading-spinner" id='create-order-loading'></span>
                     {{ __('place_order') }}
                 </button>
             </div>
@@ -328,6 +330,8 @@
 
         document.getElementById("create-order").addEventListener("submit", function(event) {
             document.getElementById("submit-create-order").disabled = true;
+            var element = document.getElementById('create-order-loading');
+            element.classList.add('loading');
         });
 
         let shippingClassRadios = document.getElementsByName('shipping_class');
