@@ -34,6 +34,9 @@ class UserResource extends Resource
                     ->placeholder('user.name@lumminn.com')
                     ->required()
                     ->maxLength(255),
+                Forms\Components\DateTimePicker::make('email_verified_at')
+                    ->required()
+                    ->hiddenOn(['create']),
                 Forms\Components\TextInput::make('password')
                     ->password()
                     ->required()
