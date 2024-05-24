@@ -7,6 +7,7 @@ use App\Jobs\CheckDeliveryStatusJob;
 use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Support\Facades\Gate;
 
 class ListOrders extends ListRecords
 {
@@ -28,7 +29,7 @@ class ListOrders extends ListRecords
                     ->color('primary')
                     ->action(fn() => dispatch(new CheckDeliveryStatusJob())),
             ],
-            )->label('Manage Orders')->button()->color('success')
+            )->label('Manage Orders')->button()->color('success')->visible(fn () => Gate::allows('update_order'))
         ];
     }
 }

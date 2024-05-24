@@ -27,6 +27,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use libphonenumber\PhoneNumberType;
 use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 use Mccarlosen\LaravelMpdf\Facades\LaravelMpdf;
@@ -109,6 +110,7 @@ class OrderResource extends Resource
             ])
             ->actions([
                 Tables\Actions\Action::make('confirm')
+                    ->visible(fn () => Gate::allows('update_order'))
                     ->label(fn($record) => $record->is_confirmed ? "Confirmed" : "Confirm Order")
                     ->color(fn($record) => $record->is_confirmed ? "success" : "warning")
                     ->icon(fn($record) => $record->is_confirmed ? 'heroicon-o-check-badge' : 'heroicon-o-phone')
@@ -136,7 +138,6 @@ class OrderResource extends Resource
                         ];
                     })
                     ->form([
-
                         Forms\Components\TextInput::make('name')
                             ->required()
                             ->maxLength(255)
