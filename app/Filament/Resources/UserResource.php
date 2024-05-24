@@ -12,15 +12,12 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Forms\Components\Actions\Action;
+
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-user-circle';
-
-    protected static ?string $navigationGroup = 'User Management';
-
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
     {
@@ -31,18 +28,15 @@ class UserResource extends Resource
                     ->maxLength(255),
                 Forms\Components\TextInput::make('email')
                     ->email()
-                    ->placeholder('user.name@lumminn.com')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\DatePicker::make('email_verified_at')
-                    ->required()
-                    ->native(false)
-                    ->hiddenOn(['create']),
+                Forms\Components\DateTimePicker::make('email_verified_at'),
                 Forms\Components\TextInput::make('password')
                     ->password()
                     ->required()
                     ->maxLength(255)
-                    ->hiddenOn(['view', 'edit']),
+                    ->disabledOn(['edit', 'view']),
+                Forms\Components\DateTimePicker::make('last_renew_password_at'),
                 Forms\Components\Select::make('roles')
                     ->relationship('roles', 'name')
                     ->searchable()
