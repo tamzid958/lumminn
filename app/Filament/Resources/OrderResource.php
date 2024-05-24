@@ -121,14 +121,7 @@ class OrderResource extends Resource
                             ->where('order_items.order_id', $orderId)
                             ->whereNotNull('order_items.product_id')
                             ->get();
-
-                        $optionalOrderItems = DB::table('order_items')
-                            ->join('optional_products', 'order_items.optional_product_id', '=', 'optional_products.id')
-                            ->select('order_items.quantity', 'order_items.optional_product_id as id')
-                            ->where('order_items.order_id', $orderId)
-                            ->whereNotNull('order_items.optional_product_id')
-                            ->get();
-
+                            
                         return [
                             'name' => $record['name'],
                             'phone_number' => $record['phone_number'],
