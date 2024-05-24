@@ -133,8 +133,8 @@ class OrderResource extends Resource
                             'name' => $record['name'],
                             'phone_number' => $record['phone_number'],
                             'address' => $record['address'],
+                            'shipping_class' => $record['shipping_class'],
                             'products' => $mandatoryOrderItems->map(fn($item) => (array)$item)->all(),
-                            'optional_products' => $optionalOrderItems->map(fn($item) => (array)$item)->all(),
                         ];
                     })
                     ->form([
@@ -157,7 +157,10 @@ class OrderResource extends Resource
                             ->required()
                             ->maxLength(255)
                             ->columnSpanFull(),
-
+                        Forms\Components\Select::make('shipping_class')
+                            ->label("Class")
+                            ->options(ShippingClass::class)
+                            ->required(),
                         Forms\Components\Repeater::make('products')
                             ->label('Mandatory')
                             ->minItems(1)
@@ -181,30 +184,6 @@ class OrderResource extends Resource
                             ->reorderable(false)
                             ->columnSpan(2)
                             ->required(),
-                        Forms\Components\Repeater::make('optional_products')
-                            ->label('Optional')
-                            ->defaultItems(1)
-                            ->schema([
-                                Forms\Components\Select::make('id')
-                                    ->label('Product')
-                                    ->options(function (callable $get) {
-                                        $product = OptionalProduct::all();
-                                        return $product->pluck('title', 'id');
-                                    })
-                                    ->searchable()
-                                    ->required()
-                                    ->columnSpan(1),
-                                Forms\Components\TextInput::make('quantity')
-                                    ->numeric()
-                                    ->required()
-                                    ->default(1)
-                                    ->minValue(1)
-                                    ->columnSpan(1)
-                            ])
-                            ->columns()
-                            ->reorderable(false)
-                            ->columnSpan(2)
-                            ->nullable()
                     ])
                     ->disabledForm()
                     ->disabled(fn($record): ?bool => $record['is_confirmed'])
