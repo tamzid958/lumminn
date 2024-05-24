@@ -93,7 +93,7 @@ class MonthlyExpenseIncome extends ApexChartWidget
 
                 ],
             ],
-            'colors' => ['#FF4560','#008FFB'],
+            'colors' => ['#FF4560', '#008FFB'],
             'plotOptions' => [
                 'bar' => [
                     'borderRadiusApplication' => 'end',

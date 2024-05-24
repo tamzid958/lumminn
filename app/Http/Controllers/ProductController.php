@@ -6,9 +6,9 @@ use App\Models\Product;
 use App\Models\ShippingProvider;
 use App\Providers\DiscountProvider;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
-use Illuminate\Support\Number;
 use Illuminate\Support\Facades\Lang;
+use Illuminate\Support\Number;
+use Illuminate\View\View;
 
 class ProductController extends Controller
 {
@@ -36,7 +36,7 @@ class ProductController extends Controller
         $shipping_class = $request->input('shipping_class');
 
         $product = Product::query()->find($product_id);
-        
+
         $inside_dhaka_max_charge = ShippingProvider::query()->max('inside_dhaka_charge');
         $outside_dhaka_max_charge = ShippingProvider::query()->max('outside_dhaka_charge');
 
@@ -48,7 +48,7 @@ class ProductController extends Controller
         } else {
             $shipping_charge = match ($shipping_class) {
                 'inside-dhaka' => Number::currency($inside_dhaka_max_charge, in: 'BDT', locale: $locale),
-                'outside-dhaka' => Number::currency($outside_dhaka_max_charge, in: 'BDT', locale: $locale) ,
+                'outside-dhaka' => Number::currency($outside_dhaka_max_charge, in: 'BDT', locale: $locale),
                 default => Lang::get('will_be_calculated', locale: $locale)
             };
             $total = match ($shipping_class) {

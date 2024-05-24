@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\BasicConfiguration;
 use App\Models\Product;
-use App\Models\Discount;
-use App\Providers\DiscountProvider;
 use Illuminate\View\View;
 
 class IndexController extends Controller

@@ -17,16 +17,16 @@ class ListOrders extends ListRecords
         return [
             Actions\CreateAction::make(),
             Actions\ActionGroup::make([
-            Action::make('send')
-                ->label('Send Orders')
-                ->icon('heroicon-o-paper-airplane')
-                ->color('success')
-                ->url(OrderResource::getUrl('send')),
-            Action::make('sync')
-                ->label('Sync Orders')
-                ->icon('heroicon-o-arrow-path')
-                ->color('primary')
-                ->action(fn() => dispatch(new CheckDeliveryStatusJob())),
+                Action::make('send')
+                    ->label('Send Orders')
+                    ->icon('heroicon-o-paper-airplane')
+                    ->color('success')
+                    ->url(OrderResource::getUrl('send')),
+                Action::make('sync')
+                    ->label('Sync Orders')
+                    ->icon('heroicon-o-arrow-path')
+                    ->color('primary')
+                    ->action(fn() => dispatch(new CheckDeliveryStatusJob())),
             ],
             )->label('Manage Orders')->button()->color('success')
         ];

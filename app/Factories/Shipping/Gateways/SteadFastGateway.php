@@ -15,7 +15,7 @@ class SteadFastGateway extends BaseShippingGateway implements ShippingGateway
     {
         try {
             $shipping_provider = ShippingProvider::query()->find($order['shipping_provider_id']);
-            
+
             $meta = $shipping_provider->meta;
 
             $baseUrl = $meta['baseUrl'];
@@ -77,7 +77,7 @@ class SteadFastGateway extends BaseShippingGateway implements ShippingGateway
                 if ($order['shipping_status'] === null) {
                     return;
                 }
-                
+
                 parent::check($order);
             } else {
                 dump("response body error " . $body);

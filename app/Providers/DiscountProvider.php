@@ -3,22 +3,15 @@
 namespace App\Providers;
 
 use App\Models\Discount;
-use App\Models\Product;
-use Ramsey\Uuid\Type\Decimal;
 use App\Models\Enum\DiscountType;
+use App\Models\Product;
 
 class DiscountProvider
 {
 
-    public static function getDiscount(Product $product): Discount|null
-    {
-        return Discount::query()->where('product_id', $product->id)->where('active', true)->first();
-    }
-
-
     public static function priceAfterDiscount(Product $product, $quantity = 1)
     {
-        $discount =  DiscountProvider::getDiscount($product);
+        $discount = DiscountProvider::getDiscount($product);
 
         $after_discount_price = $quantity * $product->sale_price;
 
@@ -33,9 +26,14 @@ class DiscountProvider
         return $after_discount_price;
     }
 
+    public static function getDiscount(Product $product): Discount|null
+    {
+        return Discount::query()->where('product_id', $product->id)->where('active', true)->first();
+    }
+
     public static function discountAmount(Product $product, $quantity = 1)
     {
-        $discount =  DiscountProvider::getDiscount($product);
+        $discount = DiscountProvider::getDiscount($product);
 
         $discount_amount = 0;
 
