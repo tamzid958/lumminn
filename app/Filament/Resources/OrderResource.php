@@ -66,6 +66,9 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('pay_amount')
                     ->numeric()
                     ->prefix('৳'),
+                Tables\Columns\TextColumn::make('payment_id')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('paymentProvider.name')
                     ->numeric(),
                 Tables\Columns\TextColumn::make('pay_status')
@@ -74,6 +77,9 @@ class OrderResource extends Resource
                     ->numeric(),
                 Tables\Columns\TextColumn::make('shipping_class')
                     ->badge()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('shipping_id')
+                    ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('shipping_status')
                     ->badge(),
