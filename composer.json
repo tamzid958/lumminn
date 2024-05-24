@@ -28,6 +28,7 @@
         "shuvroroy/filament-spatie-laravel-health": "^2.0",
         "spatie/laravel-pdf": "^1.5",
         "valentin-morice/filament-json-column": "^1.3",
+        "yebor974/filament-renew-password": "^1.2",
         "ysfkaya/filament-phone-input": "^2.3"
     },
     "require-dev": {
