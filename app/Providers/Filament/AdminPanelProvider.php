@@ -7,7 +7,7 @@ use App\Filament\Resources\OrderResource\Widgets\MonthlyExpenseIncome;
 use App\Filament\Resources\OrderResource\Widgets\PayStatusCount;
 use App\Filament\Resources\OrderResource\Widgets\ShippingStatusCount;
 use App\Filament\Resources\OrderResource\Widgets\TotalSaleBasedOnMonth;
-use App\Filament\Resources\ProductResource\Widgets\RevenueByProducts;
+use App\Filament\Resources\OrderResource\Widgets\ShippingClassRatio;
 use App\Filament\Widgets\Metrics;
 use App\Http\Middleware\LocaleMiddleware;
 use Filament\Http\Middleware\Authenticate;
@@ -53,7 +53,7 @@ class AdminPanelProvider extends PanelProvider
                 MonthlyExpenseIncome::class,
                 TotalSaleBasedOnMonth::class,
                 ExpenseByMonth::class,
-                RevenueByProducts::class,
+                ShippingClassRatio::class,
                 ShippingStatusCount::class,
                 PayStatusCount::class,
             ])

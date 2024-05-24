@@ -29,8 +29,14 @@ class PayStatusCount extends ApexChartWidget
      *
      * @return array
      */
+    protected static bool $deferLoading = true;
+
     protected function getOptions(): array
     {
+        if (!$this->readyToLoad) {
+            return [];
+        }
+        
         // Get all enum values as an array
         $enumValues = array_column(PayStatus::cases(), 'value');
 

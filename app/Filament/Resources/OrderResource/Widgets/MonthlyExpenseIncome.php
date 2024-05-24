@@ -29,6 +29,10 @@ class MonthlyExpenseIncome extends ApexChartWidget
      *
      * @return array
      */
+    protected static ?string $pollingInterval = null;
+
+    protected static bool $deferLoading = true;
+
     protected function getFormSchema(): array
     {
         $currentYear = date('Y');

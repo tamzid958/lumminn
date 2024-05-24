@@ -59,7 +59,9 @@ class OrderResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('phone_number')
                     ->searchable()
-                    ->hidden(),
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('address')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('pay_amount')
                     ->numeric()
                     ->prefix('৳'),
@@ -70,14 +72,16 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('shippingProvider.name')
                     ->numeric(),
                 Tables\Columns\TextColumn::make('shipping_class')
-                    ->badge(),
+                    ->badge()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('shipping_status')
                     ->badge(),
                 Tables\Columns\ImageColumn::make('attachment')
                     ->disk('public')
                     ->circular()
                     ->stacked()
-                    ->limitedRemainingText(),
+                    ->limitedRemainingText()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
