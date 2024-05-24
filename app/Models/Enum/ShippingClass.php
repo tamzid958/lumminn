@@ -19,7 +19,7 @@ enum ShippingClass: string implements HasLabel, HasColor
     {
         return match ($this) {
             self::InsideDhaka => 'primary',
-            self::OutsideDhaka => 'secondary',
+            self::OutsideDhaka => 'warning',
         };
     }
 }
