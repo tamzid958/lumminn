@@ -70,6 +70,8 @@ class OrderResource extends Resource
                     ->badge(),
                 Tables\Columns\TextColumn::make('shippingProvider.name')
                     ->numeric(),
+                Tables\Columns\TextColumn::make('shipping_class')
+                    ->badge(),
                 Tables\Columns\TextColumn::make('shipping_status')
                     ->badge(),
                 Tables\Columns\ImageColumn::make('attachment')
@@ -121,7 +123,7 @@ class OrderResource extends Resource
                             ->where('order_items.order_id', $orderId)
                             ->whereNotNull('order_items.product_id')
                             ->get();
-                            
+
                         return [
                             'name' => $record['name'],
                             'phone_number' => $record['phone_number'],
