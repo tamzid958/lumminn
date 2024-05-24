@@ -2,9 +2,10 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ExpenseResource\Pages;
-use App\Filament\Resources\ExpenseResource\RelationManagers;
-use App\Models\Expense;
+use App\Filament\Resources\DiscountResource\Pages;
+use App\Filament\Resources\DiscountResource\RelationManagers;
+use App\Models\Discount;
+use App\Models\Enum\DiscountType;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -12,36 +13,37 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Wallo\FilamentSelectify\Components\ToggleButton;
 
-class ExpenseResource extends Resource
+class DiscountResource extends Resource
 {
-    protected static ?string $model = Expense::class;
+    protected static ?string $model = Discount::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-credit-card';
+    protected static ?string $navigationIcon = 'heroicon-o-receipt-percent';
 
-    protected static ?string $navigationGroup = 'Accounts';
+    protected static ?string $navigationGroup = 'Shop';
+
+    protected static ?int $navigationSort = 6;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('title')
+                Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('amount')
-                    ->prefix('৳')
+                Forms\Components\Select::make('type')
+                    ->options(DiscountType::class)
+                    ->default('Flat')
+                    ->required(),
+                Forms\Components\TextInput::make('value')
+                    ->numeric()
+                    ->required(),
+                Forms\Components\Select::make('product_id')
+                    ->label('Product')
+                    ->relationship('product', 'name')
                     ->required()
-                    ->numeric(),
-                Forms\Components\Textarea::make('description')
-                    ->required()
-                    ->columnSpanFull()
-                    ->maxLength(255),
-                Forms\Components\DatePicker::make('expense_date')
-                    ->required()
-                    ->native(false)
-                    ->weekStartsOnSunday()
-                    ->closeOnDateSelection()
-                    ->maxDate(now())
+                    ->searchable(),
             ]);
     }
 
@@ -49,26 +51,24 @@ class ExpenseResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('title')
+                Tables\Columns\TextColumn::make('product.name')
+                ->label('Product'),
+                Tables\Columns\TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('description')
+                Tables\Columns\TextColumn::make('type')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('amount')
-                    ->prefix('৳')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('expense_date')
-                    ->date()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('deleted_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('value')
+                    ->numeric(),
+                Tables\Columns\ToggleColumn::make('active'),  
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('deleted_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -99,10 +99,10 @@ class ExpenseResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListExpenses::route('/'),
-            'create' => Pages\CreateExpense::route('/create'),
-            'view' => Pages\ViewExpense::route('/{record}'),
-            'edit' => Pages\EditExpense::route('/{record}/edit'),
+            'index' => Pages\ListDiscounts::route('/'),
+            'create' => Pages\CreateDiscount::route('/create'),
+            'view' => Pages\ViewDiscount::route('/{record}'),
+            'edit' => Pages\EditDiscount::route('/{record}/edit'),
         ];
     }
 

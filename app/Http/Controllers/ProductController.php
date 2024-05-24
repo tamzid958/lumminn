@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\ShippingProvider;
+use App\Providers\DiscountProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Number;
@@ -24,7 +25,7 @@ class ProductController extends Controller
 
         // Validate the request
         $request->validate([
-            'quantity' => 'required|integer|min:1|max:10',
+            'quantity' => 'required|integer|min:1|max:5',
             'id' => 'required|numeric|min:0',
             'shipping_class' => 'string'
         ]);
@@ -35,11 +36,11 @@ class ProductController extends Controller
         $shipping_class = $request->input('shipping_class');
 
         $product = Product::query()->find($product_id);
-
+        
         $inside_dhaka_max_charge = ShippingProvider::query()->max('inside_dhaka_charge');
         $outside_dhaka_max_charge = ShippingProvider::query()->max('outside_dhaka_charge');
 
-        $subTotal = $quantity * $product->sale_price;
+        $subTotal = DiscountProvider::priceAfterDiscount($product, $quantity);
 
         if (!$product->is_shipping_charge_applicable) {
             $shipping_charge = Lang::get('free_delivery', locale: $locale);

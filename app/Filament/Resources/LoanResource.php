@@ -29,6 +29,7 @@ class LoanResource extends Resource
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('amount')
+                    ->prefix('৳')
                     ->required()
                     ->numeric(),
                 Forms\Components\TextInput::make('reason')
@@ -59,6 +60,7 @@ class LoanResource extends Resource
                 Tables\Columns\TextColumn::make('reason')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('amount')
+                    ->prefix('৳')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('withdraw_date')

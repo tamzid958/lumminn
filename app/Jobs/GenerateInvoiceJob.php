@@ -59,7 +59,7 @@ class GenerateInvoiceJob implements ShouldQueue
                 ->save(public_path('storage') . '/' . $filename);
 
             Invoice::query()->create([
-                "name" => array_first($packingReceipts->toArray())['id'] . "-" . array_last($packingReceipts->toArray())['id'],
+                "name" => $filename,
                 "file" => $filename
             ]);
 

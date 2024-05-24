@@ -7,13 +7,11 @@ use App\Http\Controllers\ProductController;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware([('lscache:max-age=43200;public;esi=on')])->group(function () {
-    Route::get('/categories/{slug}', [CategoryController::class, 'products']);
-    Route::post('/product/calculate', [ProductController::class, 'calculate']);
-});
+Route::get('/categories/{slug}', [CategoryController::class, 'products']);
 
 Route::get('/', [IndexController::class, 'index'])->name('home');
-   
+
+Route::post('/product/calculate', [ProductController::class, 'calculate']);
 Route::get('/products/{slug}', [ProductController::class, 'view']);
 
 Route::post('/order/create', [OrderController::class, 'create']);

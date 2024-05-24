@@ -31,6 +31,8 @@ use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 use Mccarlosen\LaravelMpdf\Facades\LaravelMpdf;
 use ValentinMorice\FilamentJsonColumn\FilamentJsonColumn;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
+use Illuminate\Support\Facades\DB;
+use Filament\Support\Enums\MaxWidth;
 
 class OrderResource extends Resource
 {
@@ -64,6 +66,7 @@ class OrderResource extends Resource
                             ->columnSpan(1),
                         PhoneInput::make('phone_number')
                             ->onlyCountries(['bd'])
+                            ->defaultCountry('bd')
                             ->validateFor(
                                 country: 'bd',
                                 type: PhoneNumberType::MOBILE,
@@ -75,7 +78,6 @@ class OrderResource extends Resource
                             ->columnSpan(1),
                         Forms\Components\Textarea::make('address')
                             ->required()
-                            ->columnSpan(2)
                             ->maxLength(255)
                             ->disabled(fn(Get $get, Page $livewire): ?bool => $get('shipping_status') !== 'On Hold' &&
                                 $livewire instanceof EditRecord)
@@ -95,6 +97,7 @@ class OrderResource extends Resource
                                         return $product->pluck('name', 'id');
                                     })
                                     ->required()
+                                    ->searchable()
                                     ->columnSpan(1),
                                 Forms\Components\TextInput::make('quantity')
                                     ->numeric()
@@ -119,6 +122,7 @@ class OrderResource extends Resource
                                         $product = OptionalProduct::all();
                                         return $product->pluck('title', 'id');
                                     })
+                                    ->searchable()
                                     ->required()
                                     ->columnSpan(1),
                                 Forms\Components\TextInput::make('quantity')
@@ -301,33 +305,119 @@ class OrderResource extends Resource
                     ->withIndicator()
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('download-invoice')
-                    ->icon('heroicon-o-arrow-down-tray')
-                    ->label("Invoice")
-                    ->action(function (Order $record) {
+                Tables\Actions\Action::make('confirm')
+                ->label(fn($record) => $record->is_confirmed ? "Confirmed": "Confirm Order")
+                ->color(fn($record) => $record->is_confirmed ? "success": "warning")
+                ->icon(fn($record) => $record->is_confirmed ? 'heroicon-o-check-badge': 'heroicon-o-phone')
+                ->slideOver()
+                ->modalSubmitActionLabel('Confirm')
+                ->modalIconColor('warning')
+                ->requiresConfirmation()
+                ->modalDescription('Confirm the order by calling the customer')
+                ->fillForm(function (Order $record) {
+                    $orderId = $record['id'];
 
-                        $pdf = LaravelMpdf::loadView('components.download-invoice',
-                            ['packingReceipts' => [[
-                                'id' => $record['id'],
-                                'name' => $record['name'],
-                                'phone_number' => $record['phone_number'],
-                                'address' => $record['address'],
-                                'shipping_id' => $record['shipping_id'],
-                                'shipping_provider_name' => ShippingProvider::query()->find($record['shipping_provider_id'])->name,
-                                'due_amount' => PaymentProvider::query()->find($record['payment_provider_id'])->slug === 'cash-on-delivery' ? $record['pay_amount'] : 0,
-                            ]]]);
+                    $mandatoryOrderItems = DB::table('order_items')
+                        ->join('products', 'order_items.product_id', '=', 'products.id')
+                        ->select('order_items.quantity', 'order_items.product_id as id')
+                        ->where('order_items.order_id', $orderId)
+                        ->whereNotNull('order_items.product_id')
+                        ->get();
+            
+                    $optionalOrderItems = DB::table('order_items')
+                        ->join('optional_products', 'order_items.optional_product_id', '=', 'optional_products.id')
+                        ->select('order_items.quantity', 'order_items.optional_product_id as id')
+                        ->where('order_items.order_id', $orderId)
+                        ->whereNotNull('order_items.optional_product_id')
+                        ->get();
+            
+                    return  [
+                        'name' => $record['name'],
+                        'phone_number' => $record['phone_number'],
+                        'address' => $record['address'],
+                        'products' => $mandatoryOrderItems->map(fn($item) => (array)$item)->all(),
+                        'optional_products' =>$optionalOrderItems->map(fn($item) => (array)$item)->all(),
+                    ];
+                })
+                ->form([
+            
+                Forms\Components\TextInput::make('name')
+                    ->required()
+                    ->maxLength(255)
+                    ->columnSpanFull(),
+                PhoneInput::make('phone_number')
+                    ->onlyCountries(['bd'])
+                    ->defaultCountry('bd')
+                    ->validateFor(
+                        country: 'bd',
+                        type: PhoneNumberType::MOBILE,
+                        lenient: true
+                    )
+                    ->required()
+                    ->columnSpanFull(),
+                Forms\Components\Textarea::make('address')
+                    ->required()
+                    ->maxLength(255)
+                    ->columnSpanFull(),
 
-                        $pdfContent = $pdf->output();
-
-                        return response()->streamDownload(function () use ($pdfContent) {
-                            echo $pdfContent;
-                        },
-                            $record['invoice_id'] ?? $record['id'] . ".pdf",
-                            ['Content-Type' => 'application/pdf']
-                        );
-                    })
+                Forms\Components\Repeater::make('products')
+                    ->label('Mandatory')
+                    ->minItems(1)
+                    ->schema([
+                        Forms\Components\Select::make('id')
+                            ->label('Product')
+                            ->options(function (callable $get) {
+                                $product = Product::all();
+                                return $product->pluck('name', 'id');
+                            })
+                            ->required()
+                            ->columnSpan(1),
+                Forms\Components\TextInput::make('quantity')
+                            ->numeric()
+                            ->required()
+                            ->default(1)
+                            ->minValue(1)
+                            ->columnSpan(1)
+                    ])
+                    ->columns()
+                    ->reorderable(false)
+                    ->columnSpan(2)
+                    ->required(),
+                Forms\Components\Repeater::make('optional_products')
+                    ->label('Optional')
+                    ->defaultItems(1)
+                    ->schema([
+                        Forms\Components\Select::make('id')
+                            ->label('Product')
+                            ->options(function (callable $get) {
+                                $product = OptionalProduct::all();
+                                return $product->pluck('title', 'id');
+                            })
+                            ->searchable()
+                            ->required()
+                            ->columnSpan(1),
+                 Forms\Components\TextInput::make('quantity')
+                            ->numeric()
+                            ->required()
+                            ->default(1)
+                            ->minValue(1)
+                            ->columnSpan(1)
+                    ])
+                    ->columns()
+                    ->reorderable(false)
+                    ->columnSpan(2)
+                    ->nullable()
+                ])
+                ->disabledForm()
+                ->disabled(fn($record): ?bool => $record['is_confirmed'])
+                ->action(function (Order $record): void {
+                    $record['is_confirmed'] = true;
+                    $record->save();
+                }),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make(),
+                ])  
             ])
             ->bulkActions(actions: [
                 Tables\Actions\BulkActionGroup::make([
@@ -338,6 +428,7 @@ class OrderResource extends Resource
                 ExportBulkAction::make()->exporter(OrderExporter::class)->chunkSize(500),
                 Tables\Actions\BulkAction::make('send')
                     ->icon('heroicon-o-arrow-down-tray')
+                    ->color('info')
                     ->label('Download Invoice')
                     ->action(function (Collection $records) {
                         $pdf = LaravelMpdf::loadView('components.download-invoice',
@@ -361,7 +452,7 @@ class OrderResource extends Resource
                             "Invoice.pdf",
                             ['Content-Type' => 'application/pdf']
                         );
-                    })
+                    })->requiresConfirmation()
             ])->defaultSort('created_at', 'desc');
     }
 
