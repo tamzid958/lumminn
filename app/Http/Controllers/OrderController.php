@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\PaymentProvider;
-use App\Models\Product;
 use App\Models\ShippingProvider;
 use App\Providers\OrderServiceProvider;
 use App\Providers\PaymentServiceProvider;
@@ -53,8 +52,8 @@ class OrderController extends Controller
             $order->additional_amount = 0;
             $order->discount_amount = 0;
 
-            $freeShipping =  OrderServiceProvider::checkIfFreeShippingProduct($productId);
-            
+            $freeShipping = OrderServiceProvider::checkIfFreeShippingProduct($productId);
+
             $shippingProviders = ShippingProvider::query()->where('slug', '<>', 'pickup');
 
             $shipping_provider = match ($shippingClass) {
@@ -73,7 +72,7 @@ class OrderController extends Controller
                 };
             }
 
-           
+
             $order->pay_status = 'Pending';
 
             $order->shipping_status = 'On Hold';

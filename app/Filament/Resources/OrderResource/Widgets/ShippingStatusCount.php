@@ -4,8 +4,8 @@ namespace App\Filament\Resources\OrderResource\Widgets;
 
 use App\Models\Enum\ShippingStatus;
 use App\Models\Order;
-use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 use Illuminate\Support\Facades\DB;
+use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 
 class ShippingStatusCount extends ApexChartWidget
 {

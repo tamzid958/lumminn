@@ -295,6 +295,7 @@ class OrderResource extends Resource
                     ->options(ShippingStatus::class),
                 Tables\Filters\SelectFilter::make('pay_status')
                     ->options(PayStatus::class),
+                Tables\Filters\TernaryFilter::make('is_confirmed'),
                 DateRangeFilter::make('created_at')
                     ->autoApply()
                     ->withIndicator()

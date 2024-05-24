@@ -2,8 +2,10 @@
 
 namespace App\Utils;
 
-class NumberUtil {
-    static function number_shorten($number, $precision = 1, $divisors = null) {
+class NumberUtil
+{
+    static function number_shorten($number, $precision = 1, $divisors = null)
+    {
         $number = intval($number);
 
         // Setup default $divisors if not provided
@@ -16,9 +18,9 @@ class NumberUtil {
                 pow(1000, 4) => 'T', // Trillion
                 pow(1000, 5) => 'Qa', // Quadrillion
                 pow(1000, 6) => 'Qi', // Quintillion
-            );    
+            );
         }
-    
+
         // Loop through each $divisor and find the
         // lowest amount that matches
         foreach ($divisors as $divisor => $shorthand) {
@@ -27,7 +29,7 @@ class NumberUtil {
                 break;
             }
         }
-    
+
         // We found our match, or there were no matches.
         // Either way, use the last defined value for $divisor.
         return number_format($number / $divisor, $precision) . $shorthand;

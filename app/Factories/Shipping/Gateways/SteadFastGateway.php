@@ -15,7 +15,7 @@ class SteadFastGateway extends BaseShippingGateway implements ShippingGateway
     {
         try {
             $shipping_provider = ShippingProvider::query()->find($order['shipping_provider_id']);
-            
+
             $meta = $shipping_provider->meta;
 
             $baseUrl = $meta['baseUrl'];

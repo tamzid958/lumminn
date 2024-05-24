@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\ShippingProvider;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
-use Illuminate\Support\Number;
 use Illuminate\Support\Facades\Lang;
+use Illuminate\Support\Number;
+use Illuminate\View\View;
 
 class ProductController extends Controller
 {
@@ -47,7 +47,7 @@ class ProductController extends Controller
         } else {
             $shipping_charge = match ($shipping_class) {
                 'inside-dhaka' => Number::currency($inside_dhaka_max_charge, in: 'BDT', locale: $locale),
-                'outside-dhaka' => Number::currency($outside_dhaka_max_charge, in: 'BDT', locale: $locale) ,
+                'outside-dhaka' => Number::currency($outside_dhaka_max_charge, in: 'BDT', locale: $locale),
                 default => Lang::get('will_be_calculated', locale: $locale)
             };
             $total = match ($shipping_class) {

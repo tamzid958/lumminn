@@ -3,9 +3,9 @@
 namespace App\Filament\Resources\OrderResource\Widgets;
 
 use App\Models\Enum\PayStatus;
-use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
-use Illuminate\Support\Facades\DB;
 use App\Models\Order;
+use Illuminate\Support\Facades\DB;
+use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 
 class PayStatusCount extends ApexChartWidget
 {
@@ -50,7 +50,7 @@ class PayStatusCount extends ApexChartWidget
             }
         }
 
-                
+
         return [
             'chart' => [
                 'type' => 'donut',
