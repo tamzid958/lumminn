@@ -68,9 +68,15 @@ class ShippingClassRatio extends ApexChartWidget
                     }, array_keys($classCounts), $classCounts),
                 ],
             ],
-            'colors' => [ '#FF5733'],
+            'colors' => ['#FF5733', '#33FF57',],
             'legend' => [
                 'show' => true,
+            ],
+            'plotOptions' => [
+                'treemap' => [
+                    'distributed' => true,
+                    'enableShades' => false
+                ]
             ],
         ];
     }
