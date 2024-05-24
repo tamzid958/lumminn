@@ -154,7 +154,7 @@ class OrderResource extends Resource
                         Forms\Components\Select::make('shipping_class')
                             ->label("Class")
                             ->options(ShippingClass::class)
-                            ->required(),
+                            ->columnSpanFull(),
                         Forms\Components\Repeater::make('products')
                             ->label('Mandatory')
                             ->minItems(1)
