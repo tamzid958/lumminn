@@ -56,11 +56,11 @@ class OrderResource extends Resource
                     ->numeric(),
                 Tables\Columns\TextColumn::make('name')
                     ->wrap()
-                    ->searchable()
-                    ->copyable(),
+                    ->description(fn($record) => $record->phone_number)
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('phone_number')
                     ->searchable()
-                    ->copyable(),
+                    ->hidden(),
                 Tables\Columns\TextColumn::make('pay_amount')
                     ->numeric()
                     ->prefix('৳'),
