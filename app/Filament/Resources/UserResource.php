@@ -35,6 +35,7 @@ class UserResource extends Resource
                     ->password()
                     ->required()
                     ->maxLength(255)
+                    ->hiddenOn(['edit', 'view'])
                     ->disabledOn(['edit', 'view']),
                 Forms\Components\DateTimePicker::make('last_renew_password_at'),
                 Forms\Components\Select::make('roles')
