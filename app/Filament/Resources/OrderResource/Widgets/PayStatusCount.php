@@ -21,7 +21,7 @@ class PayStatusCount extends ApexChartWidget
      *
      * @var string|null
      */
-    protected static ?string $heading = 'Pay Status';
+    protected static ?string $heading = 'Payment';
 
     /**
      * Chart options (series, labels, types, size, animations...)
@@ -36,7 +36,7 @@ class PayStatusCount extends ApexChartWidget
         if (!$this->readyToLoad) {
             return [];
         }
-        
+
         // Get all enum values as an array
         $enumValues = array_column(PayStatus::cases(), 'value');
 

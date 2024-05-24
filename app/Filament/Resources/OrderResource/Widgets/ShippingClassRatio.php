@@ -21,7 +21,7 @@ class ShippingClassRatio extends ApexChartWidget
      *
      * @var string|null
      */
-    protected static ?string $heading = 'Shipping Zone';
+    protected static ?string $heading = 'Zonal Area';
 
     /**
      * Chart options (series, labels, types, size, animations...)

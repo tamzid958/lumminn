@@ -50,12 +50,12 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Metrics::class,
-                MonthlyExpenseIncome::class,
-                TotalSaleBasedOnMonth::class,
-                ExpenseByMonth::class,
-                ShippingClassRatio::class,
-                ShippingStatusCount::class,
                 PayStatusCount::class,
+                ShippingStatusCount::class,
+                ShippingClassRatio::class,
+                TotalSaleBasedOnMonth::class,
+                MonthlyExpenseIncome::class,
+                ExpenseByMonth::class,
             ])
             ->middleware([
                 EncryptCookies::class,

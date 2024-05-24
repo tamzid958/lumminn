@@ -71,7 +71,7 @@ class TotalSaleBasedOnMonth extends ApexChartWidget
 
             // Get the order count for the current month
             $orderCount = Order::query()
-                ->where('pay_status', '=', 'Paid')
+
                 ->whereBetween('created_at', [$startDate, $endDate])
                 ->count();
 

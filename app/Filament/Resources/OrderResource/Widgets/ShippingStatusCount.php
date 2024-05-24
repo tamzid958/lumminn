@@ -21,7 +21,7 @@ class ShippingStatusCount extends ApexChartWidget
      *
      * @var string|null
      */
-    protected static ?string $heading = 'Shipping Status';
+    protected static ?string $heading = 'Shipping';
 
     /**
      * Chart options (series, labels, types, size, animations...)
@@ -37,7 +37,7 @@ class ShippingStatusCount extends ApexChartWidget
         if (!$this->readyToLoad) {
             return [];
         }
-        
+
         // Get all enum values as an array
         $enumValues = array_column(ShippingStatus::cases(), 'value');
 
