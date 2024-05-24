@@ -55,7 +55,6 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('id')
                     ->numeric(),
                 Tables\Columns\TextColumn::make('name')
-                    ->wrap()
                     ->description(fn($record) => $record->phone_number)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('phone_number')
