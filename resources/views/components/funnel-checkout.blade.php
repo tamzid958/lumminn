@@ -126,7 +126,7 @@
                     </div>
                     <div class="relative">
                         <input type="text" id="name" name="name"
-                            class="@error('name') is-invalid border-error @enderror w-full rounded-md border px-4 py-3 pl-11 text-sm uppercase shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500"
+                            class="@error('name') is-invalid border-error @enderror w-full rounded-md border px-4 py-3 pl-11 text-sm uppercase shadow-sm outline-none focus:z-10 focus:border-info focus:ring-info"
                             placeholder="{{ __('full_name_placeholder') }}" />
                         <div class="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none"
@@ -143,7 +143,7 @@
 
                     <div class="relative">
                         <input type="tel" id="phone_number" name="phone_number"
-                            class="w-full rounded-md border uppercase @error('phone_number') is-invalid border-error @enderror px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500"
+                            class="w-full rounded-md border uppercase @error('phone_number') is-invalid border-error @enderror px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-info focus:ring-info"
                             placeholder="{{ __('phone_number_placeholder') }}" />
                         <div class="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
 
@@ -189,7 +189,7 @@
                     </div>
                     <div class="relative">
                         <input type="text" id="address" name="address"
-                            class="w-full rounded-md border @error('address') is-invalid border-error @enderror px-4 py-3 pl-11 text-sm uppercase shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500"
+                            class="w-full rounded-md border @error('address') is-invalid border-error @enderror px-4 py-3 pl-11 text-sm uppercase shadow-sm outline-none focus:z-10 focus:border-info focus:ring-info"
                             placeholder="{{ __('address_placeholder') }}" />
                         <div class="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
                             <svg class="h-4 w-4 text-gray-400 icon" viewBox="0 0 1024 1024" fill="#000000"
@@ -208,7 +208,7 @@
                         </div>
                         <div class="relative">
                             <select id="quantity" name="quantity"
-                                class="w-full rounded-md border @error('quantity') is-invalid border-red-600 @enderror px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500 appearance-none bg-ghost">
+                                class="w-full rounded-md border @error('quantity') is-invalid border-red-600 @enderror px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-info focus:ring-info appearance-none bg-ghost">
                                 @foreach (range(1, 5) as $number)
                                     <option value="{{ $number }}"
                                         @if ($number === 1) selected @endif>
@@ -243,8 +243,8 @@
                             <input type="radio" id="inside-dhaka" name="shipping_class" value="inside-dhaka"
                                 class="hidden peer" />
                             <label for="inside-dhaka"
-                                class="peer-checked:border-2 peer-checked:border-neutral peer-checked:bg-secondary bg-ghost  flex cursor-pointer select-none rounded-lg border p-4 border-primary">
-                                <div class="block peer-checked:text-secondary-content text-ghost-content">
+                                class="peer-checked:border-2 border-neutral peer-checked:bg-base-300 bg-base-100  flex cursor-pointer select-none rounded-lg border p-4 text-base-content">
+                                <div class="block">
                                     <div class="w-full text-lg font-semibold">
                                         {{ __('inside_dhaka') }}</div>
                                     <div class="w-full">{{ __('1-2days') }}</div>
@@ -255,8 +255,8 @@
                             <input type="radio" id="outside-dhaka" name="shipping_class" value="outside-dhaka"
                                 class="hidden peer" checked>
                             <label for="outside-dhaka"
-                                class="peer-checked:border-2 peer-checked:border-neutral peer-checked:bg-secondary bg-ghost flex cursor-pointer select-none rounded-lg border p-4 border-primary">
-                                <div class="block peer-checked:text-secondary-content text-ghost-content">
+                                class="peer-checked:border-2 border-neutral peer-checked:bg-base-300 bg-base-100 flex cursor-pointer select-none rounded-lg border p-4 text-base-content">
+                                <div class="block">
                                     <div class="w-full text-lg font-semibold">
                                         {{ __('outside_dhaka') }}</div>
                                     <div class="w-full">{{ __('2-3days') }}</div>
@@ -274,8 +274,8 @@
                                 value="cash-on-delivery" class="hidden peer"
                                 checked="@if ($is_online_payment_enabled !== 'yes') true @else false @endif" />
                             <label for="cash-on-delivery"
-                                class="peer-checked:border-2 peer-checked:border-neutral peer-checked:bg-secondary bg-ghost flex cursor-pointer select-none rounded-lg border p-4 border-primary">
-                                <div class="block peer-checked:text-secondary-content text-ghost-content">
+                                class="peer-checked:border-2 border-neutral peer-checked:bg-base-300 bg-base-100 flex cursor-pointer select-none rounded-lg border p-4 text-base-content">
+                                <div class="block ">
                                     <div class="w-full text-base font-semibold">{{ __('cash_on_delivery') }}</div>
                                 </div>
                             </label>
@@ -285,8 +285,8 @@
                                 <input type="radio" id="online-payment" name="payment_provider"
                                     value="online-payment" class="hidden peer" checked>
                                 <label for="online-payment"
-                                    class="peer-checked:border-2 peer-checked:border-neutral peer-checked:bg-secondary bg-ghost flex cursor-pointer select-none rounded-lg border p-4 border-primary">
-                                    <div class="block peer-checked:text-secondary-content text-ghost-content">
+                                    class="peer-checked:border-2 border-neutral peer-checked:bg-base-300 bg-base-100 flex cursor-pointer select-none rounded-lg border p-4 text-base-content">
+                                    <div class="block">
                                         <div class="w-full text-base font-semibold">{{ __('online_payment') }}</div>
                                     </div>
                                 </label>

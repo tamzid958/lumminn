@@ -81,7 +81,7 @@
         @yield('content')
     </main>
 
-    <footer class="footer items-center p-4 bg-neutral text-neutral-content mt-5 flex justify-between">
+    <footer class="footer items-center p-4 bg-neutral text-neutral-content mt-5 flex justify-between bg-opacity-80">
         <aside class="items-center grid-flow-col">
             <svg width="36" height="36" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
                 fill-rule="evenodd" clip-rule="evenodd" class="fill-current">
