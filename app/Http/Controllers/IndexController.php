@@ -20,6 +20,8 @@ class IndexController extends Controller
             MetaPixel::track('ViewContent', [
              'fbc' => $request->cookie('_fbc'),
              'fbp' => $request->cookie('_fbp'),
+             'currency' => 'BDT', 
+             'value' => $product->sale_price,
             ], $eventId);
         }catch (\Exception $e) {
         }
