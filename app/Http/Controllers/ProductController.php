@@ -9,13 +9,25 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Number;
 use Illuminate\View\View;
+use Combindma\FacebookPixel\Facades\MetaPixel;
 
 class ProductController extends Controller
 {
 
-    public function view($slug): View
+    public function view(Request $request, $slug): View
     {
         $product = Product::where('slug', $slug)->first();
+        
+        try {
+            $eventId = uniqid('ViewContent_', true);
+            $meta_pixel = new MetaPixel();
+            $meta_pixel->track('ViewContent', [
+             'fbc' => $request->cookie('_fbc'),
+             'fbp' => $request->cookie('_fbp'),
+            ], $eventId);
+        }catch (\Exception $e) {
+        }
+
         return view('product', compact('product'));
     }
 

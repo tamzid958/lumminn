@@ -13,6 +13,7 @@ use App\Providers\PaymentServiceProvider;
 use App\Utils\StringUtil;
 use Exception;
 use Illuminate\Http\Request;
+use Combindma\FacebookPixel\Facades\MetaPixel;
 
 class OrderController extends Controller
 {
@@ -24,6 +25,15 @@ class OrderController extends Controller
 
             PaymentServiceProvider::register($payment_provider)->create()->verify($order->invoice_id);
         }
+        try {
+            $meta_pixel = new MetaPixel();
+            $meta_pixel->track('Purchase', [
+                'currency' => 'BDT', 
+                'value' => $order->total_amount,
+            ], $order->invoice_id);
+        }catch (Exception $e) {
+        }
+       
         return view("order-success", compact("order"));
     }
 

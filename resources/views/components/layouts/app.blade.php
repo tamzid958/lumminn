@@ -35,6 +35,7 @@
     @isset($main_photo)
         <meta property="og:image" content="{{ asset('storage/' . $main_photo) }}">
     @endisset
+    <x-metapixel-head />
 </head>
 <main class="flex flex-col h-screen justify-between">
     <header>
@@ -78,6 +79,7 @@
     </header>
 
     <main class="mb-auto">
+        <x-metapixel-body />
         @yield('content')
     </main>
 
