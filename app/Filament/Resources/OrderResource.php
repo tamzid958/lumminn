@@ -467,11 +467,10 @@ class OrderResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return Cache::remember('order-resource-query', 60, function () {
-            return parent::getEloquentQuery()
+
+        return parent::getEloquentQuery()
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);
-        });
     }
 }
