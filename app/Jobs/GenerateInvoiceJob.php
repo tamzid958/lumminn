@@ -25,6 +25,8 @@ class GenerateInvoiceJob implements ShouldQueue
     protected Collection $orders;
     protected $user;
 
+    public $timeout = 0;
+
     /**
      * Create a new job instance.
      */

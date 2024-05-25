@@ -18,7 +18,7 @@ class SendOrdersJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     protected $user;
-
+    public $timeout = 0;
     /**
      * Create a new job instance.
      */
