@@ -240,7 +240,9 @@ class OrderResource extends Resource
                             ['Content-Type' => 'application/pdf']
                         );
                     })->requiresConfirmation()
-            ])->defaultSort('created_at', 'desc');
+            ])
+            ->defaultSort('created_at', 'desc')
+            ->deferLoading();
     }
 
     public static function form(Form $form): Form
