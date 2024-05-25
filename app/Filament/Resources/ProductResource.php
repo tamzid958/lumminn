@@ -67,7 +67,7 @@ class ProductResource extends Resource
                     ->offLabel('Free Shipping')
                     ->onLabel('Shipping Charge Applicable')
                     ->default(true),
-                Forms\Components\RichEditor::make('description')
+                Forms\Components\Textarea::make('description')
                     ->columnSpan(2)
                     ->required()
                     ->maxLength(5000),
