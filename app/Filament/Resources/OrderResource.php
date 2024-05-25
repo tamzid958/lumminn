@@ -360,7 +360,7 @@ class OrderResource extends Resource
                         Forms\Components\TextInput::make('shipping_id')
                             ->label('Identifier')
                             ->placeholder('will be generated')
-                            ->disabled()
+                            ->disabledOn("create")
                     ]),
 
                     Fieldset::make(
