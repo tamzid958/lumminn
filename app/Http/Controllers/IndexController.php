@@ -16,13 +16,12 @@ class IndexController extends Controller
         $product = Product::query()->where('slug', '=', $landing_page_product_slug)->first();
 
         try {
-            $eventId = uniqid('ViewContent_', true);
             MetaPixel::track('ViewContent', [
              'fbc' => $request->cookie('_fbc'),
              'fbp' => $request->cookie('_fbp'),
              'currency' => 'BDT', 
              'value' => $product->sale_price,
-            ], $eventId);
+            ], $product->slug);
         }catch (\Exception $e) {
         }
 

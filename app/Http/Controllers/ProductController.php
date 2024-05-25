@@ -19,14 +19,12 @@ class ProductController extends Controller
         $product = Product::where('slug', $slug)->first();
 
         try {
-            $eventId = uniqid('ViewContent_', true);
-
             MetaPixel::track('ViewContent', [
              'fbc' => $request->cookie('_fbc'),
              'fbp' => $request->cookie('_fbp'),
              'currency' => 'BDT', 
              'value' => $product->sale_price,
-            ], $eventId);
+            ], $product->slug);
         }catch (\Exception $e) {
         }
 
