@@ -33,8 +33,6 @@ class SendOrdersJob implements ShouldQueue
     public function handle(): void
     {
       
-        $dbOrders = Order::query()->where('shipping_status', '=', 'On Hold')->where('is_confirmed', '=', true)->get();
-
         $dbOrders = Order::query()
             ->where('shipping_status', 'On Hold')
             ->where('is_confirmed', true)
@@ -66,7 +64,8 @@ class SendOrdersJob implements ShouldQueue
             ->icon('heroicon-o-paper-airplane')
             ->body("Orders successfully sent to shipping provider")
             ->sendToDatabase($this->user);
-        
+
+        dispatch(new GenerateInvoiceJob($dbOrders, $this->user))->delay(5);
         //
     }
 }

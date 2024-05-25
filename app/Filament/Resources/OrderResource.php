@@ -236,7 +236,7 @@ class OrderResource extends Resource
 
                                     $productsString .= ($productsString ? ', ' : '') . $itemString;
                                 }
-                               // dd($productsString);
+                            
 
                                 return [
                                     'id' => $record['id'],

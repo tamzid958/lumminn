@@ -14,21 +14,23 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Collection;
 use Mccarlosen\LaravelMpdf\Facades\LaravelMpdf;
+use Illuminate\Support\Facades\DB;
 
 class GenerateInvoiceJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected array $orderIds;
+    protected Collection $orders;
     protected $user;
 
     /**
      * Create a new job instance.
      */
-    public function __construct(array $orderIds, $user)
+    public function __construct(Collection $orders, $user)
     {
-        $this->orderIds = $orderIds;
+        $this->orders = $orders;
         $this->user = $user;
     }
 
@@ -37,10 +39,27 @@ class GenerateInvoiceJob implements ShouldQueue
      */
     public function handle(): void
     {
-        $orders = Order::query()->whereIn('id', $this->orderIds)->get()->toArray();
+        $orders = $this->orders->toArray();
 
         try {
             $packingReceipts = collect($orders)->map(function ($record) {
+                $orderItems = $orderItems = DB::table('order_items')
+                                                ->leftJoin('products as product', 'order_items.product_id', '=', 'product.id')
+                                                ->leftJoin('products as optional_product', 'order_items.optional_product_id', '=', 'optional_product.id')
+                                                ->select('order_items.*', 'product.name as product_name', 'optional_product.name as optional_product_name')
+                                                ->where('order_items.order_id', $record['id'])
+                                                ->get();
+                                
+                $productsString = '';
+
+                foreach ($orderItems as $item) {
+                    $productName = $item->product_id !== null ? $item->product_name : $item->optional_product_name;
+                    $quantity = $item->quantity;
+                    $itemString = "$productName ($quantity)";
+
+                    $productsString .= ($productsString ? ', ' : '') . $itemString;
+                }
+
                 return [
                     'id' => $record['id'],
                     'name' => $record['name'],
@@ -49,6 +68,7 @@ class GenerateInvoiceJob implements ShouldQueue
                     'shipping_id' => $record['shipping_id'],
                     'shipping_provider_name' => ShippingProvider::query()->find($record['shipping_provider_id'])->name,
                     'due_amount' => PaymentProvider::query()->find($record['payment_provider_id'])->slug === 'cash-on-delivery' ? $record['pay_amount'] : 0,
+                    'order_items' => $productsString
                 ];
             });
 
