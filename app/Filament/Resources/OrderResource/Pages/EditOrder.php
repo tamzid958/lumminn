@@ -97,6 +97,7 @@ class EditOrder extends EditRecord
                 'shipping_status' => $data['shipping_status'],
                 'shipping_class' => $data['shipping_class'],
                 'payment_id' => $data['payment_id'],
+                'shipping_id' => $data['shipping_id'],
                 'name' => $data['name'],
                 'phone_number' => $data['phone_number'],
                 'address' => $data['address'],
