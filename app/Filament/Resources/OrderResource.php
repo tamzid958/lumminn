@@ -201,6 +201,7 @@ class OrderResource extends Resource
                     Tables\Actions\ForceDeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
                     Tables\Actions\BulkAction::make("confirm-all-order")
+                    ->visible(fn () => Gate::allows('update_order'))
                     ->label("Confirm All Order")
                     ->color('warning')
                     ->icon('heroicon-o-check-circle')
