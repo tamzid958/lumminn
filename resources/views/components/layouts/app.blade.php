@@ -28,8 +28,8 @@
     @endisset
 
     @isset($description)
-        <meta name="description" content={{ $description }}>
-        <meta property="og:description" content={{ $description }}>
+        <meta name="description" content="{{ $description }}">
+        <meta property="og:description" content="{{ $description }}">
     @endisset
 
     @isset($main_photo)
