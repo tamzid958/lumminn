@@ -89,6 +89,8 @@
                                 <span class='font-bold font-size-12'>Consgt: {{ $receipt['shipping_id'] }}</span>
                                 <br>
                                 <span class="text-red-900 font-size-12">Due: {{ $receipt['due_amount'] }} BDT</span>
+                                <br>
+                                <span class="font-size-10">{{ $receipt['order_items'] }}</span>
                             </p>
                         </td>
                     </tr>

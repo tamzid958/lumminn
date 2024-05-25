@@ -12,6 +12,8 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Filament\Actions\Action;
+use Illuminate\Support\Facades\Gate;
 
 class SendOrders extends ListRecords
 {
@@ -20,6 +22,26 @@ class SendOrders extends ListRecords
     protected static string $view = 'filament.resources.order-resource.pages.send-orders';
 
     use InteractsWithTable;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('dispatchOrders')
+                    ->label('Dispatch Orders')
+                    ->icon('heroicon-o-paper-airplane')
+                    ->color('warning')
+                    ->action(function() {
+                        dispatch(new SendOrdersJob(auth()->user()));
+                        Notification::make()
+                            ->title('Request sent successfully')
+                            ->body('Please check notification after a while.')
+                            ->success()
+                            ->send();
+                    })
+                    ->requiresConfirmation()
+                    ->visible(fn () => Gate::allows('update_order')),
+        ];
+    }
 
     public function table(Table $table): Table
     {
@@ -57,19 +79,6 @@ class SendOrders extends ListRecords
                 // ...
             ])
             ->bulkActions([
-                Tables\Actions\BulkAction::make('send')->label('Send to Courier')
-                    ->color('danger')
-                    ->action(function (Collection $records): void {
-                        dispatch(new SendOrdersJob(array_map(fn($obj) => $obj['id'], $records->toArray()), auth()->user()));
-                        Notification::make()
-                            ->title('Request sent successfully')
-                            ->body('Please check notification after a while.')
-                            ->success()
-                            ->send();
-                        redirect('admin/orders/');
-                    })
-                    ->deselectRecordsAfterCompletion()
-                    ->requiresConfirmation()
             ])->defaultSort('created_at', 'desc');
     }
 

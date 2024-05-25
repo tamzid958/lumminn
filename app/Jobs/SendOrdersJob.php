@@ -12,20 +12,18 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class SendOrdersJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
-    protected array $orderIds;
     protected $user;
 
     /**
      * Create a new job instance.
      */
-    public function __construct(array $orderIds, $user)
+    public function __construct($user)
     {
-        $this->orderIds = $orderIds;
         $this->user = $user;
     }
 
@@ -34,28 +32,41 @@ class SendOrdersJob implements ShouldQueue
      */
     public function handle(): void
     {
-        try {
-            foreach ($this->orderIds as $orderId) {
-                $dbOrder = Order::query()->find($orderId)->toArray();
-                $shipping_provider = ShippingProvider::query()->find($dbOrder['shipping_provider_id']);
+      
+        $dbOrders = Order::query()->where('shipping_status', '=', 'On Hold')->where('is_confirmed', '=', true)->get();
 
-                ShippingServiceProvider::register($shipping_provider)->create()->send($dbOrder);
+        $dbOrders = Order::query()
+            ->where('shipping_status', 'On Hold')
+            ->where('is_confirmed', true)
+            ->get();
+        
+        foreach ($dbOrders as $order) {
+            $shipping_provider = ShippingProvider::find($order->shipping_provider_id);
+        
+            if ($shipping_provider) {
+                try {
+                    ShippingServiceProvider::register($shipping_provider)
+                        ->create()
+                        ->send($order->toArray());
+                } catch (Exception $e) {
+                    // Handle the exception (log it, notify someone, etc.)
+                    Log::error('Failed to send order', [
+                        'order_id' => $order->id,
+                        'error' => $e->getMessage(),
+                    ]);
+                }
+            } else {
+                // Handle the case where the shipping provider is not found
+                Log::warning('Shipping provider not found', ['shipping_provider_id' => $order->shipping_provider_id]);
             }
+        }      
 
-            Notification::make()
-                ->title('Sent to shipping provider')
-                ->icon('heroicon-o-paper-airplane')
-                ->body("Orders successfully sent to shipping provider")
-                ->sendToDatabase($this->user);
-        } catch (Exception $e) {
-            Notification::make()
-                ->title('Sent to shipping provider failed')
-                ->icon('heroicon-o-document-text')
-                ->body("Check failed jobs table to see error logs")
-                ->sendToDatabase($this->user);
-        }
-
-        dispatch(new GenerateInvoiceJob($this->orderIds, $this->user))->delay(3);
+        Notification::make()
+            ->title('Sent to shipping provider')
+            ->icon('heroicon-o-paper-airplane')
+            ->body("Orders successfully sent to shipping provider")
+            ->sendToDatabase($this->user);
+        
         //
     }
 }

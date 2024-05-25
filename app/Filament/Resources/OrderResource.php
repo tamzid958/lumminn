@@ -220,6 +220,24 @@ class OrderResource extends Resource
                     ->action(function (Collection $records) {
                         $pdf = LaravelMpdf::loadView('components.download-invoice',
                             ['packingReceipts' => collect($records->toArray())->map(function ($record) {
+                                $orderItems = $orderItems = DB::table('order_items')
+                                                ->leftJoin('products as product', 'order_items.product_id', '=', 'product.id')
+                                                ->leftJoin('products as optional_product', 'order_items.optional_product_id', '=', 'optional_product.id')
+                                                ->select('order_items.*', 'product.name as product_name', 'optional_product.name as optional_product_name')
+                                                ->where('order_items.order_id', $record['id'])
+                                                ->get();
+                                
+                                $productsString = '';
+
+                                foreach ($orderItems as $item) {
+                                    $productName = $item->product_id !== null ? $item->product_name : $item->optional_product_name;
+                                    $quantity = $item->quantity;
+                                    $itemString = "$productName ($quantity)";
+
+                                    $productsString .= ($productsString ? ', ' : '') . $itemString;
+                                }
+                               // dd($productsString);
+
                                 return [
                                     'id' => $record['id'],
                                     'name' => $record['name'],
@@ -228,6 +246,7 @@ class OrderResource extends Resource
                                     'shipping_id' => $record['shipping_id'],
                                     'shipping_provider_name' => ShippingProvider::query()->find($record['shipping_provider_id'])->name,
                                     'due_amount' => PaymentProvider::query()->find($record['payment_provider_id'])->slug === 'cash-on-delivery' ? $record['pay_amount'] : 0,
+                                    'order_items' => $productsString
                                 ];
                             })]);
 
