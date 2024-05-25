@@ -83,12 +83,6 @@ class OrderResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('shipping_status')
                     ->badge(),
-                Tables\Columns\ImageColumn::make('attachment')
-                    ->disk('public')
-                    ->circular()
-                    ->stacked()
-                    ->limitedRemainingText()
-                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -206,6 +200,16 @@ class OrderResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\ForceDeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
+                    Tables\Actions\BulkAction::make("confirm-all-order")
+                    ->label("Confirm All Order")
+                    ->color('warning')
+                    ->icon('heroicon-o-check-circle')
+                    ->action(function (Collection $records) {
+                        foreach ($records as $record) {
+                            $record->is_confirmed = true;
+                            $record->save();
+                        }
+                    })->requiresConfirmation(),
                 ]),
                 ExportBulkAction::make()->exporter(OrderExporter::class)->chunkSize(500),
                 Tables\Actions\BulkAction::make('send')
