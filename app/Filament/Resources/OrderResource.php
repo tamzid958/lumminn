@@ -26,7 +26,6 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use libphonenumber\PhoneNumberType;
@@ -469,8 +468,8 @@ class OrderResource extends Resource
     {
 
         return parent::getEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]);
+        ->withoutGlobalScopes([
+            SoftDeletingScope::class,
+        ]);
     }
 }
