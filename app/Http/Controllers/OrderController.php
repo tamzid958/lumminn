@@ -26,8 +26,7 @@ class OrderController extends Controller
             PaymentServiceProvider::register($payment_provider)->create()->verify($order->invoice_id);
         }
         try {
-            $meta_pixel = new MetaPixel();
-            $meta_pixel->track('Purchase', [
+            MetaPixel::track('Purchase', [
                 'currency' => 'BDT', 
                 'value' => $order->total_amount,
             ], $order->invoice_id);

@@ -17,8 +17,7 @@ class IndexController extends Controller
 
         try {
             $eventId = uniqid('ViewContent_', true);
-            $meta_pixel = new MetaPixel();
-            $meta_pixel->track('ViewContent', [
+            MetaPixel::track('ViewContent', [
              'fbc' => $request->cookie('_fbc'),
              'fbp' => $request->cookie('_fbp'),
             ], $eventId);

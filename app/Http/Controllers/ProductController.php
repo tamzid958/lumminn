@@ -17,11 +17,11 @@ class ProductController extends Controller
     public function view(Request $request, $slug): View
     {
         $product = Product::where('slug', $slug)->first();
-        
+
         try {
             $eventId = uniqid('ViewContent_', true);
-            $meta_pixel = new MetaPixel();
-            $meta_pixel->track('ViewContent', [
+            
+            MetaPixel::track('ViewContent', [
              'fbc' => $request->cookie('_fbc'),
              'fbp' => $request->cookie('_fbp'),
             ], $eventId);
