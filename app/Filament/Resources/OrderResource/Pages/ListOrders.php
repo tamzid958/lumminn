@@ -27,7 +27,8 @@ class ListOrders extends ListRecords
                     ->label('Sync Orders')
                     ->icon('heroicon-o-arrow-path')
                     ->color('primary')
-                    ->action(fn() => dispatch(new CheckDeliveryStatusJob())),
+                    ->action(fn() => dispatch(new CheckDeliveryStatusJob()))
+                    ->requiresConfirmation(),
             ],
             )->label('Manage Orders')->button()->color('success')->visible(fn () => Gate::allows('update_order'))
         ];
