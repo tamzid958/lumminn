@@ -245,7 +245,7 @@ class OrderResource extends Resource
                                     'address' => $record['address'],
                                     'shipping_id' => $record['shipping_id'],
                                     'shipping_provider_name' => ShippingProvider::query()->find($record['shipping_provider_id'])->name,
-                                    'due_amount' => PaymentProvider::query()->find($record['payment_provider_id'])->slug === 'cash-on-delivery' ? $record['pay_amount'] : 0,
+                                    'due_amount' => $record['pay_amount'],
                                     'order_items' => $productsString
                                 ];
                             })]);
