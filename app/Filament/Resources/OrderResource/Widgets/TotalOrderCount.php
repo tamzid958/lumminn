@@ -98,7 +98,7 @@ class TotalOrderCount extends ApexChartWidget
             'series' => [
                 [
                     'tickAmount' => "dataPoints",
-                    'name' => 'Sale Count',
+                    'name' => 'Order Count',
                     'data' => array_values($orderCounts),
                 ],
             ],
