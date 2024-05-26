@@ -17,6 +17,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
 use Mccarlosen\LaravelMpdf\Facades\LaravelMpdf;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class GenerateInvoiceJob implements ShouldQueue
 {
@@ -41,51 +42,51 @@ class GenerateInvoiceJob implements ShouldQueue
      */
     public function handle(): void
     {
-        $orders = $this->orders->toArray();
+        $packingReceipts = [];
 
-        try {
-            $packingReceipts = collect($orders)->map(function ($record) {
-                $orderItems = DB::table('order_items')
-                                ->leftJoin('products as product', 'order_items.product_id', '=', 'product.id')
-                                ->leftJoin('optional_products as optional_product', 'order_items.optional_product_id', '=', 'optional_product.id')
-                                ->select('order_items.*', 'product.name as product_name', 'optional_product.name as optional_product_name')
-                                ->where('order_items.order_id', $record['id'])
-                                ->get();
-                                
-                $productsString = '';
+        foreach ($this->orders as $order) {
+            $orderItems = DB::table('order_items')
+                        ->leftJoin('products as product', 'order_items.product_id', '=', 'product.id')
+                        ->leftJoin('optional_products as optional_product', 'order_items.optional_product_id', '=', 'optional_product.id')
+                        ->select('order_items.*', 'product.name as product_name', 'optional_product.name as optional_product_name')
+                        ->where('order_items.order_id', $order->id)
+                        ->get();
 
-                foreach ($orderItems as $item) {
-                    $productName = $item->product_id !== null ? $item->product_name : $item->optional_product_name;
-                    $quantity = $item->quantity;
-                    $itemString = "$productName ($quantity)";
+            $productsString = '';
 
-                    $productsString .= ($productsString ? ', ' : '') . $itemString;
-                }
+            foreach ($orderItems as $item) {
+                $productName = $item->product_id !== null ? $item->product_name : $item->optional_product_name;
+                $quantity = $item->quantity;
+                $itemString = "$productName ($quantity)";
 
-                return [
-                    'id' => $record['id'],
-                    'name' => $record['name'],
-                    'phone_number' => $record['phone_number'],
-                    'address' => $record['address'],
-                    'shipping_id' => $record['shipping_id'],
-                    'shipping_provider_name' => ShippingProvider::query()->find($record['shipping_provider_id'])->name,
-                    'due_amount' => PaymentProvider::query()->find($record['payment_provider_id'])->slug === 'cash-on-delivery' ? $record['pay_amount'] : 0,
-                    'order_items' => $productsString
-                ];
-            });
+                $productsString .= ($productsString ? ', ' : '') . $itemString;
+            }
 
-            $filename = time() . "-invoice.pdf";
+            $packingReceipts[] = [
+                'id' => $order->id,
+                'name' => $order->name,
+                'phone_number' => $order->phone_number,
+                'address' => $order->address,
+                'shipping_id' => $order->shipping_id,
+                'shipping_provider_name' => ShippingProvider::query()->find( $order->shipping_provider_id)->name,
+                'due_amount' => PaymentProvider::query()->find( $order->payment_provider_id)->slug === 'cash-on-delivery' ?  $order->pay_amount : 0,
+                'order_items' => $productsString
+            ];
 
-            LaravelMpdf::loadView('components.download-invoice',
-                ['packingReceipts' => $packingReceipts])
-                ->save(public_path('storage') . '/' . $filename);
+        
+            try {
+                $filename = time() . "-invoice.pdf";
 
-            Invoice::query()->create([
-                "name" => $filename,
-                "file" => $filename
-            ]);
+                LaravelMpdf::loadView('components.download-invoice',
+                    ['packingReceipts' => $packingReceipts])
+                    ->save(public_path('storage') . '/' . $filename);
+    
+                Invoice::query()->create([
+                    "name" => $filename,
+                    "file" => $filename
+                ]);
 
-            Notification::make()
+                Notification::make()
                 ->title('Invoice generated')
                 ->icon('heroicon-o-document-text')
                 ->body("Download " . $filename . " and print it for packaging")
@@ -95,12 +96,21 @@ class GenerateInvoiceJob implements ShouldQueue
                         ->url(asset('storage/' . $filename), shouldOpenInNewTab: true)
                 ])
                 ->sendToDatabase($this->user);
-        } catch (Exception $e) {
-            Notification::make()
-                ->title('Invoice generation failed')
-                ->icon('heroicon-o-document-text')
-                ->body("Check failed jobs table to see error logs")
-                ->sendToDatabase($this->user);
-        }
+
+            } catch (Exception $e) {
+                // Handle the exception (log it, notify someone, etc.)
+                Log::error('Failed to send order', [
+                    'order_id' => $order->id,
+                    'error' => $e->getMessage(),
+                ]);
+                Notification::make()
+                        ->title('Invoice generation failed')
+                        ->icon('heroicon-o-document-text')
+                        ->body("Check failed jobs table to see error logs")
+                        ->sendToDatabase($this->user);
+            }
+            
+        }     
+
     }
 }
