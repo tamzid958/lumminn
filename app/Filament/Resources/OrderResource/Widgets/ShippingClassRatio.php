@@ -84,9 +84,19 @@ class ShippingClassRatio extends ApexChartWidget
                     'data' => $data,
                 ],
             ],
-            'colors' => [  
-                '#FF5733', '#33FF57', '#3357FF', '#FF33A1', '#FF8C33', '#33FFF5',
-                '#F5A623', '#50E3C2', '#B8E986', '#4A90E2', '#BD10E0', '#FF0000', 
+            'colors' => [
+                '#FF5733',
+                '#33FF57',
+                '#3357FF',
+                '#FF33A1',
+                '#FF8C33',
+                '#33FFF5',
+                '#F5A623',
+                '#50E3C2',
+                '#B8E986',
+                '#4A90E2',
+                '#BD10E0',
+                '#ff3333'
             ],
             'legend' => [
                 'show' => true,

@@ -62,7 +62,7 @@ class ShippingStatusCount extends ApexChartWidget
                 'type' => 'donut',
                 'height' => 300,
             ],
-            'colors' => ['#808080', '#0000FF', '#FFA500', '#008000', '#FF0000', '#800080'],
+            'colors' => ['#6e767d', '#5c80bc', '#d88432', '#3fa372', '#d84c4c', '#85329c'],
             'series' => array_values($statusCounts),
             'labels' => array_keys($statusCounts),
             'legend' => [
