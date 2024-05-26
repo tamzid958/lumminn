@@ -8,7 +8,7 @@ use Filament\Support\Contracts\HasLabel;
 enum ShippingStatus: string implements HasLabel, HasColor
 {
     case OnHold = 'On Hold';
-    case ReadyForDispatch = 'Ready for Dispatch';
+    case Packed = 'Packed';
     case Dispatched = 'Dispatched';
     case Completed = 'Completed';
     case Cancelled = 'Cancelled';
@@ -23,7 +23,7 @@ enum ShippingStatus: string implements HasLabel, HasColor
     {
         return match ($this) {
             self::OnHold => 'primary',
-            self::Dispatched, self::ReadyForDispatch => 'warning',
+            self::Dispatched, self::Packed => 'warning',
             self::Completed => 'success',
             self::Cancelled, self::Returned => 'danger',
         };

@@ -29,7 +29,7 @@ class CheckDeliveryStatusJob implements ShouldQueue
     public function handle(): void
     {
         $orders = Order::query()
-            ->where('shipping_status', '=', 'Ready for Dispatch')
+            ->where('shipping_status', '=', 'Packed')
             ->orWhere('shipping_status', '=', 'Dispatched')
             ->get()
             ->toArray();

@@ -10,7 +10,7 @@ abstract class BaseShippingGateway implements ShippingGateway
 {
     public function send(array $order): void
     {
-        $order['shipping_status'] = 'Ready for Dispatch';
+        $order['shipping_status'] = 'Packed';
         Order::query()->where('id', $order['id'])->update($order);
     }
 
