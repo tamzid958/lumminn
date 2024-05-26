@@ -69,8 +69,8 @@ class SteadFastGateway extends BaseShippingGateway implements ShippingGateway
             if ($body['status'] === 200) {
                 $order['shipping_status'] = match ($body['delivery_status']) {
                     'pending' => 'Dispatched',
-                    'delivered' => 'Completed',
-                    'cancelled' => 'Cancelled',
+                    'delivered', 'delivered_approval_pending' => 'Completed',
+                    'cancelled', 'cancelled_approval_pending' => 'Cancelled',
                     default => null,
                 };
 
