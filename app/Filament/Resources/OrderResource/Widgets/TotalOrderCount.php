@@ -112,11 +112,11 @@ class TotalOrderCount extends ApexChartWidget
                 ],
             ],
             'yaxis' => [
+                'show'=> false,
                 'title' => [
                     'text' => 'Number of Orders'
                 ],
                 'labels' => [
-                    'show'=> false,
                     'style' => [
                         'fontFamily' => 'inherit',
                     ],
