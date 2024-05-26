@@ -103,9 +103,9 @@ class TotalOrderCount extends ApexChartWidget
                 ],
             ],
             'xaxis' => [
-                'show'=> false,
                 'categories' => array_keys($orderCounts),
                 'labels' => [
+                    'show'=> false,
                     'style' => [
                         'fontFamily' => 'inherit',
                     ],
