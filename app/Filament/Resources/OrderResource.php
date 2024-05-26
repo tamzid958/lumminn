@@ -105,6 +105,7 @@ class OrderResource extends Resource
                 Tables\Filters\TernaryFilter::make('is_confirmed')
                     ->label('Confirmation'),
                 DateRangeFilter::make('created_at')
+                    ->timePicker()
                     ->autoApply()
                     ->withIndicator()
             ])
