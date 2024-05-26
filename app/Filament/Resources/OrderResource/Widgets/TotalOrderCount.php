@@ -47,7 +47,7 @@ class TotalOrderCount extends ApexChartWidget
         $allMonths = [];
         for ($month = 1; $month <= 12; $month++) {
             $monthName = date('M', mktime(0, 0, 0, $month, 1)); // Format the month number as a month name
-            $allMonths[$monthName] = $monthName; // Use the month name as both the key and value
+            $allMonths[$month] = $monthName; // Use the month name as both the key and value
         }
 
         return [
