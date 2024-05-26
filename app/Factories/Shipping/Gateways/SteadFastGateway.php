@@ -62,7 +62,7 @@ class SteadFastGateway extends BaseShippingGateway implements ShippingGateway
                 'Api-Key' => $apiKey,
                 'Secret-Key' => $secret,
                 'Content-Type' => 'application/json'
-            ])->get($baseUrl . '/status_by_invoice/' . $order['invoice_id']);
+            ])->get($baseUrl . '/status_by_cid/' . $order['shipping_id']);
 
             $body = $response->json();
 
