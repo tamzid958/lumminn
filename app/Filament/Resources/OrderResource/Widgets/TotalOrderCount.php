@@ -103,7 +103,7 @@ class TotalOrderCount extends ApexChartWidget
                 ],
             ],
             'xaxis' => [
-
+                'show'=> false,
                 'categories' => array_keys($orderCounts),
                 'labels' => [
                     'style' => [
@@ -112,7 +112,6 @@ class TotalOrderCount extends ApexChartWidget
                 ],
             ],
             'yaxis' => [
-                'show'=> false,
                 'title' => [
                     'text' => 'Number of Orders'
                 ],
