@@ -50,7 +50,7 @@ class SteadFastGateway extends BaseShippingGateway implements ShippingGateway
     public function check(array $order): void
     {
         try {
-            $shipping_provider = ShippingProvider::query()->find($order['shipping_provider_id']);
+            $shipping_provider = ShippingProvider::query()->where('slug', '=', 'steadfast')->first();
 
             $meta = $shipping_provider->meta;
 
