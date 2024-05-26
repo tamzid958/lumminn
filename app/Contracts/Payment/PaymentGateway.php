@@ -7,5 +7,5 @@ interface PaymentGateway
 {
     public function generateTransaction(array $order): void;
 
-    public function verify(string $invoice_id): void;
+    public function verify(string $invoice_id, array $order): void;
 }

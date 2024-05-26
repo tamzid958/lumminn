@@ -31,7 +31,7 @@ class SteadFastGateway extends BaseShippingGateway implements ShippingGateway
                 'recipient_name' => $order['name'],
                 'recipient_phone' => StringUtil::removeCountryCode($order['phone_number']),
                 'recipient_address' => $order['address'],
-                'cod_amount' => $order['pay_status'] === 'Paid' ? 0 : $order['pay_amount'],
+                'cod_amount' => $order['pay_amount'],
             ]);
 
             $body = $response->json();

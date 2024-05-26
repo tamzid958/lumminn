@@ -13,7 +13,8 @@ abstract class BasePaymentGateway implements PaymentGateway
         Order::query()->where('id', $order['id'])->update($order);
     }
 
-    public function verify(string $invoice_id): void
+    public function verify(string $invoice_id, array $order): void
     {
+        Order::query()->where('invoice_id', $invoice_id)->update($order);
     }
 }

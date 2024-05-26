@@ -14,7 +14,7 @@ class CashOnDeliveryGateway extends BasePaymentGateway implements PaymentGateway
         parent::generateTransaction($order);
     }
 
-    public function verify(string $invoice_id): void
+    public function verify(string $invoice_id, array $order): void
     {
     }
 }

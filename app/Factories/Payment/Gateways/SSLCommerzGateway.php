@@ -51,12 +51,10 @@ class SSLCommerzGateway extends BasePaymentGateway implements PaymentGateway
         parent::generateTransaction($order);
     }
 
-    public function verify(string $invoice_id): void
+    public function verify(string $invoice_id, array $order): void
     {
-        $order = Order::query()->where('invoice_id', '=', $invoice_id)->first();
-
-        if (!$order) return;
-
+        if(!isset($order)) return;
+        
         $payment_provider = PaymentProvider::query()->find($order['payment_provider_id']);
 
         $meta = $payment_provider->meta;
@@ -84,7 +82,12 @@ class SSLCommerzGateway extends BasePaymentGateway implements PaymentGateway
                 };
 
                 $order['gateway_response'] = $body;
-                Order::query()->where('id', $order['id'])->update($order->toArray());
+
+                if($order['pay_status'] === 'Paid') {
+                    $order['advance_amount'] = $order['pay_amount'];
+                }
+                
+                parent::verify($invoice_id, $order);
             } else {
                 echo "Invalid amount or invoice_id for order: " . $order['id'];
             }

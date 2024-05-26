@@ -23,7 +23,7 @@ class OrderController extends Controller
         if ($request->method() == "POST") {
             $payment_provider = PaymentProvider::find($order->payment_provider_id);
 
-            PaymentServiceProvider::register($payment_provider)->create()->verify($order->invoice_id);
+            PaymentServiceProvider::register($payment_provider)->create()->verify($order->invoice_id, $order->toArray());
         }
         try {
             MetaPixel::track('Purchase', [
@@ -140,7 +140,7 @@ class OrderController extends Controller
             $order = Order::where('invoice_id', '=', $invoice_id)->first();
             $payment_provider = PaymentProvider::find($order->payment_provider_id);
 
-            PaymentServiceProvider::register($payment_provider)->create()->verify($order->invoice_id);
+            PaymentServiceProvider::register($payment_provider)->create()->verify($order->invoice_id, $order->toArray());
         }
         return view("order-fail-or-cancel");
     }

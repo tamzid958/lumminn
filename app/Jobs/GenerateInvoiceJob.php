@@ -69,7 +69,7 @@ class GenerateInvoiceJob implements ShouldQueue
                 'address' => $order->address,
                 'shipping_id' => $order->shipping_id,
                 'shipping_provider_name' => ShippingProvider::query()->find( $order->shipping_provider_id)->name,
-                'due_amount' => PaymentProvider::query()->find( $order->payment_provider_id)->slug === 'cash-on-delivery' ?  $order->pay_amount : 0,
+                'due_amount' => $order->pay_amount,
                 'order_items' => $productsString
             ];
 
@@ -99,7 +99,7 @@ class GenerateInvoiceJob implements ShouldQueue
 
             } catch (Exception $e) {
                 // Handle the exception (log it, notify someone, etc.)
-                Log::error('Failed to send order', [
+                Log::error('Failed to generate order', [
                     'order_id' => $order->id,
                     'error' => $e->getMessage(),
                 ]);
