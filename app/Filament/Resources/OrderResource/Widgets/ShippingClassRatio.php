@@ -63,21 +63,30 @@ class ShippingClassRatio extends ApexChartWidget
             }
         }
         
+        $data = array_map(function($class, $count) {
+            return ['x' => $class, 'y' => $count];
+        }, array_keys($classStatusCounts), $classStatusCounts);
+
+       $data = array_values(array_filter($data, fn($data) => $data['y'] > 0));
 
         return [
             'chart' => [
                 'type' => 'treemap',
                 'height' => 300,
+                'toolbar' => [
+                    'tools' => [
+                        'download' => false
+                    ]
+                ],
             ],
             'series' => [
                 [
-                    'data' => array_map(function($class, $count) {
-                        return ['x' => $class, 'y' => $count];
-                    }, array_keys($dbClassStatusCounts), $dbClassStatusCounts),
+                    'data' => $data,
                 ],
             ],
-            'colors' => [  '#FF5733', '#33FF57', '#3357FF', '#FF33A1', '#FF8C33', '#33FFF5', // add more colors if needed
-            '#F5A623', '#50E3C2', '#B8E986', '#4A90E2', '#BD10E0', '#FF0000', // ensure there are enough colors
+            'colors' => [  
+                '#FF5733', '#33FF57', '#3357FF', '#FF33A1', '#FF8C33', '#33FFF5',
+                '#F5A623', '#50E3C2', '#B8E986', '#4A90E2', '#BD10E0', '#FF0000', 
             ],
             'legend' => [
                 'show' => true,
@@ -85,7 +94,7 @@ class ShippingClassRatio extends ApexChartWidget
             'plotOptions' => [
                 'treemap' => [
                     'distributed' => true,
-                    'enableShades' => true
+                    'enableShades' => false
                 ]
             ],
         ];
