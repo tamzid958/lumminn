@@ -41,6 +41,7 @@ class Order extends Model
         'invoice_id',
         'is_confirmed',
         'ip_address_id',
+        'geo_location'
     ];
 
     protected static function boot()

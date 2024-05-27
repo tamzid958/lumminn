@@ -107,7 +107,8 @@ class OrderController extends Controller
             $order->name = $request->input('name');
             $order->phone_number = $request->input('phone_number');
             $order->address = $request->input('address');
-
+            $order->geo_location = $request->input('geo_location');
+            
             $payment_provider = match ($paymentProvider) {
                 "online-payment" => PaymentProvider::query()->where('slug', '=', 'sslcommerz')->first(),
                 default => PaymentProvider::query()->where('slug', '=', 'cash-on-delivery')->first(),

@@ -68,6 +68,13 @@ class OrderResource extends Resource
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('address')
+                    ->alignCenter()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('geo_location')
+                    ->wrap()
+                    ->alignCenter()
+                    ->copyable()
+                    ->label('GEO Location')
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('pay_amount')
                     ->numeric()

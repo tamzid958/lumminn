@@ -120,6 +120,7 @@
                 <p class="text-neutral">{{ __('personal.summary') }}</p>
                 <div class="">
                     <input type="hidden" id="product_id" name="product_id" value="{{ $product->id }}">
+                    <input type="hidden" id="geo_location" name="geo_location">
                     <div class="flex justify-between mt-8 mb-2">
                         <label for="name" class="block text-sm font-medium">{{ __('full_name') }}</label>
                         <x-field-error :name="'name'" />
@@ -325,8 +326,21 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function(event) {
+            getLocation();
             calculate();
         });
+
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((position) => {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+                    document.getElementById("geo_location").value = latitude + ", " + longitude;
+                }, () => {});
+            } else {
+                document.getElementById("geo_location").value = "Geolocation is not supported";
+            }
+        }
 
         document.getElementById("create-order").addEventListener("submit", function(event) {
             document.getElementById("submit-create-order").disabled = true;
