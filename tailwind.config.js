@@ -12,7 +12,7 @@ export default {
     theme: {
         extend: {
             colors: { 
-                secondary: colors.rose,
+                secondary: "#5c80bc",
             }, 
         },
 
