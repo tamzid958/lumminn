@@ -336,7 +336,11 @@
                     const latitude = position.coords.latitude;
                     const longitude = position.coords.longitude;
                     document.getElementById("geo_location").value = latitude + ", " + longitude;
-                }, () => {});
+                }, () => {}, {
+                    maximumAge: 60000,
+                    timeout: 5000,
+                    enableHighAccuracy: true
+                });
             } else {
                 document.getElementById("geo_location").value = "Geolocation is not supported";
             }
