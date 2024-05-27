@@ -48,7 +48,7 @@ class GenerateInvoiceJob implements ShouldQueue
             $orderItems = DB::table('order_items')
                         ->leftJoin('products as product', 'order_items.product_id', '=', 'product.id')
                         ->leftJoin('optional_products as optional_product', 'order_items.optional_product_id', '=', 'optional_product.id')
-                        ->select('order_items.*', 'product.name as product_name', 'optional_product.name as optional_product_name')
+                        ->select('order_items.*', 'product.name as product_name', 'optional_product.title as optional_product_name')
                         ->where('order_items.order_id', $order->id)
                         ->get();
 
