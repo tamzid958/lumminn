@@ -58,6 +58,11 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->description(fn($record) => $record->phone_number)
                     ->searchable(),
+                Tables\Columns\TextColumn::make('ipAddress.ip')
+                    ->label("IP Address")
+                    ->default('n/a')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('phone_number')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),

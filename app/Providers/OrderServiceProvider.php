@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\IpAddress;
 use App\Models\Product;
 use Illuminate\Support\Facades\DB;
 
@@ -51,6 +52,24 @@ class OrderServiceProvider
             ->where('id', $product_id)
             ->where('is_shipping_charge_applicable', false)
             ->exists();
+    }
+
+    public static function checkFakeOrder(string $ip): IpAddress 
+    {
+        $alreadyStoredIp  = IpAddress::query()->where('ip', $ip)->first();
+
+        if (isset($alreadyStoredIp)) {
+            $alreadyStoredIp->count = $alreadyStoredIp->count + 1;
+            $alreadyStoredIp->save();
+            return $alreadyStoredIp;
+        } else {
+            $ipAddress = new IpAddress();
+            $ipAddress->ip = $ip;
+            $ipAddress->count = 1;
+            $ipAddress->is_blocked = false;
+            $ipAddress->save();
+            return $ipAddress;
+        }
     }
 
     public static function checkIfAnyFreeShippingProduct(array $data): bool

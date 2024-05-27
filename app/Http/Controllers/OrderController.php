@@ -36,20 +36,30 @@ class OrderController extends Controller
         return view("order-success", compact("order"));
     }
 
+    public function fake_success($invoice_id)
+    {
+        return view("order-fake-success");
+    }
+
     public function create(Request $request)
     {
-        $request['phone_number'] = StringUtil::convertBanglaToEnglishPhoneNumber($request->phone_number);
+            $request['phone_number'] = StringUtil::convertBanglaToEnglishPhoneNumber($request->phone_number);
 
-        $request->validate([
-            'name' => 'required|string',
-            'phone_number' => 'required|numeric|digits:11',
-            'address' => 'required|string',
-            'shipping_class' => 'required|string',
-            'payment_provider' => 'required|string',
-            'quantity' => 'required|numeric|min:1|max:5',
-            'product_id' => 'required|numeric'
-        ]);
-
+            $request->validate([
+                'name' => 'required|string',
+                'phone_number' => 'required|numeric|digits:11',
+                'address' => 'required|string',
+                'shipping_class' => 'required|string',
+                'payment_provider' => 'required|string',
+                'quantity' => 'required|numeric|min:1|max:5',
+                'product_id' => 'required|numeric'
+            ]);
+            
+            $ipAddress = OrderServiceProvider::checkFakeOrder($request->ip());
+            
+            if($ipAddress->is_blocked) {
+                return redirect('/order/success_/'. uniqid());
+            }
       
             $productId = $request->input('product_id');
             $shippingClass = $request->input('shipping_class');
@@ -105,6 +115,8 @@ class OrderController extends Controller
             };
 
             $order->payment_provider_id = $payment_provider['id'];
+
+            $order->ip_address_id = $ipAddress->id;
 
             $createdOrder = Order::create($order->toArray());
 

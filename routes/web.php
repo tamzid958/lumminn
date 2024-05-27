@@ -15,6 +15,7 @@ Route::post('/product/calculate', [ProductController::class, 'calculate']);
 Route::get('/products/{slug}', [ProductController::class, 'view']);
 
 Route::post('/order/create', [OrderController::class, 'create']);
+Route::any('/order/success_/{invoice_id}', [OrderController::class, 'fake_success']);
 Route::any('/order/success/{invoice_id}', [OrderController::class, 'success'])->withoutMiddleware([VerifyCsrfToken::class]);
 Route::any('/order/fail-or-cancel/{invoice_id}', [OrderController::class, 'failOrCancel'])->withoutMiddleware([VerifyCsrfToken::class]);
 

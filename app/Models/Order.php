@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Ramsey\Uuid\Uuid;
 
@@ -38,7 +39,8 @@ class Order extends Model
         'note',
         'attachment',
         'invoice_id',
-        'is_confirmed'
+        'is_confirmed',
+        'ip_address_id',
     ];
 
     protected static function boot()
@@ -68,6 +70,11 @@ class Order extends Model
     public function paymentProvider(): BelongsTo
     {
         return $this->belongsTo(PaymentProvider::class, 'payment_provider_id');
+    }
+
+    public function ipAddress(): BelongsTo
+    {
+        return $this->belongsTo(IpAddress::class, "ip_address_id", "id");
     }
 
     protected function casts(): array|PayStatus|ShippingClass|ShippingStatus
