@@ -11,9 +11,6 @@ export default {
     ],
     theme: {
         extend: {
-            colors: { 
-                secondary: "#5c80bc",
-            }, 
         },
 
     },
