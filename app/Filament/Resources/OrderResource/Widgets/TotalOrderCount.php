@@ -5,7 +5,9 @@ namespace App\Filament\Resources\OrderResource\Widgets;
 use App\Models\Enum\ShippingStatus;
 use App\Models\Order;
 use Filament\Forms\Components\Select;
+use Illuminate\Support\Carbon;
 use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
+use Malzariey\FilamentDaterangepickerFilter\Fields\DateRangePicker;
 
 class TotalOrderCount extends ApexChartWidget
 {
@@ -37,27 +39,11 @@ class TotalOrderCount extends ApexChartWidget
     
     protected function getFormSchema(): array
     {
-        $currentMonth = date('m');
-        $currentYear = date('Y');
-        $previousYears = [];
-
-        for ($i = 0; $i < 10; $i++) {
-            $previousYears[] = $currentYear - $i;
-        }
-
-        $allMonths = [];
-        for ($month = 1; $month <= 12; $month++) {
-            $monthName = date('M', mktime(0, 0, 0, $month, 1)); // Format the month number as a month name
-            $allMonths[$month] = $monthName; // Use the month name as both the key and value
-        }
-
         return [
-            Select::make('year')
-                ->options($previousYears)
-                ->default($currentYear),
-            Select::make('month')
-                ->options($allMonths)
-                ->default($currentMonth),
+            DateRangePicker::make('date-range')
+            ->startDate(Carbon::now()->subDays(7))
+            ->endDate(Carbon::now()->addDays(1))
+            ->autoApply(), // End date: today),
         ];
     }
 
@@ -67,43 +53,59 @@ class TotalOrderCount extends ApexChartWidget
             return [];
         }
 
-        $currentYear = $this->filterFormData['year'];
-        $currentMonth = $this->filterFormData['month'];
+        $dateRange = $this->filterFormData['date-range'];
+        // Split the date range by the dash and trim any extra spaces
+        list($startDateStr, $endDateStr) = array_map('trim', explode('-', $dateRange));
 
-        $numDaysInMonth = cal_days_in_month(CAL_GREGORIAN, $currentMonth, $currentYear);
+        // Convert the date strings to Unix timestamps
+        $startDate = strtotime(str_replace('/', '-', $startDateStr));
+        $endDate = strtotime(str_replace('/', '-', $endDateStr));
+
+        $numDays = floor(($endDate - $startDate) / (60 * 60 * 24)) + 1; // Add 1 to include the end date
+    
+        // Initialize arrays to hold the total order counts and order counts per shipping status for each day
+        $totalOrderCounts = array_fill(0, $numDays, 0);
+        $orderCounts = [];
+
+        // Create an array of day numbers for the x-axis
+        $days = [];
+        $currentDate = $startDate;
+        for ($i = 0; $i < $numDays; $i++) {
+            $days[] = date('Y-m-d', $currentDate);
+            $currentDate += 86400; // 86400 seconds = 1 day
+        }
+
+        // Get enum values for shipping status
         $enumValues = array_column(ShippingStatus::cases(), 'value');
 
-        $totalOrderCounts = array_fill(1, $numDaysInMonth, 0);
-
-        // Initialize an array to hold the order counts for each shipping status and day
-        $orderCounts = array_fill_keys($enumValues, array_fill(1, $numDaysInMonth, 0));
-
-        // Loop through each day of the current month and gather order counts
-        for ($day = 1; $day <= $numDaysInMonth; $day++) {
-            // Format the date for the current day
-            $currentDate = sprintf('%04d-%02d-%02d', $currentYear, $currentMonth, $day);
-            $startDateTime = "$currentDate 00:00:00";
-            $endDateTime = "$currentDate 23:59:59";
-
-            $totalOrderCount = Order::query()
-                            ->whereBetween('created_at', [$startDateTime, $endDateTime])
-                            ->count();
-            $totalOrderCounts[$day] = $totalOrderCount;
+        // Loop through each day of the date range and gather order counts
+        foreach ($days as $index => $day) {
+            // Query the total order count for the current day
+            $totalOrderCount = Order::whereDate('created_at', $day)->count();
+            $totalOrderCounts[$index] = $totalOrderCount;
 
             // Query orders created on the current day, grouped by shipping status
-            $dailyOrderCounts = Order::query()
-                ->whereBetween('created_at', [$startDateTime, $endDateTime])
+            $dailyOrderCounts = Order::whereDate('created_at', $day)
                 ->selectRaw('shipping_status, COUNT(*) as count')
                 ->groupBy('shipping_status')
                 ->pluck('count', 'shipping_status')
                 ->toArray();
 
             // Store the counts in the orderCounts array
-            foreach ($dailyOrderCounts as $status => $count) {
-                $orderCounts[$status][$day] = $count;
+            foreach ($enumValues as $status) {
+                $orderCounts[$status][$index] = $dailyOrderCounts[$status] ?? 0;
             }
         }
-        
+
+        // Initialize an empty array to hold the dates
+        $dateArray = [];
+
+        // Iterate through the date range
+        for ($currentDate = $startDate; $currentDate <= $endDate; $currentDate = strtotime("+1 day", $currentDate)) {
+            // Format the current date as "Y-m-d" and add to the array
+            $dateArray[] = date("Y-m-d", $currentDate);
+        }
+                
         return [
             'chart' => [
                 'type' => 'area',
@@ -124,10 +126,9 @@ class TotalOrderCount extends ApexChartWidget
                 }, $enumValues)
             ],
             'xaxis' => [
-                'type'=> 'date',
-                'categories' => range(1, $numDaysInMonth),
+                'type'=> 'datetime',
+                'categories' => $dateArray,
                 'labels' => [
-                    'show'=> false,
                     'style' => [
                         'fontFamily' => 'inherit',
                     ],
