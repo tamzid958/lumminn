@@ -42,6 +42,7 @@ class IpAddressResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('ip')
+                    ->label('IP')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('count')
                     ->numeric()
