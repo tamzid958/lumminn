@@ -10,7 +10,7 @@ class IpAddress extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['ip', 'count', 'is_blocked'];
+    protected $fillable = ['ip', 'count', 'alias', 'is_blocked'];
 
     public function order(): HasMany
     {

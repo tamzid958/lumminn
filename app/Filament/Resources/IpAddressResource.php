@@ -29,8 +29,10 @@ class IpAddressResource extends Resource
                     ->ip()
                     ->label("IP Address")
                     ->required()
-                    ->maxLength(255)
-                    ->columnSpanFull(),
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('alias')
+                    ->label("Alias")
+                    ->maxLength(255),
                 Forms\Components\Toggle::make('is_blocked')
                     ->required()
                     ->default(false),
@@ -41,6 +43,9 @@ class IpAddressResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('alias')
+                    ->label('Alias')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('ip')
                     ->label('IP')
                     ->searchable(),

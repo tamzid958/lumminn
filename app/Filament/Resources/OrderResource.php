@@ -60,6 +60,7 @@ class OrderResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('ipAddress.ip')
                     ->label("IP Address")
+                    ->state(fn($record) => isset($record->ipAddress) ? ($record->ipAddress->alias ?? $record->ipAddress->ip) . " (". $record->ipAddress->count. ")": "")
                     ->copyable()
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
