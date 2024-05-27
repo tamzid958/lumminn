@@ -23,7 +23,7 @@ enum ShippingStatus: string implements HasLabel, HasColor
     {
         return match ($this) {
             self::OnHold => 'primary',
-            self::Packed => '#5c80bc',
+            self::Packed => 'secondary',
             self::Dispatched => 'warning',
             self::Completed => 'success',
             self::Cancelled, self::Returned => 'danger',

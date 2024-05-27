@@ -10,7 +10,11 @@ export default {
         "./vendor/robsontenorio/mary/src/View/Components/**/*.php",  
     ],
     theme: {
-        extend: {},
+        extend: {
+            colors: { 
+                secondary: colors.rose,
+            }, 
+        },
 
     },
     daisyui: {
