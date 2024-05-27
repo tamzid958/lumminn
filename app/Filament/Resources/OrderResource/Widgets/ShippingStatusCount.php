@@ -67,6 +67,7 @@ class ShippingStatusCount extends ApexChartWidget
             'labels' => array_keys($statusCounts),
             'legend' => [
                 'labels' => [
+                    'show'=> false,
                     'fontFamily' => 'inherit',
                 ],
             ],

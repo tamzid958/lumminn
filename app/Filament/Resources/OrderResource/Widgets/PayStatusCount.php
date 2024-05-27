@@ -67,6 +67,7 @@ class PayStatusCount extends ApexChartWidget
             'colors' => ['#6e767d', '#3fa372', '#d84c4c', '#5c80bc'],
             'legend' => [
                 'labels' => [
+                    'show'=> false,
                     'fontFamily' => 'inherit',
                 ],
             ],
