@@ -7,6 +7,9 @@
     $messenger_link =
         App\Models\BasicConfiguration::query()->where('config_key', '=', 'messenger_link')->first()->config_value ??
         null;
+    $facebook_group_link =
+        App\Models\BasicConfiguration::query()->where('config_key', '=', 'facebook_group_link')->first()
+            ->config_value ?? null;
 @endphp
 @section('content')
     <div class="lg:px-20 xl:px-32 max-w-7xl mx-auto rounded-md card bg-base-200 pb-4">
@@ -24,6 +27,13 @@
                     <div class="py-3 text-center">
                         <a href="{{ $messenger_link }}" class="btn btn-secondary" target="_blank">
                             {{ __('want_to_add_power') }}
+                        </a>
+                    </div>
+                @endisset
+                @isset($facebook_group_link)
+                    <div class="py-3 text-center">
+                        <a href="{{ $facebook_group_link }}" class="btn btn-secondary" target="_blank">
+                            {{ __('facebook_group') }}
                         </a>
                     </div>
                 @endisset
