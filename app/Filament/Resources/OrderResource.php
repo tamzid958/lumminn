@@ -214,9 +214,9 @@ class OrderResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\ForceDeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
-                    Tables\Actions\BulkAction::make("confirm-all-order")
+                    Tables\Actions\BulkAction::make("confirm-selected")
                     ->visible(fn () => Gate::allows('update_order'))
-                    ->label("Confirm All Order")
+                    ->label("Confirm selected")
                     ->color('warning')
                     ->icon('heroicon-o-check-circle')
                     ->action(function (Collection $records) {
