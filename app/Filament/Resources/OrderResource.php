@@ -60,7 +60,6 @@ class OrderResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('ipAddress.ip')
                     ->label("IP Address")
-                    ->default('n/a')
                     ->copyable()
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
