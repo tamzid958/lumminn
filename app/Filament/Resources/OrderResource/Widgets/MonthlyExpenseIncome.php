@@ -83,9 +83,7 @@ class MonthlyExpenseIncome extends ApexChartWidget
             ],
             'yaxis' => [
                 'type' => 'datetime',
-                'show' => false,
                 'labels' => [
-                    'show' => false,
                     'style' => [
                         'fontFamily' => 'inherit',
                     ],
