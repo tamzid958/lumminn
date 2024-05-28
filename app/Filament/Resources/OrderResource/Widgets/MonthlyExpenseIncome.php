@@ -39,7 +39,7 @@ class MonthlyExpenseIncome extends ApexChartWidget
     {
         return [
             DateRangePicker::make('date-range')
-            ->startDate(Carbon::now()->subMonths(1))
+            ->startDate(Carbon::now()->subDays(15))
             ->endDate(Carbon::now()->addDays(1))
             ->autoApply(), // End date: today),
         ];
