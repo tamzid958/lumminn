@@ -74,7 +74,6 @@ class MonthlyExpenseIncome extends ApexChartWidget
                 ],
             ],
             'xaxis' => [
-                'type' => 'datetime',
                 'categories' => $this->generateDateRange(),
                 'labels' => [
                     'style' => [
@@ -83,6 +82,7 @@ class MonthlyExpenseIncome extends ApexChartWidget
                 ],
             ],
             'yaxis' => [
+                'type' => 'datetime',
                 'show' => false,
                 'labels' => [
                     'show' => false,
