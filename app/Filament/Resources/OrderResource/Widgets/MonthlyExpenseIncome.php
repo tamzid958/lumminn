@@ -74,15 +74,16 @@ class MonthlyExpenseIncome extends ApexChartWidget
                 ],
             ],
             'xaxis' => [
+                'type' => 'datetime',
                 'categories' => $this->generateDateRange(),
                 'labels' => [
+                    'rotate'=> -90,
                     'style' => [
                         'fontFamily' => 'inherit',
                     ],
                 ],
             ],
             'yaxis' => [
-                'type' => 'datetime',
                 'labels' => [
                     'style' => [
                         'fontFamily' => 'inherit',
@@ -96,7 +97,7 @@ class MonthlyExpenseIncome extends ApexChartWidget
                     'borderRadiusApplication' => 'end',
                     'borderRadiusWhenStacked' => 'all',
                     'borderRadius' => 3,
-                    'horizontal' => true,
+                    'horizontal' => false,
                 ],
             ],
         ];
