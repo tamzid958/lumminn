@@ -5,7 +5,9 @@ namespace App\Filament\Resources\OrderResource\Widgets;
 use App\Models\Expense;
 use App\Models\Order;
 use Filament\Forms\Components\Select;
+use Illuminate\Support\Carbon;
 use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
+use Malzariey\FilamentDaterangepickerFilter\Fields\DateRangePicker;
 
 class MonthlyExpenseIncome extends ApexChartWidget
 {
@@ -35,18 +37,11 @@ class MonthlyExpenseIncome extends ApexChartWidget
 
     protected function getFormSchema(): array
     {
-        $currentYear = date('Y');
-        $previousYears = [];
-
-        for ($i = 0; $i < 10; $i++) {
-            $previousYears[] = $currentYear - $i;
-        }
-
         return [
-            Select::make('year')
-                ->options($previousYears)
-                ->default($currentYear),
-
+            DateRangePicker::make('date-range')
+            ->startDate(Carbon::now()->subMonths(1))
+            ->endDate(Carbon::now()->addDays(1))
+            ->autoApply(), // End date: today),
         ];
     }
 
@@ -79,10 +74,8 @@ class MonthlyExpenseIncome extends ApexChartWidget
                 ],
             ],
             'xaxis' => [
-                'title' => [
-                    'text' => 'Amount (BDT)'
-                ],
-                'categories' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                'type' => 'datetime',
+                'categories' => $this->generateDateRange(),
                 'labels' => [
                     'style' => [
                         'fontFamily' => 'inherit',
@@ -114,17 +107,26 @@ class MonthlyExpenseIncome extends ApexChartWidget
      */
     public function getIncomes(): array
     {
-        $currentYear = $this->filterFormData['year'];
-        $orderRevenues = [];
+    $dateRange = $this->filterFormData['date-range'];
 
-// Loop through each month of the current year
-        for ($month = 1; $month <= 12; $month++) {
-            // Get the number of days in the current month
-            $numDaysInMonth = cal_days_in_month(CAL_GREGORIAN, $month, $currentYear);
+    // Split the date range by the dash and trim any extra spaces
+    list($startDateStr, $endDateStr) = array_map('trim', explode('-', $dateRange));
+    
+    // Convert the date strings to the desired format directly
+    $startDate = date('Y-m-d', strtotime(str_replace('/', '-', $startDateStr)));
+    $endDate = date('Y-m-d', strtotime(str_replace('/', '-', $endDateStr)));
 
-            // Get the start and end date of the current day
-            $startDate = date('Y-m-d', mktime(0, 0, 0, $month, 1, $currentYear));
-            $endDate = date('Y-m-d', mktime(23, 59, 59, $month, $numDaysInMonth, $currentYear));
+    $orderRevenues = [];
+    
+    // Initialize currentDate to startDate and convert endDate to timestamp
+    $currentDate = strtotime($startDate);
+    $endDateTimestamp = strtotime($endDate);
+
+    // Loop through each day within the specified date range
+    while ($currentDate <= $endDateTimestamp) {
+            // Get the start and end time for the current day
+            $startDateTime = date('Y-m-d 00:00:00', $currentDate);
+            $endDateTime = date('Y-m-d 23:59:59', $currentDate);
 
             // Get the order revenue for the current day
             $orderRevenue = Order::query()
@@ -133,43 +135,81 @@ class MonthlyExpenseIncome extends ApexChartWidget
                 ->selectRaw('SUM(production_cost) AS total_production_cost')
                 ->selectRaw('(SUM(orders.total_amount + orders.additional_amount - orders.discount_amount) - SUM(production_cost)) AS net_revenue')
                 ->where('orders.pay_status', '=', 'Paid')
-                ->whereBetween('orders.created_at', [$startDate, $endDate])
+                ->whereBetween('orders.created_at', [$startDateTime, $endDateTime])
                 ->first();
-            // Accumulate the revenue for the month
+            
+            // Store the daily revenue in the array
+            $dateStr = date('Y-m-d', $currentDate);
+            $orderRevenues[$dateStr] = $orderRevenue->net_revenue ?? 0;
 
-            // Store the monthly revenue in the array
-            $monthName = date('M', mktime(0, 0, 0, $month, 1));
-            $orderRevenues[$monthName] = $orderRevenue['net_revenue'];
+            // Move to the next day
+            $currentDate = strtotime('+1 day', $currentDate);
         }
 
         return $orderRevenues;
     }
+
 
     /**
      * @return array
      */
     private function getExpenses(): array
     {
-        $expensesByMonth = Expense::query()->selectRaw('EXTRACT(MONTH FROM expense_date) as month, SUM(amount) as total')
-            ->whereYear('expense_date', $this->filterFormData['year'])
-            ->groupBy('month')
-            ->get();
-
-// Initialize an array to store expenses by month
+        $dateRange = $this->filterFormData['date-range'];
+    
+        // Split the date range by the dash and trim any extra spaces
+        list($startDateStr, $endDateStr) = array_map('trim', explode('-', $dateRange));
+        
+        // Convert the date strings to the desired format directly
+        $startDate = date('Y-m-d', strtotime(str_replace('/', '-', $startDateStr)));
+        $endDate = date('Y-m-d', strtotime(str_replace('/', '-', $endDateStr)));
+    
+        $expensesByDay = Expense::query()->selectRaw('DATE(expense_date) as day, SUM(amount) as total')
+            ->whereBetween('expense_date', [$startDate, $endDate])
+            ->groupBy('day')
+            ->orderBy('day')
+            ->get()
+            ->pluck('total', 'day')
+            ->toArray();
+    
+        // Initialize an array to store expenses by day
         $expensesArray = [];
+        
+        // Initialize currentDate to startDate and convert endDate to timestamp
+        $currentDate = strtotime($startDate);
+        $endDateTimestamp = strtotime($endDate);
+    
+        // Loop through each day within the specified date range
+        while ($currentDate <= $endDateTimestamp) {
+            $dateStr = date('Y-m-d', $currentDate);
+            $expensesArray[$dateStr] = $expensesByDay[$dateStr] ?? 0;
+            $currentDate = strtotime('+1 day', $currentDate);
+        }
+    
+        return $expensesArray;
+    }    
 
-// Map the results to create the array with month names and totals
-        foreach ($expensesByMonth as $expense) {
-            $monthName = date('M', mktime(0, 0, 0, $expense->month, 1));
-            $expensesArray[$monthName] = $expense->total;
+    function generateDateRange()
+    {
+        $dateRange = $this->filterFormData['date-range'];
+    
+        // Split the date range by the dash and trim any extra spaces
+        list($startDateStr, $endDateStr) = array_map('trim', explode('-', $dateRange));
+        
+        // Convert the date strings to the desired format directly
+        $startDate = date('Y-m-d', strtotime(str_replace('/', '-', $startDateStr)));
+        $endDate = date('Y-m-d', strtotime(str_replace('/', '-', $endDateStr)));
+
+        $dates = [];
+        $currentDate = strtotime($startDate);
+        $endDateTimestamp = strtotime($endDate);
+
+        while ($currentDate <= $endDateTimestamp) {
+            $dates[] = date('Y-m-d', $currentDate);
+            $currentDate = strtotime('+1 day', $currentDate);
         }
 
-// If any month has no expense, set its value to 0
-        $allMonths = array_map(function ($month) {
-            return date('M', mktime(0, 0, 0, $month, 1));
-        }, range(1, 12));
-
-        $expensesArray = array_merge(array_fill_keys($allMonths, 0), $expensesArray);
-        return $expensesArray;
+        return $dates;
     }
+
 }
