@@ -37,6 +37,8 @@ class SendOrdersJob implements ShouldQueue
             ->where('shipping_status', 'On Hold')
             ->where('is_confirmed', true)
             ->get();
+
+        if (count($dbOrders) === 0)  return;
         
         foreach ($dbOrders as $order) {
             $shipping_provider = ShippingProvider::find($order->shipping_provider_id);

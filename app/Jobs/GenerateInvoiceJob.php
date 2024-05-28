@@ -42,6 +42,8 @@ class GenerateInvoiceJob implements ShouldQueue
      */
     public function handle(): void
     {
+        if (count($this->orders) === 0)  return;
+        
         $packingReceipts = [];
 
         foreach ($this->orders as $order) {
@@ -72,45 +74,38 @@ class GenerateInvoiceJob implements ShouldQueue
                 'due_amount' => $order->pay_amount,
                 'order_items' => $productsString
             ];
-
+        }
         
-            try {
-                $filename = time() . "-invoice.pdf";
+        try {
+            $filename = time() . "-invoice.pdf";
 
-                LaravelMpdf::loadView('components.download-invoice',
-                    ['packingReceipts' => $packingReceipts])
-                    ->save(public_path('storage') . '/' . $filename);
-    
-                Invoice::query()->create([
-                    "name" => $filename,
-                    "file" => $filename
-                ]);
+            LaravelMpdf::loadView('components.download-invoice',
+                ['packingReceipts' => $packingReceipts])
+                ->save(public_path('storage') . '/' . $filename);
 
-                Notification::make()
-                ->title('Invoice generated')
-                ->icon('heroicon-o-document-text')
-                ->body("Download " . $filename . " and print it for packaging")
-                ->actions([
-                    Action::make('Download')
-                        ->button()
-                        ->url(asset('storage/' . $filename), shouldOpenInNewTab: true)
-                ])
-                ->sendToDatabase($this->user);
+            Invoice::query()->create([
+                "name" => $filename,
+                "file" => $filename
+            ]);
 
-            } catch (Exception $e) {
-                // Handle the exception (log it, notify someone, etc.)
-                Log::error('Failed to generate order', [
-                    'order_id' => $order->id,
-                    'error' => $e->getMessage(),
-                ]);
-                Notification::make()
-                        ->title('Invoice generation failed')
-                        ->icon('heroicon-o-document-text')
-                        ->body("Check failed jobs table to see error logs")
-                        ->sendToDatabase($this->user);
-            }
-            
-        }     
+            Notification::make()
+            ->title('Invoice generated')
+            ->icon('heroicon-o-document-text')
+            ->body("Download " . $filename . " and print it for packaging")
+            ->actions([
+                Action::make('Download')
+                    ->button()
+                    ->url(asset('storage/' . $filename), shouldOpenInNewTab: true)
+            ])
+            ->sendToDatabase($this->user);
+
+        } catch (Exception $e) {
+            // Handle the exception (log it, notify someone, etc.)
+            Log::error('Failed to generate order', [
+                'order_id' => $order->id,
+                'error' => $e->getMessage(),
+            ]);
+        }               
 
     }
 }
