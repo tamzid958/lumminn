@@ -18,19 +18,19 @@ class ListOrders extends ListRecords
         return [
             Actions\CreateAction::make(),
             Actions\ActionGroup::make([
-                Action::make('send')
-                    ->label('Send Orders')
+                Action::make('dispatch')
+                    ->label('Dispatch')
                     ->icon('heroicon-o-paper-airplane')
                     ->color('success')
                     ->url(OrderResource::getUrl('send')),
                 Action::make('sync')
-                    ->label('Sync Orders')
+                    ->label('Sync')
                     ->icon('heroicon-o-arrow-path')
                     ->color('primary')
                     ->action(fn() => dispatch(new CheckDeliveryStatusJob()))
                     ->requiresConfirmation(),
             ],
-            )->label('Manage Orders')->button()->color('success')->visible(fn () => Gate::allows('update_order'))
+            )->label('Manage orders')->button()->color('success')->visible(fn () => Gate::allows('update_order'))
         ];
     }
 }
