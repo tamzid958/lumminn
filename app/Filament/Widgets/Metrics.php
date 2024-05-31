@@ -27,22 +27,20 @@ class Metrics extends BaseWidget
         $invesmentArray = $investments->pluck('total')->toArray();
         $totalInvestment = array_sum($invesmentArray);
 
-        $totalSales = Order::selectRaw('EXTRACT(YEAR FROM created_at) as year, EXTRACT(MONTH FROM created_at) as month, SUM(total_amount + additional_amount - discount_amount) as total')
-            ->where('pay_status', '=', 'Paid')
-            ->groupBy('year', 'month')
-            ->get();
+        $orderRevenue = Order::query()
+                ->join('order_items', 'orders.id', '=', 'order_items.order_id')
+                ->selectRaw('EXTRACT(YEAR FROM orders.created_at) as year, EXTRACT(MONTH FROM orders.created_at) as month')
+                ->selectRaw('SUM(orders.total_amount + orders.additional_amount - orders.discount_amount) AS total_revenue')
+                ->selectRaw('SUM(production_cost) AS total_production_cost')
+                ->selectRaw('(SUM(orders.total_amount + orders.additional_amount - orders.discount_amount) - SUM(production_cost)) AS net_revenue')
+                ->where('orders.pay_status', '=', 'Paid')
+                ->groupBy('year', 'month')
+                ->first();
 
-        $totalSaleArray = $totalSales->pluck('total')->toArray();
+        $totalSaleArray = $orderRevenue->pluck('total_revenue')->toArray();
         $totalSale = array_sum($totalSaleArray);
 
-        $totalGrossProfits = Order::join('order_items', 'orders.id', '=', 'order_items.order_id')
-            ->selectRaw('EXTRACT(YEAR FROM orders.created_at) as year, EXTRACT(MONTH FROM orders.created_at) as month,
-        (SUM(orders.total_amount + orders.additional_amount - orders.discount_amount) - SUM(production_cost)) AS net_revenue')
-            ->where('orders.pay_status', '=', 'Paid')
-            ->groupBy('year', 'month')
-            ->get();
-
-        $totalGrossProfitArray = $totalGrossProfits->pluck('net_revenue')->toArray();
+        $totalGrossProfitArray = $orderRevenue->pluck('net_revenue')->toArray();
         $totalGrossProfit = array_sum($totalGrossProfitArray);
 
         return [
