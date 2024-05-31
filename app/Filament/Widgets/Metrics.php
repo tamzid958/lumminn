@@ -38,7 +38,7 @@ class Metrics extends BaseWidget
                             - CASE WHEN orders.shipping_status IN ('Cancelled', 'Returned') THEN orders.shipping_amount ELSE 0 END
                         ) AS net_revenue
                     ")
-                    ->where('orders.shipping_status', '=', 'Completed')
+                    ->where('orders.pay_status', '=', 'Paid')
                     ->groupBy('orders.id')
                     ->get();
 
