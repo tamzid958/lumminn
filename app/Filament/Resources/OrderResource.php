@@ -10,6 +10,7 @@ use App\Models\Enum\ShippingClass;
 use App\Models\Enum\ShippingStatus;
 use App\Models\OptionalProduct;
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\PaymentProvider;
 use App\Models\Product;
 use App\Models\ShippingProvider;
@@ -60,7 +61,7 @@ class OrderResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('ipAddress.ip')
                     ->label("IP Address")
-                    ->state(fn($record) => isset($record->ipAddress) ? ($record->ipAddress->alias ?? $record->ipAddress->ip) . " (". $record->ipAddress->count. ")": "")
+                    ->state(fn($record) => isset($record->ipAddress) ? ($record->ipAddress->alias ?? $record->ipAddress->ip) . " (" . $record->ipAddress->count . ")" : "")
                     ->copyable()
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -124,7 +125,7 @@ class OrderResource extends Resource
             ])
             ->actions([
                 Tables\Actions\Action::make('confirm')
-                    ->visible(fn () => Gate::allows('update_order'))
+                    ->visible(fn() => Gate::allows('update_order'))
                     ->label(fn($record) => $record->is_confirmed ? "Confirmed" : "Confirm Order")
                     ->color(fn($record) => $record->is_confirmed ? "success" : "warning")
                     ->icon(fn($record) => $record->is_confirmed ? 'heroicon-o-check-badge' : 'heroicon-o-phone')
@@ -136,19 +137,40 @@ class OrderResource extends Resource
                     ->fillForm(function (Order $record) {
                         $orderId = $record['id'];
 
-                        $mandatoryOrderItems = DB::table('order_items')
-                            ->join('products', 'order_items.product_id', '=', 'products.id')
-                            ->select('order_items.quantity', 'order_items.product_id as id')
-                            ->where('order_items.order_id', $orderId)
-                            ->whereNotNull('order_items.product_id')
-                            ->get();
+                        $mandatoryOrderItems = OrderItem::with('product')
+                            ->where('order_id', $orderId)
+                            ->whereNotNull('product_id')
+                            ->get(['quantity', 'product_id as id']);
+
+                        $shippingStatusCounts = Order::select('shipping_status', DB::raw('count(*) as total'))
+                            ->where('phone_number', $record['phone_number'])
+                            ->groupBy('shipping_status')
+                            ->get()
+                            ->toArray();
+
+                        $shippingStatusString = '';
+
+                        foreach ($shippingStatusCounts as $item) {
+                            $status = strval($item['shipping_status']); // Cast the enum value to a string
+                            $count = $item['total'];
+                            $shippingStatusString .= ucfirst($status) . ": $count, ";
+                        }
+
+                        // Remove the trailing comma and space
+                        $shippingStatusString = rtrim($shippingStatusString, ', ');
 
                         return [
                             'name' => $record['name'],
                             'phone_number' => $record['phone_number'],
                             'address' => $record['address'],
                             'shipping_class' => $record['shipping_class'],
-                            'products' => $mandatoryOrderItems->map(fn($item) => (array)$item)->all(),
+                            'products' => $mandatoryOrderItems->map(function ($item) {
+                                return [
+                                    'quantity' => $item->quantity,
+                                    'id' => $item->id,
+                                ];
+                            })->all(),
+                            'previous_history' => $shippingStatusString,
                         ];
                     })
                     ->form([
@@ -197,6 +219,8 @@ class OrderResource extends Resource
                             ->reorderable(false)
                             ->columnSpan(2)
                             ->required(),
+                        Forms\Components\Textarea::make('previous_history')
+                            ->columnSpanFull()
                     ])
                     ->disabledForm()
                     ->disabled(fn($record): ?bool => $record['is_confirmed'])
@@ -215,16 +239,16 @@ class OrderResource extends Resource
                     Tables\Actions\ForceDeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
                     Tables\Actions\BulkAction::make("confirm-selected")
-                    ->visible(fn () => Gate::allows('update_order'))
-                    ->label("Confirm selected")
-                    ->color('warning')
-                    ->icon('heroicon-o-check-circle')
-                    ->action(function (Collection $records) {
-                        foreach ($records as $record) {
-                            $record->is_confirmed = true;
-                            $record->save();
-                        }
-                    })->requiresConfirmation(),
+                        ->visible(fn() => Gate::allows('update_order'))
+                        ->label("Confirm selected")
+                        ->color('warning')
+                        ->icon('heroicon-o-check-circle')
+                        ->action(function (Collection $records) {
+                            foreach ($records as $record) {
+                                $record->is_confirmed = true;
+                                $record->save();
+                            }
+                        })->requiresConfirmation(),
                 ]),
                 ExportBulkAction::make()->exporter(OrderExporter::class)->chunkSize(500),
                 Tables\Actions\BulkAction::make('send')
@@ -232,25 +256,21 @@ class OrderResource extends Resource
                     ->color('info')
                     ->label('Download Invoice')
                     ->action(function (Collection $records) {
-                        $pdf = LaravelMpdf::loadView('components.download-invoice',
-                            ['packingReceipts' => collect($records->toArray())->map(function ($record) {
-                                $orderItems = $orderItems = DB::table('order_items')
-                                                ->leftJoin('products as product', 'order_items.product_id', '=', 'product.id')
-                                                ->leftJoin('products as optional_product', 'order_items.optional_product_id', '=', 'optional_product.id')
-                                                ->select('order_items.*', 'product.name as product_name', 'optional_product.name as optional_product_name')
-                                                ->where('order_items.order_id', $record['id'])
-                                                ->get();
-                                
+                        $pdf = LaravelMpdf::loadView('components.download-invoice', [
+                            'packingReceipts' => collect($records->toArray())->map(function ($record) {
+                                $orderItems = OrderItem::with(['product', 'optionalProduct'])
+                                    ->where('order_id', $record['id'])
+                                    ->get();
+
                                 $productsString = '';
 
                                 foreach ($orderItems as $item) {
-                                    $productName = $item->product_id !== null ? $item->product_name : $item->optional_product_name;
+                                    $productName = $item->product ? $item->product->name : $item->optionalProduct->title;
                                     $quantity = $item->quantity;
                                     $itemString = "$productName ($quantity)";
 
                                     $productsString .= ($productsString ? ', ' : '') . $itemString;
                                 }
-                            
 
                                 return [
                                     'id' => $record['id'],
@@ -258,23 +278,33 @@ class OrderResource extends Resource
                                     'phone_number' => $record['phone_number'],
                                     'address' => $record['address'],
                                     'shipping_id' => $record['shipping_id'],
-                                    'shipping_provider_name' => ShippingProvider::query()->find($record['shipping_provider_id'])->name,
+                                    'shipping_provider_name' => ShippingProvider::find($record['shipping_provider_id'])->name,
                                     'due_amount' => $record['pay_amount'],
-                                    'order_items' => $productsString
+                                    'order_items' => $productsString,
                                 ];
-                            })]);
+                            })
+                        ]);
 
                         $pdfContent = $pdf->output();
 
                         return response()->streamDownload(function () use ($pdfContent) {
                             echo $pdfContent;
-                        },
-                            "Invoice.pdf",
-                            ['Content-Type' => 'application/pdf']
-                        );
+                        }, "Invoice.pdf", ['Content-Type' => 'application/pdf']);
                     })->requiresConfirmation()
             ])
-            ->defaultSort('created_at', 'desc')
+            ->defaultSort(function (Builder $query) {
+                $query->orderByRaw(
+                    "CASE
+                            WHEN shipping_status = 'On Hold' AND is_confirmed = 0 THEN 1
+                            WHEN shipping_status = 'On Hold' AND is_confirmed = 1 THEN 2
+                            WHEN shipping_status = 'Cancelled' THEN 3
+                            WHEN shipping_status = 'Packed' THEN 4
+                            WHEN shipping_status = 'Dispatched' THEN 5
+                            WHEN shipping_status = 'Completed' THEN 6
+                            WHEN shipping_status = 'Returned' THEN 7
+                            ELSE 8
+                        END ASC");
+            })
             ->deferLoading();
     }
 
@@ -503,8 +533,8 @@ class OrderResource extends Resource
     {
 
         return parent::getEloquentQuery()
-        ->withoutGlobalScopes([
-            SoftDeletingScope::class,
-        ]);
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
     }
 }

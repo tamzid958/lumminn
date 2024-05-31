@@ -84,9 +84,9 @@ class AdminPanelProvider extends PanelProvider
                 FilamentApexChartsPlugin::make(),
                 FilamentShieldPlugin::make(),
                 RenewPasswordPlugin::make()
-                ->timestampColumn('last_renew_password_at')
-                ->passwordExpiresIn(days: 30)
-            
+                    ->timestampColumn('last_renew_password_at')
+                    ->passwordExpiresIn(days: 30)
+
             ])
             ->maxContentWidth(MaxWidth::Full)
             ->sidebarCollapsibleOnDesktop()

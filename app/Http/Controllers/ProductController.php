@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\ShippingProvider;
 use App\Providers\DiscountProvider;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Number;
@@ -21,13 +22,13 @@ class ProductController extends Controller
         try {
             $eventId = uniqid('ViewContent_', true);
             MetaPixel::track('ViewContent', [
-             'fbc' => $request->cookie('_fbc'),
-             'fbp' => $request->cookie('_fbp'),
-             'currency' => 'BDT', 
-             'value' => $product->sale_price,
-             'product' => $product->slug
+                'fbc' => $request->cookie('_fbc'),
+                'fbp' => $request->cookie('_fbp'),
+                'currency' => 'BDT',
+                'value' => $product->sale_price,
+                'product' => $product->slug
             ], $eventId);
-        }catch (\Exception $e) {
+        } catch (Exception $e) {
         }
 
         return view('product', compact('product'));

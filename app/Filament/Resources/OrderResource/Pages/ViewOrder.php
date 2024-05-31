@@ -3,9 +3,9 @@
 namespace App\Filament\Resources\OrderResource\Pages;
 
 use App\Filament\Resources\OrderResource;
+use App\Models\OrderItem;
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
-use Illuminate\Support\Facades\DB;
 
 class ViewOrder extends ViewRecord
 {
@@ -21,23 +21,30 @@ class ViewOrder extends ViewRecord
     protected function mutateFormDataBeforeFill(array $data): array
     {
         $orderId = $data['id'];
+        
+        $mandatoryOrderItems = OrderItem::with('product')
+            ->where('order_id', $orderId)
+            ->whereNotNull('product_id')
+            ->get(['quantity', 'product_id as id']);
 
-        $mandatatoryOrderItems = DB::table('order_items')
-            ->join('products', 'order_items.product_id', '=', 'products.id')
-            ->select('order_items.quantity', 'order_items.product_id as id')
-            ->where('order_items.order_id', $orderId)
-            ->whereNotNull('order_items.product_id')
-            ->get();
+        $optionalOrderItems = OrderItem::with('optionalProduct')
+            ->where('order_id', $orderId)
+            ->whereNotNull('optional_product_id')
+            ->get(['quantity', 'optional_product_id as id']);
 
-        $optionalOrderItems = DB::table('order_items')
-            ->join('optional_products', 'order_items.optional_product_id', '=', 'optional_products.id')
-            ->select('order_items.quantity', 'order_items.optional_product_id as id')
-            ->where('order_items.order_id', $orderId)
-            ->whereNotNull('order_items.optional_product_id')
-            ->get();
+        $data['products'] = $mandatoryOrderItems->map(function ($item) {
+            return [
+                'quantity' => $item->quantity,
+                'id' => $item->id,
+            ];
+        })->all();
 
-        $data['products'] = $mandatatoryOrderItems->map(fn($item) => (array)$item)->all();
-        $data['optional_products'] = $optionalOrderItems->map(fn($item) => (array)$item)->all();
+        $data['optional_products'] = $optionalOrderItems->map(function ($item) {
+            return [
+                'quantity' => $item->quantity,
+                'id' => $item->id,
+            ];
+        })->all();
 
         return $data;
     }

@@ -27,19 +27,19 @@ class SendOrders extends ListRecords
     {
         return [
             Action::make('dispatchOrders')
-                    ->label('Dispatch Orders')
-                    ->icon('heroicon-o-paper-airplane')
-                    ->color('warning')
-                    ->action(function() {
-                        dispatch(new SendOrdersJob(auth()->user()));
-                        Notification::make()
-                            ->title('Request sent successfully')
-                            ->body('Please check notification after a while.')
-                            ->success()
-                            ->send();
-                    })
-                    ->requiresConfirmation()
-                    ->visible(fn () => Gate::allows('update_order')),
+                ->label('Dispatch Orders')
+                ->icon('heroicon-o-paper-airplane')
+                ->color('warning')
+                ->action(function () {
+                    dispatch(new SendOrdersJob(auth()->user()));
+                    Notification::make()
+                        ->title('Request sent successfully')
+                        ->body('Please check notification after a while.')
+                        ->success()
+                        ->send();
+                })
+                ->requiresConfirmation()
+                ->visible(fn() => Gate::allows('update_order')),
         ];
     }
 

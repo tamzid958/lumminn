@@ -3,11 +3,13 @@
 namespace App\Filament\Resources\OrderResource\Pages;
 
 use App\Filament\Resources\OrderResource;
+use App\Models\OrderItem;
+use App\Models\PaymentProvider;
+use App\Models\ShippingProvider;
 use App\Providers\OrderServiceProvider;
 use App\Providers\PaymentServiceProvider;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 
 class CreateOrder extends CreateRecord
 {
@@ -29,7 +31,7 @@ class CreateOrder extends CreateRecord
 
         $freeShipping = OrderServiceProvider::checkIfAnyFreeShippingProduct($data);
 
-        $shipping_provider = DB::table('shipping_providers')->find($data['shipping_provider_id']);
+        $shipping_provider = ShippingProvider::query()->find($data['shipping_provider_id']);
 
         if (!$freeShipping) {
             $data['shipping_amount'] = match ($data['shipping_class']) {
@@ -70,9 +72,9 @@ class CreateOrder extends CreateRecord
             ];
         })->toArray();
 
-        DB::table('order_items')->insert($orderItems);
+        OrderItem::query()->insert($orderItems);
 
-        $payment_provider = DB::table('payment_providers')->find($data['payment_provider_id']);
+        $payment_provider = PaymentProvider::query()->find($data['payment_provider_id']);
 
         PaymentServiceProvider::register($payment_provider)->create()->generateTransaction($record->toArray());
 

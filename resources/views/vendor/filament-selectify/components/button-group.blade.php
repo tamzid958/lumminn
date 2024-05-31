@@ -1,5 +1,5 @@
 @php
-    $id = $getId();
+    use Filament\Support\Enums\IconPosition;use Filament\Support\Enums\IconSize;use function Filament\Support\get_color_css_variables;$id = $getId();
     $statePath = $getStatePath();
     $isDisabled = $isDisabled();
     $options = $getOptions();
@@ -42,8 +42,8 @@
                 "
                 x-bind:style="
                     state == '{{ $value }}'
-                        ? '{{ \Filament\Support\get_color_css_variables($onColor, shades: [600, 500, 400]) }}'
-                        : '{{ \Filament\Support\get_color_css_variables($offColor, shades: [600, 500, 400]) }}'
+                        ? '{{ get_color_css_variables($onColor, shades: [600, 500, 400]) }}'
+                        : '{{ get_color_css_variables($offColor, shades: [600, 500, 400]) }}'
                 "
                 {{
                     $attributes
@@ -52,8 +52,8 @@
                     ->class([
                         'selectify-button-group items-center justify-center font-semibold outline-none transition duration-75 focus:ring-2 rounded-lg gap-1.5 px-3 py-2 text-sm flex shadow-sm',
                         'opacity-70 pointer-events-none' => $shouldOptionBeDisabled,
-                        'flex-row mr-1' => $iconPosition === \Filament\Support\Enums\IconPosition::Before || $iconPosition === 'before',
-                        'flex-row-reverse ml-1' => $iconPosition === \Filament\Support\Enums\IconPosition::After || $iconPosition === 'after',
+                        'flex-row mr-1' => $iconPosition === IconPosition::Before || $iconPosition === 'before',
+                        'flex-row-reverse ml-1' => $iconPosition === IconPosition::After || $iconPosition === 'after',
                     ])
                 }}
                 {{ $getExtraAlpineAttributeBag() }}
@@ -73,9 +73,9 @@
                         icon="{{ $icons[$value] }}"
                         @class([
                             match ($iconSize) {
-                                \Filament\Support\Enums\IconSize::Small, 'sm' => 'h-4 w-4 mt-1',
-                                \Filament\Support\Enums\IconSize::Medium, 'md' => 'h-5 w-5 mt-0.5',
-                                \Filament\Support\Enums\IconSize::Large, 'lg' => 'h-6 w-6',
+                                IconSize::Small, 'sm' => 'h-4 w-4 mt-1',
+                                IconSize::Medium, 'md' => 'h-5 w-5 mt-0.5',
+                                IconSize::Large, 'lg' => 'h-6 w-6',
                                 default => $iconSize,
                             },
                         ])

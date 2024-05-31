@@ -54,9 +54,9 @@ class OrderServiceProvider
             ->exists();
     }
 
-    public static function checkFakeOrder(string $ip): IpAddress 
+    public static function checkFakeOrder(string $ip): IpAddress
     {
-        $alreadyStoredIp  = IpAddress::query()->where('ip', $ip)->first();
+        $alreadyStoredIp = IpAddress::query()->where('ip', $ip)->first();
 
         if (isset($alreadyStoredIp)) {
             $alreadyStoredIp->count = $alreadyStoredIp->count + 1;

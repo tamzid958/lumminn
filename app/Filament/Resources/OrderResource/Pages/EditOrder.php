@@ -5,11 +5,11 @@ namespace App\Filament\Resources\OrderResource\Pages;
 use App\Filament\Resources\OrderResource;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\ShippingProvider;
 use App\Providers\OrderServiceProvider;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class EditOrder extends EditRecord
@@ -34,22 +34,29 @@ class EditOrder extends EditRecord
     {
         $orderId = $data['id'];
 
-        $mandatoryOrderItems = DB::table('order_items')
-            ->join('products', 'order_items.product_id', '=', 'products.id')
-            ->select('order_items.quantity', 'order_items.product_id as id')
-            ->where('order_items.order_id', $orderId)
-            ->whereNotNull('order_items.product_id')
-            ->get();
+        $mandatoryOrderItems = OrderItem::with('product')
+            ->where('order_id', $orderId)
+            ->whereNotNull('product_id')
+            ->get(['quantity', 'product_id as id']);
 
-        $optionalOrderItems = DB::table('order_items')
-            ->join('optional_products', 'order_items.optional_product_id', '=', 'optional_products.id')
-            ->select('order_items.quantity', 'order_items.optional_product_id as id')
-            ->where('order_items.order_id', $orderId)
-            ->whereNotNull('order_items.optional_product_id')
-            ->get();
+        $optionalOrderItems = OrderItem::with('optionalProduct')
+            ->where('order_id', $orderId)
+            ->whereNotNull('optional_product_id')
+            ->get(['quantity', 'optional_product_id as id']);
 
-        $data['products'] = $mandatoryOrderItems->map(fn($item) => (array)$item)->all();
-        $data['optional_products'] = $optionalOrderItems->map(fn($item) => (array)$item)->all();
+        $data['products'] = $mandatoryOrderItems->map(function ($item) {
+            return [
+                'quantity' => $item->quantity,
+                'id' => $item->id,
+            ];
+        })->all();
+
+        $data['optional_products'] = $optionalOrderItems->map(function ($item) {
+            return [
+                'quantity' => $item->quantity,
+                'id' => $item->id,
+            ];
+        })->all();
 
         return $data;
     }
@@ -76,7 +83,7 @@ class EditOrder extends EditRecord
 
             $freeShipping = OrderServiceProvider::checkIfAnyFreeShippingProduct($data);
 
-            $shipping_provider = DB::table('shipping_providers')->find($data['shipping_provider_id']);
+            $shipping_provider = ShippingProvider::query()->find($data['shipping_provider_id']);
 
             if (!$freeShipping) {
                 $data['shipping_amount'] = match ($data['shipping_class']) {
@@ -118,7 +125,7 @@ class EditOrder extends EditRecord
                 ];
             })->toArray();
 
-            DB::table('order_items')->insert($orderItems);
+            OrderItem::query()->insert($orderItems);
         }
 
         return $record;

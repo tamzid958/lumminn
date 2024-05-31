@@ -1,3 +1,4 @@
+@php use function Filament\Support\get_color_css_variables; @endphp
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     @php
         $id = $getId();
@@ -16,19 +17,19 @@
     <div class="flex items-center rounded-md" x-data="{
         state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }}
     }" x-on:keydown.left="state = true"
-        x-on:keydown.right="state = false">
+         x-on:keydown.right="state = false">
         @foreach ($buttons as $key => [$color, $label, $value])
             <button x-on:click="state = {{ $value ? 'true' : 'false' }}" x-bind:aria-pressed="state ? 'true' : 'false'"
-                x-bind:class="{{ $value ? 'state' : '!state' }}
+                    x-bind:class="{{ $value ? 'state' : '!state' }}
                     ?
                     '{{ match ($color) {
                         'gray' => 'bg-gray-700 text-white hover:bg-gray-700 dark:bg-gray-950 dark:text-white dark:hover:bg-gray-800',
                         default => 'bg-custom-600 text-white hover:bg-custom-500 dark:bg-custom-500 dark:hover:bg-custom-400',
                     } }}' :
                     'bg-gray-200 dark:bg-white/10 text-gray-900 dark:text-white'"
-                x-bind:style="{{ $value ? 'state' : '!state' }}
+                    x-bind:style="{{ $value ? 'state' : '!state' }}
                     ?
-                    '{{ \Filament\Support\get_color_css_variables($color, shades: [600, 500, 400]) }}' :
+                    '{{ get_color_css_variables($color, shades: [600, 500, 400]) }}' :
                     null"
                 {{ $attributes->merge(
                         [

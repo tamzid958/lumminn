@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BasicConfiguration;
 use App\Models\Product;
+use Exception;
 use Illuminate\View\View;
 use Combindma\FacebookPixel\Facades\MetaPixel;
 use Illuminate\Http\Request;
@@ -18,13 +19,13 @@ class IndexController extends Controller
         try {
             $eventId = uniqid('ViewContent_', true);
             MetaPixel::track('ViewContent', [
-             'fbc' => $request->cookie('_fbc'),
-             'fbp' => $request->cookie('_fbp'),
-             'currency' => 'BDT', 
-             'value' => $product->sale_price,
-             'product' => $product->slug
+                'fbc' => $request->cookie('_fbc'),
+                'fbp' => $request->cookie('_fbp'),
+                'currency' => 'BDT',
+                'value' => $product->sale_price,
+                'product' => $product->slug
             ], $eventId);
-        }catch (\Exception $e) {
+        } catch (Exception $e) {
         }
 
         return view('index', compact('product'));

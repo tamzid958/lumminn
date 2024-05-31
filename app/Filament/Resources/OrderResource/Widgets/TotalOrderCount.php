@@ -31,19 +31,19 @@ class TotalOrderCount extends ApexChartWidget
      *
      * @return array
      */
-    
-     protected static ?string $pollingInterval = null;
 
-     protected static bool $deferLoading = true;
+    protected static ?string $pollingInterval = null;
 
-    
+    protected static bool $deferLoading = true;
+
+
     protected function getFormSchema(): array
     {
         return [
             DateRangePicker::make('date-range')
-            ->startDate(Carbon::now()->subDays(7))
-            ->endDate(Carbon::now()->addDays(1))
-            ->autoApply(), // End date: today),
+                ->startDate(Carbon::now()->subDays(7))
+                ->endDate(Carbon::now()->addDays(1))
+                ->autoApply(), // End date: today),
         ];
     }
 
@@ -62,7 +62,7 @@ class TotalOrderCount extends ApexChartWidget
         $endDate = strtotime(str_replace('/', '-', $endDateStr));
 
         $numDays = floor(($endDate - $startDate) / (60 * 60 * 24)) + 1; // Add 1 to include the end date
-    
+
         // Initialize arrays to hold the total order counts and order counts per shipping status for each day
         $totalOrderCounts = array_fill(0, $numDays, 0);
         $orderCounts = [];
@@ -105,7 +105,7 @@ class TotalOrderCount extends ApexChartWidget
             // Format the current date as "Y-m-d" and add to the array
             $dateArray[] = date("Y-m-d", $currentDate);
         }
-                
+
         return [
             'chart' => [
                 'type' => 'area',
@@ -126,7 +126,7 @@ class TotalOrderCount extends ApexChartWidget
                 }, $enumValues)
             ],
             'xaxis' => [
-                'type'=> 'datetime',
+                'type' => 'datetime',
                 'categories' => $dateArray,
                 'labels' => [
                     'style' => [

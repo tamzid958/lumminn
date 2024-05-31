@@ -40,10 +40,10 @@ class SteadFastGateway extends BaseShippingGateway implements ShippingGateway
                 $order['shipping_id'] = (string)$body['consignment']['consignment_id'];
                 parent::send($order);
             } else {
-                dump("response body error (". $order['id'] . ") " . $body);
+                dump("response body error (" . $order['id'] . ") " . $body);
             }
         } catch (Throwable $e) {
-            dump("throwable error (". $order['id'] . ") ". $e->getMessage());
+            dump("throwable error (" . $order['id'] . ") " . $e->getMessage());
         }
     }
 
@@ -80,10 +80,10 @@ class SteadFastGateway extends BaseShippingGateway implements ShippingGateway
 
                 parent::check($order);
             } else {
-                dump("response body error (". $order['id'] . ") " . $body);
+                dump("response body error (" . $order['id'] . ") " . $body);
             }
         } catch (Throwable $e) {
-            dump("throwable error (". $order['id'] . ") ". $e->getMessage());
+            dump("throwable error (" . $order['id'] . ") " . $e->getMessage());
         }
     }
 }

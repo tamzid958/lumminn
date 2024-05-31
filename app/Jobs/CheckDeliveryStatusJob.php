@@ -14,7 +14,9 @@ use Illuminate\Queue\SerializesModels;
 class CheckDeliveryStatusJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
     public $timeout = 0;
+
     /**
      * Create a new job instance.
      */

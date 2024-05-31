@@ -31,7 +31,7 @@ class ShippingClassRatio extends ApexChartWidget
      * @return array
      */
     protected static bool $deferLoading = true;
-    
+
     protected function getOptions(): array
     {
         if (!$this->readyToLoad) {
@@ -62,12 +62,12 @@ class ShippingClassRatio extends ApexChartWidget
                 $classStatusCounts[$classStatus] = $row['total'];
             }
         }
-        
-        $data = array_map(function($class, $count) {
+
+        $data = array_map(function ($class, $count) {
             return ['x' => $class, 'y' => $count];
         }, array_keys($classStatusCounts), $classStatusCounts);
 
-       $data = array_values(array_filter($data, fn($data) => $data['y'] > 0));
+        $data = array_values(array_filter($data, fn($data) => $data['y'] > 0));
 
         return [
             'chart' => [

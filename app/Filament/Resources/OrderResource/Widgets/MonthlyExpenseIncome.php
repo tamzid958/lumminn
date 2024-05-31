@@ -39,9 +39,9 @@ class MonthlyExpenseIncome extends ApexChartWidget
     {
         return [
             DateRangePicker::make('date-range')
-            ->startDate(Carbon::now()->subDays(15))
-            ->endDate(Carbon::now()->addDays(1))
-            ->autoApply(), // End date: today),
+                ->startDate(Carbon::now()->subDays(15))
+                ->endDate(Carbon::now()->addDays(1))
+                ->autoApply(), // End date: today),
         ];
     }
 
@@ -77,7 +77,7 @@ class MonthlyExpenseIncome extends ApexChartWidget
                 'type' => 'datetime',
                 'categories' => $this->generateDateRange(),
                 'labels' => [
-                    'rotate'=> -90,
+                    'rotate' => -90,
                     'style' => [
                         'fontFamily' => 'inherit',
                     ],
@@ -108,23 +108,23 @@ class MonthlyExpenseIncome extends ApexChartWidget
      */
     public function getIncomes(): array
     {
-    $dateRange = $this->filterFormData['date-range'];
+        $dateRange = $this->filterFormData['date-range'];
 
-    // Split the date range by the dash and trim any extra spaces
-    list($startDateStr, $endDateStr) = array_map('trim', explode('-', $dateRange));
-    
-    // Convert the date strings to the desired format directly
-    $startDate = date('Y-m-d', strtotime(str_replace('/', '-', $startDateStr)));
-    $endDate = date('Y-m-d', strtotime(str_replace('/', '-', $endDateStr)));
+        // Split the date range by the dash and trim any extra spaces
+        list($startDateStr, $endDateStr) = array_map('trim', explode('-', $dateRange));
 
-    $orderRevenues = [];
-    
-    // Initialize currentDate to startDate and convert endDate to timestamp
-    $currentDate = strtotime($startDate);
-    $endDateTimestamp = strtotime($endDate);
+        // Convert the date strings to the desired format directly
+        $startDate = date('Y-m-d', strtotime(str_replace('/', '-', $startDateStr)));
+        $endDate = date('Y-m-d', strtotime(str_replace('/', '-', $endDateStr)));
 
-    // Loop through each day within the specified date range
-    while ($currentDate <= $endDateTimestamp) {
+        $orderRevenues = [];
+
+        // Initialize currentDate to startDate and convert endDate to timestamp
+        $currentDate = strtotime($startDate);
+        $endDateTimestamp = strtotime($endDate);
+
+        // Loop through each day within the specified date range
+        while ($currentDate <= $endDateTimestamp) {
             // Get the start and end time for the current day
             $startDateTime = date('Y-m-d 00:00:00', $currentDate);
             $endDateTime = date('Y-m-d 23:59:59', $currentDate);
@@ -138,7 +138,7 @@ class MonthlyExpenseIncome extends ApexChartWidget
                 ->where('orders.pay_status', '=', 'Paid')
                 ->whereBetween('orders.created_at', [$startDateTime, $endDateTime])
                 ->first();
-            
+
             // Store the daily revenue in the array
             $dateStr = date('Y-m-d', $currentDate);
             $orderRevenues[$dateStr] = $orderRevenue->net_revenue ?? 0;
@@ -157,14 +157,14 @@ class MonthlyExpenseIncome extends ApexChartWidget
     private function getExpenses(): array
     {
         $dateRange = $this->filterFormData['date-range'];
-    
+
         // Split the date range by the dash and trim any extra spaces
         list($startDateStr, $endDateStr) = array_map('trim', explode('-', $dateRange));
-        
+
         // Convert the date strings to the desired format directly
         $startDate = date('Y-m-d', strtotime(str_replace('/', '-', $startDateStr)));
         $endDate = date('Y-m-d', strtotime(str_replace('/', '-', $endDateStr)));
-    
+
         $expensesByDay = Expense::query()->selectRaw('DATE(expense_date) as day, SUM(amount) as total')
             ->whereBetween('expense_date', [$startDate, $endDate])
             ->groupBy('day')
@@ -172,31 +172,31 @@ class MonthlyExpenseIncome extends ApexChartWidget
             ->get()
             ->pluck('total', 'day')
             ->toArray();
-    
+
         // Initialize an array to store expenses by day
         $expensesArray = [];
-        
+
         // Initialize currentDate to startDate and convert endDate to timestamp
         $currentDate = strtotime($startDate);
         $endDateTimestamp = strtotime($endDate);
-    
+
         // Loop through each day within the specified date range
         while ($currentDate <= $endDateTimestamp) {
             $dateStr = date('Y-m-d', $currentDate);
             $expensesArray[$dateStr] = $expensesByDay[$dateStr] ?? 0;
             $currentDate = strtotime('+1 day', $currentDate);
         }
-    
+
         return $expensesArray;
-    }    
+    }
 
     function generateDateRange()
     {
         $dateRange = $this->filterFormData['date-range'];
-    
+
         // Split the date range by the dash and trim any extra spaces
         list($startDateStr, $endDateStr) = array_map('trim', explode('-', $dateRange));
-        
+
         // Convert the date strings to the desired format directly
         $startDate = date('Y-m-d', strtotime(str_replace('/', '-', $startDateStr)));
         $endDate = date('Y-m-d', strtotime(str_replace('/', '-', $endDateStr)));

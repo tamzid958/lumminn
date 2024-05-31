@@ -17,8 +17,10 @@ use Illuminate\Support\Facades\Log;
 class SendOrdersJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
     protected $user;
     public $timeout = 0;
+
     /**
      * Create a new job instance.
      */
@@ -32,17 +34,17 @@ class SendOrdersJob implements ShouldQueue
      */
     public function handle(): void
     {
-      
+
         $dbOrders = Order::query()
             ->where('shipping_status', 'On Hold')
             ->where('is_confirmed', true)
             ->get();
 
-        if (count($dbOrders) === 0)  return;
-        
+        if (count($dbOrders) === 0) return;
+
         foreach ($dbOrders as $order) {
             $shipping_provider = ShippingProvider::find($order->shipping_provider_id);
-        
+
             if ($shipping_provider) {
                 try {
                     ShippingServiceProvider::register($shipping_provider)
@@ -59,7 +61,7 @@ class SendOrdersJob implements ShouldQueue
                 // Handle the case where the shipping provider is not found
                 Log::warning('Shipping provider not found', ['shipping_provider_id' => $order->shipping_provider_id]);
             }
-        }      
+        }
 
         Notification::make()
             ->title('Sent to shipping provider')

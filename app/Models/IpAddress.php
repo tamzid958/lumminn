@@ -16,7 +16,7 @@ class IpAddress extends Model
     {
         return $this->hasMany(Order::class, "id", "ip_address_id");
     }
-    
+
     protected function casts(): array
     {
         return [

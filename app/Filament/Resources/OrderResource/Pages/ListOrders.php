@@ -30,7 +30,7 @@ class ListOrders extends ListRecords
                     ->action(fn() => dispatch(new CheckDeliveryStatusJob()))
                     ->requiresConfirmation(),
             ],
-            )->label('Manage orders')->button()->color('success')->visible(fn () => Gate::allows('update_order'))
+            )->label('Manage orders')->button()->color('success')->visible(fn() => Gate::allows('update_order'))
         ];
     }
 }
