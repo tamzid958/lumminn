@@ -35,7 +35,7 @@ class Metrics extends BaseWidget
                 ->selectRaw('(SUM(orders.total_amount + orders.additional_amount - orders.discount_amount) - SUM(production_cost)) AS net_revenue')
                 ->where('orders.pay_status', '=', 'Paid')
                 ->groupBy('year', 'month')
-                ->first();
+                ->get();
 
         $totalSaleArray = $orderRevenue->pluck('total_revenue')->toArray();
         $totalSale = array_sum($totalSaleArray);
