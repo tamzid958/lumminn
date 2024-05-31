@@ -37,13 +37,7 @@ class Metrics extends BaseWidget
                         - SUM(CASE WHEN orders.shipping_status IN ('Cancelled', 'Returned') THEN orders.shipping_amount ELSE 0 END)
                         ) AS net_revenue")
                     ->where('orders.shipping_status', '=', 'Completed')
-                    ->get();
-
-        $totalSaleArray = $orderRevenue->pluck('total_revenue')->toArray();
-        $totalSale = array_sum($totalSaleArray);
-
-        $totalGrossProfitArray = $orderRevenue->pluck('net_revenue')->toArray();
-        $totalGrossProfit = array_sum($totalGrossProfitArray);
+                    ->first();
 
         return [
             Stat::make('Total Investment', NumberUtil::number_shorten($totalInvestment))
@@ -60,12 +54,12 @@ class Metrics extends BaseWidget
                 ->extraAttributes(['title' => '৳' . $totalExpense])
                 ->color('danger'),
 
-            Stat::make('Total Sale', NumberUtil::number_shorten($totalSale))
-                ->extraAttributes(['title' => '৳' . $totalSale])
+            Stat::make('Total Sale', NumberUtil::number_shorten($orderRevenue->total_revenue))
+                ->extraAttributes(['title' => '৳' . $orderRevenue->total_revenue])
                 ->color('success'),
 
-            Stat::make('Gross Profit', NumberUtil::number_shorten($totalGrossProfit))
-                ->extraAttributes(['title' => '৳' . $totalGrossProfit])
+            Stat::make('Gross Profit', NumberUtil::number_shorten($orderRevenue->net_revenue))
+                ->extraAttributes(['title' => '৳' . $orderRevenue->net_revenue])
                 ->color('success'),
         ];
     }
