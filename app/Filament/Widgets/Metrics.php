@@ -29,15 +29,21 @@ class Metrics extends BaseWidget
 
         $orderRevenue = Order::query()
                     ->join('order_items', 'orders.id', '=', 'order_items.order_id')
-                    ->selectRaw('SUM(orders.total_amount + orders.additional_amount - orders.discount_amount) AS total_revenue')
-                    ->selectRaw('SUM(order_items.production_cost) AS total_production_cost')
                     ->selectRaw("
-                        (SUM(orders.total_amount + orders.additional_amount - orders.discount_amount) 
-                        - SUM(order_items.production_cost) 
-                        - SUM(CASE WHEN orders.shipping_status IN ('Cancelled', 'Returned') THEN orders.shipping_amount ELSE 0 END)
-                        ) AS net_revenue")
+                        SUM(orders.total_amount + orders.additional_amount - orders.discount_amount) AS total_revenue,
+                        SUM(order_items.production_cost) AS total_production_cost,
+                        SUM(
+                            (orders.total_amount + orders.additional_amount - orders.discount_amount)
+                            - order_items.production_cost
+                            - CASE WHEN orders.shipping_status IN ('Cancelled', 'Returned') THEN orders.shipping_amount ELSE 0 END
+                        ) AS net_revenue
+                    ")
                     ->where('orders.shipping_status', '=', 'Completed')
-                    ->first();
+                    ->groupBy('orders.id')
+                    ->get();
+
+        $totalSale = isset($orderRevenue[0])? $orderRevenue[0]->total_revenue : 0;
+        $grossProfit = isset($orderRevenue[0])? $orderRevenue[0]->net_revenue : 0;
 
         return [
             Stat::make('Total Investment', NumberUtil::number_shorten($totalInvestment))
@@ -54,12 +60,12 @@ class Metrics extends BaseWidget
                 ->extraAttributes(['title' => '৳' . $totalExpense])
                 ->color('danger'),
 
-            Stat::make('Total Sale', NumberUtil::number_shorten($orderRevenue->total_revenue))
-                ->extraAttributes(['title' => '৳' . $orderRevenue->total_revenue])
+            Stat::make('Total Sale', NumberUtil::number_shorten($totalSale))
+                ->extraAttributes(['title' => '৳' . $totalSale])
                 ->color('success'),
 
-            Stat::make('Gross Profit', NumberUtil::number_shorten($orderRevenue->net_revenue))
-                ->extraAttributes(['title' => '৳' . $orderRevenue->net_revenue])
+            Stat::make('Gross Profit', NumberUtil::number_shorten($grossProfit))
+                ->extraAttributes(['title' => '৳' . ($grossProfit)])
                 ->color('success'),
         ];
     }
