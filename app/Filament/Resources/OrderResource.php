@@ -144,6 +144,7 @@ class OrderResource extends Resource
 
                         $shippingStatusCounts = Order::select('shipping_status', DB::raw('count(*) as total'))
                             ->where('phone_number', $record['phone_number'])
+                            ->whereNot('id', $orderId)
                             ->groupBy('shipping_status')
                             ->get()
                             ->toArray();
