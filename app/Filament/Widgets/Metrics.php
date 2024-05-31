@@ -31,10 +31,10 @@ class Metrics extends BaseWidget
                 ->join('order_items', 'orders.id', '=', 'order_items.order_id')
                 ->selectRaw('EXTRACT(YEAR FROM orders.created_at) as year, EXTRACT(MONTH FROM orders.created_at) as month')
                 ->selectRaw('SUM(orders.total_amount + orders.additional_amount - orders.discount_amount) AS total_revenue')
-                ->selectRaw('SUM(production_cost) AS total_production_cost')
-                ->selectRaw('(SUM(orders.total_amount + orders.additional_amount - orders.discount_amount) - SUM(production_cost)) AS net_revenue')
+                ->selectRaw('SUM(order_items.production_cost) AS total_production_cost')
+                ->selectRaw('(SUM(orders.total_amount + orders.additional_amount - orders.discount_amount) - SUM(order_items.production_cost)) AS net_revenue')
                 ->where('orders.pay_status', '=', 'Paid')
-                ->groupBy('year', 'month')
+                ->groupByRaw('EXTRACT(YEAR FROM orders.created_at), EXTRACT(MONTH FROM orders.created_at)')
                 ->get();
 
         $totalSaleArray = $orderRevenue->pluck('total_revenue')->toArray();
