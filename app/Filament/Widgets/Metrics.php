@@ -42,8 +42,8 @@ class Metrics extends BaseWidget
                     ->groupBy('orders.id')
                     ->get();
 
-        $totalSale = isset($orderRevenue[0])? $orderRevenue[0]->total_revenue : 0;
-        $grossProfit = isset($orderRevenue[0])? $orderRevenue[0]->net_revenue : 0;
+        $totalSale = $orderRevenue->pluck('total_revenue')->sum();
+        $grossProfit = $orderRevenue->pluck('net_revenue')->sum();
 
         return [
             Stat::make('Total Investment', NumberUtil::number_shorten($totalInvestment))
