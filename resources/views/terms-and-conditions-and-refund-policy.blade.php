@@ -21,18 +21,6 @@
                 You may access this from {{ config('app.name') }} for your own personal use subjected to restrictions set in
                 these terms and conditions.
             </p>
-            <h2 class="text-2xl font-semibold mt-6 mb-4">User Comments</h2>
-            <p class="mb-4">Certain parts of this website offer the opportunity for users to post and exchange opinions and
-                information in certain areas of the website. {{ config('app.name') }} does not filter, edit, publish or
-                review
-                Comments prior to their presence on the website. Comments do not reflect the views and opinions of
-                {{ config('app.name') }}, its agents and/or affiliates. Comments reflect the views and opinions of the
-                person
-                who post their views and opinions. To the extent permitted by applicable laws, {{ config('app.name') }}
-                shall
-                not be liable for the Comments or for any liability, damages or expenses caused and/or suffered as a result
-                of any use of and/or posting of and/or appearance of the Comments on this website.
-            </p>
             <h2 class="text-2xl font-semibold mt-6 mb-4">Hyperlinking to our Content</h2>
             <p class="mb-4">The following organizations may link to our Website without prior written approval:</p>
             <ul class="list-disc list-inside mb-4">
