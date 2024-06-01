@@ -97,7 +97,7 @@
                 </span>
                 <span>
                     <a href="{{ route('terms-and-condition') }}" class="hover:underline">
-                        Terms and Conditions | Refund Policy
+                       {{__('terms-and-conditions')}}
                     </a>
                 </span>
             </p>
