@@ -7,24 +7,29 @@
     <div class="container mx-auto p-8">
         <div class="rounded-lg shadow-lg p-6">
             <h1 class="text-3xl font-bold mb-4">Terms and Conditions</h1>
-            <p class="mb-4">Welcome to {{ env('APP_NAME') }}! These terms and conditions outline the rules and regulations
-                for the use of {{ env('APP_NAME') }}'s Website, located at {{ env('APP_URL') }}.</p>
+            <p class="mb-4">Welcome to {{ config('app.name') }}! These terms and conditions outline the rules and
+                regulations
+                for the use of {{ config('app.name') }}'s Website, located at {{ config('app.url') }}.</p>
             <p class="mb-4">By accessing this website we assume you accept these terms and conditions. Do not continue to
-                use {{ env('APP_NAME') }} if you do not agree to take all of the terms and conditions stated on this page.
+                use {{ config('app.name') }} if you do not agree to take all of the terms and conditions stated on this
+                page.
             </p>
 
             <h2 class="text-2xl font-semibold mt-6 mb-4">License</h2>
-            <p class="mb-4">Unless otherwise stated, {{ env('APP_NAME') }} and/or its licensors own the intellectual
-                property rights for all material on {{ env('APP_NAME') }}. All intellectual property rights are reserved.
-                You may access this from {{ env('APP_NAME') }} for your own personal use subjected to restrictions set in
+            <p class="mb-4">Unless otherwise stated, {{ config('app.name') }} and/or its licensors own the intellectual
+                property rights for all material on {{ config('app.name') }}. All intellectual property rights are reserved.
+                You may access this from {{ config('app.name') }} for your own personal use subjected to restrictions set in
                 these terms and conditions.
             </p>
             <h2 class="text-2xl font-semibold mt-6 mb-4">User Comments</h2>
             <p class="mb-4">Certain parts of this website offer the opportunity for users to post and exchange opinions and
-                information in certain areas of the website. {{ env('APP_NAME') }} does not filter, edit, publish or review
+                information in certain areas of the website. {{ config('app.name') }} does not filter, edit, publish or
+                review
                 Comments prior to their presence on the website. Comments do not reflect the views and opinions of
-                {{ env('APP_NAME') }}, its agents and/or affiliates. Comments reflect the views and opinions of the person
-                who post their views and opinions. To the extent permitted by applicable laws, {{ env('APP_NAME') }} shall
+                {{ config('app.name') }}, its agents and/or affiliates. Comments reflect the views and opinions of the
+                person
+                who post their views and opinions. To the extent permitted by applicable laws, {{ config('app.name') }}
+                shall
                 not be liable for the Comments or for any liability, damages or expenses caused and/or suffered as a result
                 of any use of and/or posting of and/or appearance of the Comments on this website.
             </p>
@@ -45,7 +50,8 @@
                 that alter in any way the visual presentation or appearance of our Website.</p>
 
             <h1 class="text-3xl font-bold mt-12 mb-4">Refund Policy</h1>
-            <p class="mb-4">Thank you for shopping at {{ env('APP_NAME') }}. If you are not entirely satisfied with your
+            <p class="mb-4">Thank you for shopping at {{ config('app.name') }}. If you are not entirely satisfied with
+                your
                 purchase, we're here to help.</p>
 
             <h2 class="text-2xl font-semibold mt-6 mb-4">Returns</h2>
