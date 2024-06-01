@@ -28,84 +28,93 @@ class ProductResource extends Resource
     protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('slug')
-                    ->regex('/^[a-z-]+$/i')
-                    ->required()
-                    ->maxLength(255),
-                SelectTree::make('category_id')
-                    ->label('Category')
-                    ->relationship('category', 'name', 'parent_id')
-                    ->nullable(),
-                Forms\Components\TextInput::make('sale_price')
-                    ->gt('production_cost')
-                    ->prefix('৳')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('production_cost')
-                    ->lt('sale_price')
-                    ->prefix('৳')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\Select::make('stock_status')
-                    ->options(StockStatus::class)
-                    ->required()
-                    ->reactive(),
-                Forms\Components\TextInput::make('stock')
-                    ->numeric()
-                    ->hidden(fn($get) => $get('stock_status') !== 'In Stock')
-                    ->required(fn($get) => $get('stock_status') === 'In Stock'),
-                ToggleButton::make('is_shipping_charge_applicable')
-                    ->label('Shipping Condition')
-                    ->offColor('warning')
-                    ->onColor('primary')
-                    ->offLabel('Free Shipping')
-                    ->onLabel('Shipping Charge Applicable')
-                    ->default(true),
-                Forms\Components\Textarea::make('description')
-                    ->columnSpan(2)
-                    ->required()
-                    ->maxLength(5000),
-                Forms\Components\KeyValue::make('meta')
-                    ->columnSpan(2)
-                    ->nullable(),
-                Forms\Components\KeyValue::make('production_cost_breakdown')
-                    ->columnSpan(2)
-                    ->keyLabel('Title')
-                    ->valueLabel('Price')
-                    ->required(),
-                Forms\Components\FileUpload::make('main_photo')
-                    ->image()
-                    ->maxSize(1024)
-                    ->imageEditor()
-                    ->columnSpan(2)
-                    ->disk('public')
-                    ->visibility('public')
-                    ->required(),
-                Forms\Components\FileUpload::make('photos')
-                    ->image()
-                    ->maxSize(1024)
-                    ->maxFiles(5)
-                    ->imageEditor()
-                    ->reorderable()
-                    ->openable()
-                    ->downloadable()
-                    ->columnSpan(2)
-                    ->multiple()
-                    ->disk('public')
-                    ->visibility('public'),
-                Forms\Components\TextInput::make('video_link')
-                    ->url()
-                    ->placeholder('YouTube link is acceptable')
-                    ->nullable()
-                    ->columnSpanFull()
-            ]);
+{
+    return $form
+        ->schema([
+            Forms\Components\TextInput::make('name')
+                ->required()
+                ->maxLength(255)
+                ->columnSpan(['md' => 1]),
+            Forms\Components\TextInput::make('slug')
+                ->regex('/^[a-z-]+$/i')
+                ->required()
+                ->maxLength(255)
+                ->columnSpan(['md' => 1]),
+            SelectTree::make('category_id')
+                ->label('Category')
+                ->relationship('category', 'name', 'parent_id')
+                ->nullable()
+                ->columnSpan(['md' => 1]),
+            Forms\Components\TextInput::make('sale_price')
+                ->gt('production_cost')
+                ->prefix('৳')
+                ->required()
+                ->numeric()
+                ->columnSpan(['md' => 1]),
+            Forms\Components\TextInput::make('production_cost')
+                ->lt('sale_price')
+                ->prefix('৳')
+                ->required()
+                ->numeric()
+                ->columnSpan(['md' => 1]),
+            Forms\Components\Select::make('stock_status')
+                ->options(StockStatus::class)
+                ->required()
+                ->reactive()
+                ->columnSpan(['md' => 1]),
+            Forms\Components\TextInput::make('stock')
+                ->numeric()
+                ->hidden(fn($get) => $get('stock_status') !== 'In Stock')
+                ->required(fn($get) => $get('stock_status') === 'In Stock')
+                ->columnSpan(['md' => 1]),
+            ToggleButton::make('is_shipping_charge_applicable')
+                ->label('Shipping Condition')
+                ->offColor('warning')
+                ->onColor('primary')
+                ->offLabel('Free Shipping')
+                ->onLabel('Shipping Charge Applicable')
+                ->default(true)
+                ->columnSpan(['md' => 1]),
+            Forms\Components\Textarea::make('description')
+                ->required()
+                ->maxLength(5000)
+                ->columnSpan(['md' => 2]),
+            Forms\Components\KeyValue::make('meta')
+                ->nullable()
+                ->columnSpan(['md' => 2]),
+            Forms\Components\KeyValue::make('production_cost_breakdown')
+                ->keyLabel('Title')
+                ->valueLabel('Price')
+                ->required()
+                ->columnSpan(['md' => 2]),
+            Forms\Components\FileUpload::make('main_photo')
+                ->image()
+                ->maxSize(1024)
+                ->imageEditor()
+                ->disk('public')
+                ->visibility('public')
+                ->required()
+                ->columnSpan(['md' => 2]),
+            Forms\Components\FileUpload::make('photos')
+                ->image()
+                ->maxSize(1024)
+                ->maxFiles(5)
+                ->imageEditor()
+                ->reorderable()
+                ->openable()
+                ->downloadable()
+                ->multiple()
+                ->disk('public')
+                ->visibility('public')
+                ->columnSpan(['md' => 2]),
+            Forms\Components\TextInput::make('video_link')
+                ->url()
+                ->placeholder('YouTube link is acceptable')
+                ->nullable()
+                ->columnSpanFull()
+        ]);
     }
+
 
     public static function table(Table $table): Table
     {
