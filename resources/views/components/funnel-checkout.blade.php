@@ -257,7 +257,7 @@ $outside_dhaka_max_charge = ShippingProvider::query()->max('outside_dhaka_charge
                                     </div>
                                     <div class="w-full">
                                         {{ __('1-2days') }}
-                                        ({{ $product->is_shipping_charge_applicable ? Number::currency($inside_dhaka_max_charge, in: 'BDT', locale: $locale) : __('free_delivery') }})
+                                        {{ $product->is_shipping_charge_applicable ? '(' . Number::currency($inside_dhaka_max_charge, in: 'BDT', locale: $locale) . ')' : '' }}
                                     </div>
                                 </div>
                             </label>
@@ -273,7 +273,7 @@ $outside_dhaka_max_charge = ShippingProvider::query()->max('outside_dhaka_charge
                                     </div>
                                     <div class="w-full">
                                         {{ __('2-3days') }}
-                                        ({{ $product->is_shipping_charge_applicable ? Number::currency($outside_dhaka_max_charge, in: 'BDT', locale: $locale) : __('free_delivery') }})
+                                        {{ $product->is_shipping_charge_applicable ? '(' . Number::currency($outside_dhaka_max_charge, in: 'BDT', locale: $locale) . ')' : '' }}
                                     </div>
                                 </div>
                             </label>
