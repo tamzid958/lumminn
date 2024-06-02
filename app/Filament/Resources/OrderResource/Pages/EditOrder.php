@@ -85,15 +85,15 @@ class EditOrder extends EditRecord
 
             $shipping_provider = ShippingProvider::query()->find($data['shipping_provider_id']);
 
-            if (!$freeShipping) {
-                $data['shipping_amount'] = match ($data['shipping_class']) {
-                    'Inside Dhaka' => $shipping_provider->inside_dhaka_charge,
-                    default => $shipping_provider->outside_dhaka_charge,
-                };
-            } else {
-                $data['shipping_amount'] = 0;
-            }
+            $data['shipping_amount'] = match ($data['shipping_class']) {
+                'Inside Dhaka' => $shipping_provider->inside_dhaka_charge,
+                default => $shipping_provider->outside_dhaka_charge,
+            };
 
+            if ($freeShipping) {
+                $data['discount_amount'] += $data['shipping_amount'];
+            }
+            
             $record->update([
                 'total_amount' => $data['total_amount'],
                 'additional_amount' => $data['additional_amount'],

@@ -86,16 +86,15 @@ class OrderController extends Controller
 
         $order->shipping_provider_id = $shipping_provider['id'];
 
+        $order->shipping_amount = match ($shippingClass) {
+            "inside-dhaka" => $shipping_provider->inside_dhaka_charge,
+            default => $shipping_provider->outside_dhaka_charge
+        };
+
         if ($freeShipping) {
-            $order->shipping_amount = 0;
-        } else {
-            $order->shipping_amount = match ($shippingClass) {
-                "inside-dhaka" => $shipping_provider->inside_dhaka_charge,
-                default => $shipping_provider->outside_dhaka_charge
-            };
+            $order->discount_amount += $order->shipping_amount;
         }
-
-
+        
         $order->pay_status = 'Pending';
 
         $order->shipping_status = 'On Hold';
