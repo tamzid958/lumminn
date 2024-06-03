@@ -17,4 +17,11 @@ abstract class BasePaymentGateway implements PaymentGateway
     {
         Order::query()->where('invoice_id', $invoice_id)->update($order);
     }
+
+    public function setPaymentId(string $invoice_id, string $payment_id): void
+    {
+        $order = Order::query()->where('invoice_id', $invoice_id)->first();
+        $order->payment_id = $payment_id;
+        Order::query()->where('invoice_id', $invoice_id)->update(($order->toArray()));
+    }
 }

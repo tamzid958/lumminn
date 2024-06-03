@@ -11,9 +11,9 @@ use App\Providers\DiscountProvider;
 use App\Providers\OrderServiceProvider;
 use App\Providers\PaymentServiceProvider;
 use App\Utils\StringUtil;
+use Combindma\FacebookPixel\Facades\MetaPixel;
 use Exception;
 use Illuminate\Http\Request;
-use Combindma\FacebookPixel\Facades\MetaPixel;
 
 class OrderController extends Controller
 {
@@ -22,8 +22,7 @@ class OrderController extends Controller
         $order = Order::where('invoice_id', '=', $invoice_id)->first();
         if ($request->method() == "POST") {
             $payment_provider = PaymentProvider::find($order->payment_provider_id);
-
-            PaymentServiceProvider::register($payment_provider)->create()->verify($order->invoice_id, $order->toArray());
+            PaymentServiceProvider::register($payment_provider)->create()->setPaymentId($order->invoice_id, $request->input('val_id'));
         }
         try {
             MetaPixel::track('Purchase', [
@@ -34,11 +33,6 @@ class OrderController extends Controller
         }
 
         return view("order-success", compact("order"));
-    }
-
-    public function fake_success($invoice_id)
-    {
-        return view("order-fake-success");
     }
 
     public function create(Request $request)
@@ -147,13 +141,18 @@ class OrderController extends Controller
 
     }
 
+    public function fake_success($invoice_id)
+    {
+        return view("order-fake-success");
+    }
+
     public function failOrCancel($invoice_id, Request $request)
     {
         if ($request->method() == "POST") {
             $order = Order::where('invoice_id', '=', $invoice_id)->first();
             $payment_provider = PaymentProvider::find($order->payment_provider_id);
 
-            PaymentServiceProvider::register($payment_provider)->create()->verify($order->invoice_id, $order->toArray());
+            PaymentServiceProvider::register($payment_provider)->create()->setPaymentId($order->invoice_id, $request->input('val_id'));
         }
         return view("order-fail-or-cancel");
     }

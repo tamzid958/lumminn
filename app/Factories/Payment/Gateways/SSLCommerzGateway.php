@@ -4,7 +4,6 @@ namespace App\Factories\Payment\Gateways;
 
 
 use App\Contracts\Payment\PaymentGateway;
-use App\Models\Order;
 use App\Models\PaymentProvider;
 use Illuminate\Support\Facades\Http;
 
@@ -44,8 +43,6 @@ class SSLCommerzGateway extends BasePaymentGateway implements PaymentGateway
 
         $body = $response->json();
 
-        $order['payment_id'] = $body['sessionkey'];
-
         $order['gateway_response'] = $body;
 
         parent::generateTransaction($order);
@@ -62,8 +59,8 @@ class SSLCommerzGateway extends BasePaymentGateway implements PaymentGateway
         $store_id = $meta['storeId'];
         $password = $meta['password'];
 
-        $response = Http::get($baseUrl . '/validator/api/merchantTransIDvalidationAPI.php', [
-            'tran_id' => $order['invoice_id'],
+        $response = Http::get($baseUrl . '/validator/api/validationserverAPI.php', [
+            'val_id' => $order['payment_id'],
             'store_id' => $store_id,
             'store_passwd' => $password,
             'format' => 'json',
@@ -71,11 +68,9 @@ class SSLCommerzGateway extends BasePaymentGateway implements PaymentGateway
 
         $body = $response->json();
 
-        if (isset($body['element']) && !empty($body['element'])) {
-            // Get the first element
-            $firstElement = $body['element'][0];
-            if ($order['pay_amount'] === $firstElement['amount'] && $order['invoice_id'] === $firstElement['tran_id']) {
-                $order['pay_status'] = match ($firstElement['status']) {
+        if (isset($body)) {
+            if ($order['pay_amount'] === $body['amount'] && $order['invoice_id'] === $body['tran_id']) {
+                $order['pay_status'] = match ($body['status']) {
                     'VALID', 'VALIDATED' => 'Paid',
                     'PENDING' => 'Pending',
                     'FAILED' => 'Cancelled'
