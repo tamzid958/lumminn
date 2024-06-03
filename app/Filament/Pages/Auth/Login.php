@@ -15,7 +15,7 @@ class Login extends \Filament\Pages\Auth\Login
                 $this->getPasswordFormComponent(),
                 $this->getRememberFormComponent(),
                 Turnstile::make('turnstile')
-                ->size('compact')
+                ->size('nomral')
                 ->language('en-US'),
             ])
             ->statePath('data');
