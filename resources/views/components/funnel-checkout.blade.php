@@ -1,6 +1,9 @@
 @php
     use App\Models\BasicConfiguration;
-    use App\Providers\DiscountProvider;use Illuminate\Support\Number;
+    use App\Providers\DiscountProvider;
+    use Illuminate\Support\Number;
+    use App\Models\ShippingProvider;
+
     $locale = app()->getLocale();
 
     try {
@@ -29,10 +32,13 @@
         $nextString = $currentIndex < count($array) - 1 ? $array[$currentIndex + 1] : $array[0];
 
         return ['previous' => $previousString, 'next' => $nextString];
-        }
     }
+}
 
-    $after_discount_price = DiscountProvider::priceAfterDiscount($product);
+$after_discount_price = DiscountProvider::priceAfterDiscount($product);
+
+$inside_dhaka_max_charge = ShippingProvider::query()->max('inside_dhaka_charge');
+$outside_dhaka_max_charge = ShippingProvider::query()->max('outside_dhaka_charge');
 
 @endphp
 
@@ -48,7 +54,7 @@
                     <div class="flex md:flex-row flex-col rounded-lg bg-base-400 justify-between">
                         <div class="flex flex-row items-center">
                             <img class="m-2 h-28 w-32 rounded-md border object-cover object-center"
-                                 src="{{ asset('storage/' . $product->main_photo) }}" alt="{{ $product->name }}"/>
+                                src="{{ asset('storage/' . $product->main_photo) }}" alt="{{ $product->name }}" />
                             <div class="flex w-full flex-col px-4 py-4">
                                 <span class="font-semibold">{{ $product->name }}</span>
                                 @if ($after_discount_price >= $product->sale_price)
@@ -70,7 +76,7 @@
                             </div>
                         </div>
                         <a class="btn btn-neutral my-auto"
-                           onclick="see_description.showModal()">{{ __('description') }}</a>
+                            onclick="see_description.showModal()">{{ __('description') }}</a>
                         <dialog id="see_description" class="modal">
                             <div class="modal-box">
                                 <h3 class="font-bold text-lg">{!! $product->name !!}</h3>
@@ -87,13 +93,13 @@
                 </div>
                 @if (!is_null($product->video_link))
                     <iframe class="w-full mt-5 bg-base-300 rounded-md" height="315" src="{{ $product->video_link }}"
-                            title="YouTube video player" frameborder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen autoplay controls>
+                        title="YouTube video player" frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerpolicy="strict-origin-when-cross-origin" allowfullscreen autoplay controls>
                     </iframe>
                 @else
                     <img src="{{ asset('storage/' . $product->main_photo) }}" height="315"
-                         class="w-full rounded-md object-contain h-full mt-5 bg-base-300" style="height: 315px"/>
+                        class="w-full rounded-md object-contain h-full mt-5 bg-base-300" style="height: 315px" />
                 @endif
                 <div class="carousel w-full mt-5 bg-base-300 h-2/6 rounded-md">
                     @foreach ($product->photos as $photo)
@@ -102,9 +108,9 @@
                         @endphp
 
                         <div id="slide-{{ $photo }}" class="carousel-item relative w-full rounded-md"
-                             style="height: 355px">
+                            style="height: 355px">
                             <img src="{{ asset('storage/' . $photo) }}"
-                                 class="w-full rounded-md object-contain h-full p-2 mt-5 bg-base-300"/>
+                                class="w-full rounded-md object-contain h-full p-2 mt-5 bg-base-300" />
                             <div
                                 class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
                                 <a href="#slide-{{ $adjacentStrings['previous'] }}" class="btn btn-circle">❮</a>
@@ -123,34 +129,34 @@
                     <input type="hidden" id="geo_location" name="geo_location">
                     <div class="flex justify-between mt-8 mb-2">
                         <label for="name" class="block text-sm font-medium">{{ __('full_name') }}</label>
-                        <x-field-error :name="'name'"/>
+                        <x-field-error :name="'name'" />
                     </div>
                     <div class="relative">
                         <input type="text" id="name" name="name"
-                               class="@error('name') is-invalid border-error @enderror w-full rounded-md border px-4 py-3 pl-11 text-sm uppercase shadow-sm outline-none focus:z-10 focus:border-info focus:ring-info"
-                               placeholder="{{ __('full_name_placeholder') }}"/>
+                            class="@error('name') is-invalid border-error @enderror w-full rounded-md border px-4 py-3 pl-11 text-sm uppercase shadow-sm outline-none focus:z-10 focus:border-info focus:ring-info"
+                            placeholder="{{ __('full_name_placeholder') }}" />
                         <div class="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none"
-                                 viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round"
-                                      d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z"/>
+                                    d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z" />
                             </svg>
                         </div>
                     </div>
                     <div class="flex justify-between mt-4 mb-2">
                         <label for="phone_number" class="block text-sm font-medium">{{ __('phone_number') }}</label>
-                        <x-field-error :name="'phone_number'"/>
+                        <x-field-error :name="'phone_number'" />
                     </div>
 
                     <div class="relative">
                         <input type="tel" id="phone_number" name="phone_number"
-                               class="w-full rounded-md border uppercase @error('phone_number') is-invalid border-error @enderror px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-info focus:ring-info"
-                               placeholder="{{ __('phone_number_placeholder') }}"/>
+                            class="w-full rounded-md border uppercase @error('phone_number') is-invalid border-error @enderror px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-info focus:ring-info"
+                            placeholder="{{ __('phone_number_placeholder') }}" />
                         <div class="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
 
                             <svg fill="#000000" class="h-4 w-4 text-gray-400" version="1.1" id="Capa_1"
-                                 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                                 viewBox="0 0 473.806 473.806" xml:space="preserve">
+                                xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                viewBox="0 0 473.806 473.806" xml:space="preserve">
                                 <g>
                                     <g>
                                         <path
@@ -169,15 +175,15 @@
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             c-8.6,8.6-7,17-5.2,22.7c0.1,0.3,0.2,0.6,0.3,0.9c7.1,17.2,17.1,33.4,32.3,52.7l0.1,0.1c27.6,34,56.7,60.5,88.8,80.8
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             c4.1,2.6,8.3,4.7,12.3,6.7c3.6,1.8,7,3.5,9.9,5.3c0.4,0.2,0.8,0.5,1.2,0.7c3.4,1.7,6.6,2.5,9.9,2.5c8.3,0,13.5-5.2,15.2-6.9
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             l34.2-34.2c3.4-3.4,8.8-7.5,15.1-7.5c6.2,0,11.3,3.9,14.4,7.3c0.1,0.1,0.1,0.1,0.2,0.2l55.1,55.1
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            C420.456,377.706,420.456,388.206,410.256,398.806z"/>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            C420.456,377.706,420.456,388.206,410.256,398.806z" />
                                         <path
                                             d="M256.056,112.706c26.2,4.4,50,16.8,69,35.8s31.3,42.8,35.8,69c1.1,6.6,6.8,11.2,13.3,11.2c0.8,0,1.5-0.1,2.3-0.2
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             c7.4-1.2,12.3-8.2,11.1-15.6c-5.4-31.7-20.4-60.6-43.3-83.5s-51.8-37.9-83.5-43.3c-7.4-1.2-14.3,3.7-15.6,11
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            S248.656,111.506,256.056,112.706z"/>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            S248.656,111.506,256.056,112.706z" />
                                         <path
                                             d="M473.256,209.006c-8.9-52.2-33.5-99.7-71.3-137.5s-85.3-62.4-137.5-71.3c-7.3-1.3-14.2,3.7-15.5,11
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             c-1.2,7.4,3.7,14.3,11.1,15.6c46.6,7.9,89.1,30,122.9,63.7c33.8,33.8,55.8,76.3,63.7,122.9c1.1,6.6,6.8,11.2,13.3,11.2
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            c0.8,0,1.5-0.1,2.3-0.2C469.556,223.306,474.556,216.306,473.256,209.006z"/>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            c0.8,0,1.5-0.1,2.3-0.2C469.556,223.306,474.556,216.306,473.256,209.006z" />
                                     </g>
                                 </g>
                             </svg>
@@ -186,18 +192,18 @@
 
                     <div class="flex justify-between mt-4 mb-2">
                         <label for="address" class="block text-sm font-medium">{{ __('address') }}</label>
-                        <x-field-error :name="'address'"/>
+                        <x-field-error :name="'address'" />
                     </div>
                     <div class="relative">
                         <input type="text" id="address" name="address"
-                               class="w-full rounded-md border @error('address') is-invalid border-error @enderror px-4 py-3 pl-11 text-sm uppercase shadow-sm outline-none focus:z-10 focus:border-info focus:ring-info"
-                               placeholder="{{ __('address_placeholder') }}"/>
+                            class="w-full rounded-md border @error('address') is-invalid border-error @enderror px-4 py-3 pl-11 text-sm uppercase shadow-sm outline-none focus:z-10 focus:border-info focus:ring-info"
+                            placeholder="{{ __('address_placeholder') }}" />
                         <div class="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
                             <svg class="h-4 w-4 text-gray-400 icon" viewBox="0 0 1024 1024" fill="#000000"
-                                 version="1.1" xmlns="http://www.w3.org/2000/svg">
+                                version="1.1" xmlns="http://www.w3.org/2000/svg">
                                 <path
                                     d="M512 1012.8c-253.6 0-511.2-54.4-511.2-158.4 0-92.8 198.4-131.2 283.2-143.2h3.2c12 0 22.4 8.8 24 20.8 0.8 6.4-0.8 12.8-4.8 17.6-4 4.8-9.6 8.8-16 9.6-176.8 25.6-242.4 72-242.4 96 0 44.8 180.8 110.4 463.2 110.4s463.2-65.6 463.2-110.4c0-24-66.4-70.4-244.8-96-6.4-0.8-12-4-16-9.6-4-4.8-5.6-11.2-4.8-17.6 1.6-12 12-20.8 24-20.8h3.2c85.6 12 285.6 50.4 285.6 143.2 0.8 103.2-256 158.4-509.6 158.4z m-16.8-169.6c-12-11.2-288.8-272.8-288.8-529.6 0-168 136.8-304.8 304.8-304.8S816 145.6 816 313.6c0 249.6-276.8 517.6-288.8 528.8l-16 16-16-15.2zM512 56.8c-141.6 0-256.8 115.2-256.8 256.8 0 200.8 196 416 256.8 477.6 61.6-63.2 257.6-282.4 257.6-477.6C768.8 172.8 653.6 56.8 512 56.8z m0 392.8c-80 0-144.8-64.8-144.8-144.8S432 160 512 160c80 0 144.8 64.8 144.8 144.8 0 80-64.8 144.8-144.8 144.8zM512 208c-53.6 0-96.8 43.2-96.8 96.8S458.4 401.6 512 401.6c53.6 0 96.8-43.2 96.8-96.8S564.8 208 512 208z"
-                                    fill=""/>
+                                    fill="" />
                             </svg>
                         </div>
                     </div>
@@ -205,31 +211,31 @@
                     <div class="w-full mx-auto">
                         <div class="flex justify-between mt-4 mb-2">
                             <label for="quantity" class="block text-sm font-medium">{{ __('quantity') }}</label>
-                            <x-field-error :name="'quantity'"/>
+                            <x-field-error :name="'quantity'" />
                         </div>
                         <div class="relative">
                             <select id="quantity" name="quantity"
-                                    class="w-full rounded-md border @error('quantity') is-invalid border-red-600 @enderror px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-info focus:ring-info appearance-none bg-ghost">
+                                class="w-full rounded-md border @error('quantity') is-invalid border-red-600 @enderror px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-info focus:ring-info appearance-none bg-ghost">
                                 @foreach (range(1, 5) as $number)
                                     <option value="{{ $number }}"
-                                            @if ($number === 1) selected @endif>
+                                        @if ($number === 1) selected @endif>
                                         {{ Number::format($number, locale: $locale) }} {{ __('pcs') }}
                                     </option>
                                 @endforeach
                             </select>
                             <div class="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
                                 <svg class="w-5 h-5 text-gray-400 opacity-50" viewBox="0 0 100 100"
-                                     xmlns="http://www.w3.org/2000/svg">
+                                    xmlns="http://www.w3.org/2000/svg">
                                     <rect x="19" y="18.92" width="60" height="16" rx="4"
-                                          ry="4"/>
+                                        ry="4" />
                                     <rect x="19" y="40.92" width="27" height="16" rx="4"
-                                          ry="4"/>
+                                        ry="4" />
                                     <rect x="19" y="62.92" width="27" height="16" rx="4"
-                                          ry="4"/>
+                                        ry="4" />
                                     <rect x="52" y="40.92" width="27" height="16" rx="4"
-                                          ry="4"/>
+                                        ry="4" />
                                     <rect x="52" y="62.92" width="27" height="16" rx="4"
-                                          ry="4"/>
+                                        ry="4" />
                                 </svg>
                             </div>
                         </div>
@@ -237,45 +243,53 @@
 
                     <div class="flex justify-between mt-8 mb-2 items-center">
                         <p class="text-lg font-medium">{{ __('shipping_methods') }}</p>
-                        <x-field-error :name="'shipping_class'"/>
+                        <x-field-error :name="'shipping_class'" />
                     </div>
                     <ul class="grid w-full gap-6 grid-cols-2">
                         <li>
                             <input type="radio" id="inside-dhaka" name="shipping_class" value="inside-dhaka"
-                                   class="hidden peer"/>
+                                class="hidden peer" />
                             <label for="inside-dhaka"
-                                   class="peer-checked:border-2 border-neutral peer-checked:bg-base-300 bg-base-100  flex cursor-pointer select-none rounded-lg border p-4 text-base-content">
+                                class="peer-checked:border-2 border-neutral peer-checked:bg-base-300 bg-base-100  flex cursor-pointer select-none rounded-lg border p-4 text-base-content">
                                 <div class="block">
                                     <div class="w-full text-lg font-semibold">
-                                        {{ __('inside_dhaka') }}</div>
-                                    <div class="w-full">{{ __('1-2days') }}</div>
+                                        {{ __('inside_dhaka') }}
+                                    </div>
+                                    <div class="w-full">
+                                        {{ __('1-2days') }}
+                                        {{ $product->is_shipping_charge_applicable ? '(' . Number::currency($inside_dhaka_max_charge, in: 'BDT', locale: $locale) . ')' : '' }}
+                                    </div>
                                 </div>
                             </label>
                         </li>
                         <li>
                             <input type="radio" id="outside-dhaka" name="shipping_class" value="outside-dhaka"
-                                   class="hidden peer" checked>
+                                class="hidden peer" checked>
                             <label for="outside-dhaka"
-                                   class="peer-checked:border-2 border-neutral peer-checked:bg-base-300 bg-base-100 flex cursor-pointer select-none rounded-lg border p-4 text-base-content">
+                                class="peer-checked:border-2 border-neutral peer-checked:bg-base-300 bg-base-100 flex cursor-pointer select-none rounded-lg border p-4 text-base-content">
                                 <div class="block">
                                     <div class="w-full text-lg font-semibold">
-                                        {{ __('outside_dhaka') }}</div>
-                                    <div class="w-full">{{ __('2-3days') }}</div>
+                                        {{ __('outside_dhaka') }}
+                                    </div>
+                                    <div class="w-full">
+                                        {{ __('2-3days') }}
+                                        {{ $product->is_shipping_charge_applicable ? '(' . Number::currency($outside_dhaka_max_charge, in: 'BDT', locale: $locale) . ')' : '' }}
+                                    </div>
                                 </div>
                             </label>
                         </li>
                     </ul>
                     <div class="flex justify-between mt-8 mb-2 items-center">
                         <p class="text-lg font-medium">{{ __('payment_methods') }}</p>
-                        <x-field-error :name="'payment_provider'"/>
+                        <x-field-error :name="'payment_provider'" />
                     </div>
                     <ul class="grid w-full gap-6 grid-cols-2">
                         <li>
                             <input type="radio" id="cash-on-delivery" name="payment_provider"
-                                   value="cash-on-delivery" class="hidden peer"
-                                   checked="@if ($is_online_payment_enabled !== 'yes') true @else false @endif"/>
+                                value="cash-on-delivery" class="hidden peer"
+                                checked="@if ($is_online_payment_enabled !== 'yes') true @else false @endif" />
                             <label for="cash-on-delivery"
-                                   class="peer-checked:border-2 border-neutral peer-checked:bg-base-300 bg-base-100 flex cursor-pointer select-none rounded-lg border p-4 text-base-content">
+                                class="peer-checked:border-2 border-neutral peer-checked:bg-base-300 bg-base-100 flex cursor-pointer select-none rounded-lg border p-4 text-base-content">
                                 <div class="block ">
                                     <div class="w-full text-base font-semibold">{{ __('cash_on_delivery') }}</div>
                                 </div>
@@ -284,9 +298,9 @@
                         @if ($is_online_payment_enabled === 'yes')
                             <li>
                                 <input type="radio" id="online-payment" name="payment_provider"
-                                       value="online-payment" class="hidden peer" checked>
+                                    value="online-payment" class="hidden peer" checked>
                                 <label for="online-payment"
-                                       class="peer-checked:border-2 border-neutral peer-checked:bg-base-300 bg-base-100 flex cursor-pointer select-none rounded-lg border p-4 text-base-content">
+                                    class="peer-checked:border-2 border-neutral peer-checked:bg-base-300 bg-base-100 flex cursor-pointer select-none rounded-lg border p-4 text-base-content">
                                     <div class="block">
                                         <div class="w-full text-base font-semibold">{{ __('online_payment') }}</div>
                                     </div>
@@ -325,7 +339,7 @@
     </form>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function (event) {
+        document.addEventListener("DOMContentLoaded", function(event) {
             getLocation();
             calculate();
         });
@@ -336,8 +350,7 @@
                     const latitude = position.coords.latitude;
                     const longitude = position.coords.longitude;
                     document.getElementById("geo_location").value = latitude + ", " + longitude;
-                }, () => {
-                }, {
+                }, () => {}, {
                     enableHighAccuracy: true
                 });
             } else {
@@ -345,14 +358,14 @@
             }
         }
 
-        document.getElementById("create-order").addEventListener("submit", function (event) {
+        document.getElementById("create-order").addEventListener("submit", function(event) {
             document.getElementById("submit-create-order").disabled = true;
             var element = document.getElementById('create-order-loading');
             element.classList.add('loading');
         });
 
         let shippingClassRadios = document.getElementsByName('shipping_class');
-        shippingClassRadios.forEach(function (radio) {
+        shippingClassRadios.forEach(function(radio) {
             radio.addEventListener('change', calculate);
         });
 
@@ -365,13 +378,13 @@
             let shipping_class = document.querySelector('input[name="shipping_class"]:checked')?.value;
 
             axios.post("/product/calculate", {
-                id: productId,
-                shipping_class: shipping_class,
-                quantity: quantity,
-            })
-                .then(function ({
-                                    data
-                                }) {
+                    id: productId,
+                    shipping_class: shipping_class,
+                    quantity: quantity,
+                })
+                .then(function({
+                    data
+                }) {
                     let subTotalElement = document.getElementById('sub_total');
                     let shippingChargeElement = document.getElementById('shipping_charge');
                     let totalElement = document.getElementById('total');
@@ -380,7 +393,7 @@
                     shippingChargeElement.textContent = data.shipping_charge;
                     totalElement.textContent = data.total;
                 })
-                .catch(function (error) {
+                .catch(function(error) {
                     console.error(error);
                 });
         }

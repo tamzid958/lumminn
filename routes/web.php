@@ -11,6 +11,10 @@ Route::get('/categories/{slug}', [CategoryController::class, 'products']);
 
 Route::get('/', [IndexController::class, 'index'])->name('home');
 
+Route::get('/terms-and-conditions-and-refund-policy', function () {
+    return view('terms-and-conditions-and-refund-policy');
+})->name('terms-and-condition');
+
 Route::post('/product/calculate', [ProductController::class, 'calculate']);
 Route::get('/products/{slug}', [ProductController::class, 'view']);
 

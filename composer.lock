@@ -7221,16 +7221,16 @@
         },
         {
             "name": "robsontenorio/mary",
-            "version": "1.31.3",
+            "version": "1.32.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/robsontenorio/mary.git",
-                "reference": "3eb37ac1a115511af0cb4a540175c1658e922f2b"
+                "reference": "67f3f4b184375619882f5648868067507dbac933"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/robsontenorio/mary/zipball/3eb37ac1a115511af0cb4a540175c1658e922f2b",
-                "reference": "3eb37ac1a115511af0cb4a540175c1658e922f2b",
+                "url": "https://api.github.com/repos/robsontenorio/mary/zipball/67f3f4b184375619882f5648868067507dbac933",
+                "reference": "67f3f4b184375619882f5648868067507dbac933",
                 "shasum": ""
             },
             "require": {
@@ -7296,7 +7296,7 @@
             ],
             "support": {
                 "issues": "https://github.com/robsontenorio/mary/issues",
-                "source": "https://github.com/robsontenorio/mary/tree/1.31.3"
+                "source": "https://github.com/robsontenorio/mary/tree/1.32.0"
             },
             "funding": [
                 {
@@ -7304,7 +7304,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-05-28T16:32:24+00:00"
+            "time": "2024-05-31T16:06:38+00:00"
         },
         {
             "name": "ryangjchandler/blade-capture-directive",
