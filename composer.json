@@ -11,6 +11,7 @@
         "php": "^8.2",
         "ext-calendar": "*",
         "ext-openssl": "*",
+        "afatmustafa/filamentv3-turnstile": "^1.1",
         "andrewdwallo/filament-selectify": "*",
         "bezhansalleh/filament-shield": "^3.2",
         "carlos-meneses/laravel-mpdf": "^2.1",

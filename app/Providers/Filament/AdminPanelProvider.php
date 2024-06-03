@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Auth\Login;
 use App\Filament\Resources\OrderResource\Widgets\ExpenseByMonth;
 use App\Filament\Resources\OrderResource\Widgets\MonthlyExpenseIncome;
 use App\Filament\Resources\OrderResource\Widgets\PayStatusCount;
@@ -43,7 +44,7 @@ class AdminPanelProvider extends PanelProvider
             ->darkModeBrandLogo(asset('logo.dark.png'))
             ->brandLogoHeight('3rem')
             ->favicon(asset('favicon.ico'))
-            ->login()
+            ->login(Login::class)
             ->emailVerification()
             ->profile(isSimple: false)
             ->colors([
