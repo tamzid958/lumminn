@@ -17,7 +17,8 @@ class CategoryController extends Controller
             ->selectRaw('(SELECT COUNT(*) FROM order_items WHERE order_items.product_id = products.id) AS orders_count')
             ->where('category_id', $category->id)
             ->orderByDesc('orders_count')
-            ->cursorPaginate(6, 'orders_count');
+            ->orderBy('id')
+            ->cursorPaginate(6, 'id');
         return view('products-by-category', compact('products', 'category'));
     }
 }
