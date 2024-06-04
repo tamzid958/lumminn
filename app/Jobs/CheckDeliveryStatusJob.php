@@ -16,6 +16,7 @@ class CheckDeliveryStatusJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $timeout = 0;
+    public $tries = 5;
 
     /**
      * Create a new job instance.

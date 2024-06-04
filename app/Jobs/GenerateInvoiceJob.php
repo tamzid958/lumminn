@@ -21,6 +21,8 @@ class GenerateInvoiceJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $timeout = 0;
+    public $tries = 5;
+    
     protected Collection $orders;
     protected $user;
 

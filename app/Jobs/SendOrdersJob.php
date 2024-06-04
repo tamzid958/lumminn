@@ -20,6 +20,7 @@ class SendOrdersJob implements ShouldQueue
 
     protected $user;
     public $timeout = 0;
+    public $tries = 5;
 
     /**
      * Create a new job instance.
