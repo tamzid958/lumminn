@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationGroup;
+use Filament\Tables\Table;
 use Illuminate\Support\ServiceProvider;
 use Spatie\Health\Checks\Checks\DatabaseCheck;
 use Spatie\Health\Checks\Checks\DatabaseConnectionCountCheck;
@@ -46,6 +47,10 @@ class AppServiceProvider extends ServiceProvider
                     ->label('User Management')
                     ->collapsed(),
             ]);
+        });
+
+        Table::configureUsing(function (Table $table) {
+            $table->paginated([10, 25, 50]);
         });
 
         //
