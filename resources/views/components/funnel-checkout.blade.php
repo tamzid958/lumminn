@@ -296,10 +296,10 @@ $outside_dhaka_max_charge = ShippingProvider::query()->max('outside_dhaka_charge
 
                     <div class="collapse mt-3">
                         <input type="radio" name="coupon-code-accordion" />
-                        <div class="collapse-title text-sm font-bold text-blue-800 px-0 underline underline-offset-2">
+                        <div class="collapse-title text-sm font-bold text-blue-800 px-1 underline underline-offset-2">
                             {{ __('have_any_coupon_code') }}
                         </div>
-                        <div class="collapse-content px-0 py-0 my-0">
+                        <div class="collapse-content px-1 py-0 my-0">
                             <div class="flex">
                                 <input type="text" placeholder="{{ __('coupon_code') }}" name="coupon_code"
                                     class="input input-sm flex-grow mr-2" id="coupon_code" />
