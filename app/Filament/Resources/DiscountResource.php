@@ -53,8 +53,8 @@ class DiscountResource extends Resource
                     ToggleButton::make('free_shipping')
                         ->offColor('primary')
                         ->onColor('danger')
-                        ->offLabel('Yes')
-                        ->onLabel('No')
+                        ->onLabel('Yes')
+                        ->offLabel('No')
                         ->default(false)
                         ->columnSpanFull(),
                 ]),
@@ -74,12 +74,12 @@ class DiscountResource extends Resource
                     ->alignCenter(),
                 Tables\Columns\IconColumn::make('free_shipping')
                     ->icon(fn (string $state): string => match ($state) {
-                        '1' => 'heroicon-o-x-circle',
-                        default =>'heroicon-o-check-circle',
+                        '1' => 'heroicon-o-check-circle',
+                        default =>'heroicon-o-x-circle',
                     })
                     ->color(fn (string $state): string => match ($state) {
-                        '1' => 'danger',
-                        default => 'success',
+                        '1' => 'success',
+                        default => 'danger',
                     })
                     ->alignCenter(),
                 Tables\Columns\ToggleColumn::make('active')

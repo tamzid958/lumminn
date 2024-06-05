@@ -226,7 +226,7 @@ $outside_dhaka_max_charge = ShippingProvider::query()->max('outside_dhaka_charge
                         </div>
                     </div>
 
-                    <div class="flex justify-between mt-8 mb-2 items-center">
+                    <div class="flex justify-between mt-5 mb-2 items-center">
                         <p class="text-lg font-medium">{{ __('shipping_methods') }}</p>
                         <x-field-error :name="'shipping_class'" />
                     </div>
@@ -264,7 +264,7 @@ $outside_dhaka_max_charge = ShippingProvider::query()->max('outside_dhaka_charge
                             </label>
                         </li>
                     </ul>
-                    <div class="flex justify-between mt-8 mb-2 items-center">
+                    <div class="flex justify-between mt-5 mb-2 items-center">
                         <p class="text-lg font-medium">{{ __('payment_methods') }}</p>
                         <x-field-error :name="'payment_provider'" />
                     </div>
@@ -294,11 +294,28 @@ $outside_dhaka_max_charge = ShippingProvider::query()->max('outside_dhaka_charge
                         @endif
                     </ul>
 
-                    
+                    <div class="collapse mt-3">
+                        <input type="radio" name="coupon-code-accordion" />
+                        <div class="collapse-title text-sm font-bold text-blue-800 px-0 underline underline-offset-2">
+                            {{ __('have_any_coupon_code') }}
+                        </div>
+                        <div class="collapse-content px-0 py-0 my-0">
+                            <div class="flex">
+                                <input type="text" placeholder="{{ __('coupon_code') }}" name="coupon_code"
+                                    class="input input-sm flex-grow mr-2" id="coupon_code" />
+                                <button type="button" class="btn btn-sm btn-primary text-base-content"
+                                    id="apply-coupon-code">
+                                    <span class=" loading-spinner loading-sm hidden"
+                                        id='apply-coupon-code-loading'></span>
+                                    {{ __('apply') }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
 
 
                     <!-- Total -->
-                    <div class="mt-6 border-t border-b border-secondary py-2">
+                    <div class="border-t border-b border-secondary mt-3 py-2">
                         <div class="flex items-center justify-between">
                             <p class="text-sm font-medium text-neutral">{{ __('subtotal') }}</p>
                             <p class="font-semibold text-neutral" id='sub_total'>৳ {{ $product->sale_price }}</p>
@@ -306,6 +323,12 @@ $outside_dhaka_max_charge = ShippingProvider::query()->max('outside_dhaka_charge
                         <div class="flex items-center justify-between">
                             <p class="text-sm font-medium text-neutral">{{ __('shipping') }}</p>
                             <p class="font-semibold text-neutral" id='shipping_charge'>
+                                {{ __('will_be_calculated') }}
+                            </p>
+                        </div>
+                        <div class="flex items-center justify-between text-red-600" id='discount_section'>
+                            <p class="text-sm font-medium">{{ __('discount') }}</p>
+                            <p class="font-semibold" id='discount_amount'>
                                 {{ __('will_be_calculated') }}
                             </p>
                         </div>
@@ -345,6 +368,23 @@ $outside_dhaka_max_charge = ShippingProvider::query()->max('outside_dhaka_charge
             }
         }
 
+        document.getElementById("apply-coupon-code").addEventListener("click", function(event) {
+            event.preventDefault();
+
+            const applyButton = document.getElementById("apply-coupon-code");
+            const loadingElement = document.getElementById('apply-coupon-code-loading');
+
+            applyButton.disabled = true;
+            loadingElement.classList.toggle('hidden', false);
+            loadingElement.classList.add('loading');
+
+            calculate();
+
+            loadingElement.classList.remove('loading');
+            loadingElement.classList.toggle('hidden', true);
+            applyButton.disabled = false;
+        });
+
         document.getElementById("create-order").addEventListener("submit", function(event) {
             document.getElementById("submit-create-order").disabled = true;
             var element = document.getElementById('create-order-loading');
@@ -359,26 +399,43 @@ $outside_dhaka_max_charge = ShippingProvider::query()->max('outside_dhaka_charge
         var quantity = document.getElementById('quantity');
         quantity.addEventListener('change', calculate);
 
+        function formatCurrency(number) {
+            return new Intl.NumberFormat("{{ app()->getLocale() }}", {
+                style: 'currency',
+                currency: 'BDT'
+            }).format(number);
+        }
+
         function calculate() {
             let productId = document.getElementById('product_id').value;
             let quantity = document.getElementById('quantity').value;
             let shipping_class = document.querySelector('input[name="shipping_class"]:checked')?.value;
+            let coupon_code = document.getElementById('coupon_code').value;
 
             axios.post("/product/calculate", {
                     id: productId,
                     shipping_class: shipping_class,
                     quantity: quantity,
+                    coupon_code: coupon_code
                 })
                 .then(function({
                     data
                 }) {
+                    console.log(data);
+                    const discountSection = document.getElementById("discount_section");
+                    discountSection.classList.toggle("hidden", data.discount_amount == 0);
+
                     let subTotalElement = document.getElementById('sub_total');
                     let shippingChargeElement = document.getElementById('shipping_charge');
                     let totalElement = document.getElementById('total');
+                    let discountAmountElement = document.getElementById('discount_amount');
 
-                    subTotalElement.textContent = data.sub_total;
-                    shippingChargeElement.textContent = data.shipping_charge;
-                    totalElement.textContent = data.total;
+                    subTotalElement.textContent = formatCurrency(data.sub_total);
+                    shippingChargeElement.textContent = formatCurrency(data.shipping_charge);
+                    totalElement.textContent = formatCurrency(data.total);
+                    discountAmountElement.textContent = (data.free_shipping ? "ফ্রি ডেলিভারী" + " + " : "- ") +
+                        formatCurrency(
+                            data.discount_amount);
                 })
                 .catch(function(error) {
                     console.error(error);

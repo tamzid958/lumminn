@@ -304,7 +304,7 @@ class OrderResource extends Resource
                             WHEN shipping_status = 'Completed' THEN 6
                             WHEN shipping_status = 'Returned' THEN 7
                             ELSE 8
-                        END ASC");
+                        END ASC")->orderByDesc('id');
             })
             ->deferLoading();
     }

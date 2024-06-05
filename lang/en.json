@@ -37,5 +37,9 @@
     "try_again": "Please try again.",
     "order_placed": "Order Placed!",
     "facebook_group": "Join Facebook Group",
-    "terms-and-conditions": "Terms and Conditions | Refund Policy"
+    "terms-and-conditions": "Terms and Conditions | Refund Policy",
+    "apply": "Apply",
+    "coupon_code": "COUPON CODE",
+    "have_any_coupon_code": "Do you have any coupon code?",
+    "discount": "Discount"
 }

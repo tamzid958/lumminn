@@ -38,6 +38,10 @@ class OrderController extends Controller
 
     public function create(Request $request)
     {
+        if( $request->method() != "POST") {
+            abort(404);
+        }
+
         $request['phone_number'] = StringUtil::convertBanglaToEnglishPhoneNumber($request->phone_number);
 
         $request->validate([
@@ -47,7 +51,8 @@ class OrderController extends Controller
             'shipping_class' => 'required|string',
             'payment_provider' => 'required|string',
             'quantity' => 'required|numeric|min:1|max:5',
-            'product_id' => 'required|numeric'
+            'product_id' => 'required|numeric',
+            'coupon_code' => 'string|nullable'
         ]);
 
         $ipAddress = OrderServiceProvider::checkFakeOrder($request->ip());
@@ -59,8 +64,10 @@ class OrderController extends Controller
         $productId = $request->input('product_id');
         $shippingClass = $request->input('shipping_class');
         $paymentProvider = $request->input('payment_provider');
+        $quantity = $request->input('quantity');
+        $coupon_code = $request->input('coupon_code');
 
-        $orderItem = OrderServiceProvider::convertToOrderItem($productId, $request->input('quantity'));
+        $orderItem = OrderServiceProvider::convertToOrderItem($productId, $quantity);
 
         $order = new Order();
 
@@ -68,7 +75,7 @@ class OrderController extends Controller
 
         $order->total_amount = $orderItem['price'] * $orderItem['quantity'];
         $order->additional_amount = 0;
-        $order->discount_amount = 0;
+     
 
         $shippingProviders = ShippingProvider::query()->where('slug', '<>', 'pickup');
 
@@ -83,6 +90,16 @@ class OrderController extends Controller
             "inside-dhaka" => $shipping_provider->inside_dhaka_charge,
             default => $shipping_provider->outside_dhaka_charge
         };
+        
+        $discount_amount = 0;
+        $free_shipping = false;
+
+        if(isset($coupon_code) && $coupon_code != '') {
+            $discount_amount = DiscountProvider::discountAmount($coupon_code, $product, $quantity);
+            $free_shipping = DiscountProvider::getDiscount($coupon_code, $product)->free_shipping ?? false;
+        }
+
+        $order->discount_amount = $discount_amount + ($free_shipping ? $order->shipping_amount : 0);
 
         $order->pay_status = 'Pending';
 
