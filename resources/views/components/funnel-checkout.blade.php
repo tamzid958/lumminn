@@ -421,7 +421,6 @@ $outside_dhaka_max_charge = ShippingProvider::query()->max('outside_dhaka_charge
                 .then(function({
                     data
                 }) {
-                    console.log(data);
                     const discountSection = document.getElementById("discount_section");
                     discountSection.classList.toggle("hidden", data.discount_amount == 0);
 
