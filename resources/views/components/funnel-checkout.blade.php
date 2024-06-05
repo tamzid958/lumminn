@@ -422,7 +422,8 @@ $outside_dhaka_max_charge = ShippingProvider::query()->max('outside_dhaka_charge
                     data
                 }) {
                     const discountSection = document.getElementById("discount_section");
-                    discountSection.classList.toggle("hidden", data.discount_amount == 0);
+                    discountSection.classList.toggle("hidden",
+                        data.discount_amount == 0 && data.free_shipping == false);
 
                     let subTotalElement = document.getElementById('sub_total');
                     let shippingChargeElement = document.getElementById('shipping_charge');
@@ -432,9 +433,25 @@ $outside_dhaka_max_charge = ShippingProvider::query()->max('outside_dhaka_charge
                     subTotalElement.textContent = formatCurrency(data.sub_total);
                     shippingChargeElement.textContent = formatCurrency(data.shipping_charge);
                     totalElement.textContent = formatCurrency(data.total);
-                    discountAmountElement.textContent = (data.free_shipping ? "ফ্রি ডেলিভারী" + " + " : "- ") +
-                        formatCurrency(
-                            data.discount_amount);
+
+                    let discount_message = "";
+
+                    if (data.free_shipping) {
+                        discount_message += "ফ্রি ডেলিভারী";
+                    }
+
+                    if (data.discount_amount > 0) {
+                        if (discount_message) {
+                            discount_message += " + ";
+                        }
+                        discount_message += formatCurrency(data.discount_amount);
+                    }
+
+                    if (!discount_message) {
+                        discount_message = "-";
+                    }
+
+                    discountAmountElement.textContent = discount_message;
                 })
                 .catch(function(error) {
                     console.error(error);
