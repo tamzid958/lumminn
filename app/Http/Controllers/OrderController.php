@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BasicConfiguration;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\PaymentProvider;
@@ -88,7 +89,7 @@ class OrderController extends Controller
         if ($freeShipping) {
             $order->discount_amount += $order->shipping_amount;
         }
-        
+
         $order->pay_status = 'Pending';
 
         $order->shipping_status = 'On Hold';
@@ -102,8 +103,12 @@ class OrderController extends Controller
         $order->address = $request->input('address');
         $order->geo_location = $request->input('geo_location');
 
+        $default_online_payment = BasicConfiguration::query()
+            ->where('config_key', '=', 'online-payment')
+            ->first()->config_value;
+
         $payment_provider = match ($paymentProvider) {
-            "online-payment" => PaymentProvider::query()->where('slug', '=', 'sslcommerz')->first(),
+            "online-payment" => PaymentProvider::query()->where('slug', '=', $default_online_payment)->first(),
             default => PaymentProvider::query()->where('slug', '=', 'cash-on-delivery')->first(),
 
         };
