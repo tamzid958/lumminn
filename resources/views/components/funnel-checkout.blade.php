@@ -447,10 +447,6 @@ $outside_dhaka_max_charge = ShippingProvider::query()->max('outside_dhaka_charge
                         discount_message += formatCurrency(data.discount_amount);
                     }
 
-                    if (!discount_message) {
-                        discount_message = "-";
-                    }
-
                     discountAmountElement.textContent = discount_message;
                 })
                 .catch(function(error) {
