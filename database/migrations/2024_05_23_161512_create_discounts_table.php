@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('discounts', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('code', 50)->unique();
             $table->string('type');
             $table->decimal('value');
             $table->tinyInteger('active')->default(0);
-            $table->integer('product_id')->unique();
+            $table->tinyInteger('free_shipping')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });

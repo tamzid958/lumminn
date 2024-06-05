@@ -29,18 +29,12 @@ class CreateOrder extends CreateRecord
             return $carry + ($item['price'] * $item['quantity']);
         }, 0);
 
-        $freeShipping = OrderServiceProvider::checkIfAnyFreeShippingProduct($data);
-
         $shipping_provider = ShippingProvider::query()->find($data['shipping_provider_id']);
 
         $data['shipping_amount'] = match ($data['shipping_class']) {
             'Inside Dhaka' => $shipping_provider->inside_dhaka_charge,
             default => $shipping_provider->outside_dhaka_charge,
         };
-
-        if ($freeShipping) {
-            $data['discount_amount'] += $data['shipping_amount'];
-        }
 
         $record = static::getModel()::create([
             'total_amount' => $data['total_amount'],

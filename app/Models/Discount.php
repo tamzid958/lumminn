@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Models\Enum\DiscountType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -13,18 +15,19 @@ class Discount extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected $fillable = ['name', 'type', 'value', 'active', 'product_id'];
+    protected $fillable = ['code', 'type', 'value', 'free_shipping', 'active'];
 
-    public function product(): HasOne
+    public function products(): BelongsToMany
     {
-        return $this->hasOne(Product::class, "id", "product_id");
+        return $this->belongsToMany(Product::class);
     }
 
     protected function casts(): array
     {
         return [
             'type' => DiscountType::class,
-            'active' => 'boolean'
+            'active' => 'boolean',
+            'free_shipping' => 'boolean'
         ];
     }
 }

@@ -7,6 +7,7 @@ use App\Filament\Resources\DiscountResource\RelationManagers;
 use App\Models\Discount;
 use App\Models\Enum\DiscountType;
 use Filament\Forms;
+use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -29,21 +30,34 @@ class DiscountResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
+                Forms\Components\TextInput::make('code')
                     ->required()
-                    ->maxLength(255),
-                Forms\Components\Select::make('type')
-                    ->options(DiscountType::class)
-                    ->default('Flat')
+                    ->maxLength(50),
+                Forms\Components\Select::make('products')
+                    ->relationship('products', 'name', function (Builder $query) {
+                        return $query->select('products.id', 'products.name')->distinct();
+                    })
+                    ->searchable()
+                    ->multiple()
+                    ->preload()
                     ->required(),
-                Forms\Components\TextInput::make('value')
-                    ->numeric()
-                    ->required(),
-                Forms\Components\Select::make('product_id')
-                    ->label('Product')
-                    ->relationship('product', 'name')
-                    ->required()
-                    ->searchable(),
+                Fieldset::make('Discount')->schema([
+                    Forms\Components\Select::make('type')
+                        ->options(DiscountType::class)
+                        ->required()
+                        ->default('Flat'),
+                    Forms\Components\TextInput::make('value')
+                        ->required()
+                        ->numeric()
+                        ->default(0),
+                    ToggleButton::make('free_shipping')
+                        ->offColor('primary')
+                        ->onColor('danger')
+                        ->offLabel('Yes')
+                        ->onLabel('No')
+                        ->default(false)
+                        ->columnSpanFull(),
+                ]),
             ]);
     }
 
@@ -51,15 +65,25 @@ class DiscountResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('product.name')
-                    ->label('Product'),
-                Tables\Columns\TextColumn::make('name')
+                Tables\Columns\TextColumn::make('code')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('type')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('value')
-                    ->numeric(),
-                Tables\Columns\ToggleColumn::make('active'),
+                    ->numeric()
+                    ->alignCenter(),
+                Tables\Columns\IconColumn::make('free_shipping')
+                    ->icon(fn (string $state): string => match ($state) {
+                        '1' => 'heroicon-o-x-circle',
+                        default =>'heroicon-o-check-circle',
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        '1' => 'danger',
+                        default => 'success',
+                    })
+                    ->alignCenter(),
+                Tables\Columns\ToggleColumn::make('active')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -86,7 +110,7 @@ class DiscountResource extends Resource
                     Tables\Actions\ForceDeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
                 ]),
-            ])->defaultSort('created_at', 'desc');
+            ]);
     }
 
     public static function getRelations(): array

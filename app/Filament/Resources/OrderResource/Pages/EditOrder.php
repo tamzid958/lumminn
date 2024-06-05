@@ -81,8 +81,6 @@ class EditOrder extends EditRecord
                 return $carry + ($item['price'] * $item['quantity']);
             }, 0);
 
-            $freeShipping = OrderServiceProvider::checkIfAnyFreeShippingProduct($data);
-
             $shipping_provider = ShippingProvider::query()->find($data['shipping_provider_id']);
 
             $data['shipping_amount'] = match ($data['shipping_class']) {
@@ -90,10 +88,6 @@ class EditOrder extends EditRecord
                 default => $shipping_provider->outside_dhaka_charge,
             };
 
-            if ($freeShipping) {
-                $data['discount_amount'] += $data['shipping_amount'];
-            }
-            
             $record->update([
                 'total_amount' => $data['total_amount'],
                 'additional_amount' => $data['additional_amount'],

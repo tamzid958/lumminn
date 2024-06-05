@@ -15,7 +15,6 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Mansoor\FilamentVersionable\Table\RevisionsAction;
-use Wallo\FilamentSelectify\Components\ToggleButton;
 
 class ProductResource extends Resource
 {
@@ -66,14 +65,6 @@ class ProductResource extends Resource
                 ->numeric()
                 ->hidden(fn($get) => $get('stock_status') !== 'In Stock')
                 ->required(fn($get) => $get('stock_status') === 'In Stock')
-                ->columnSpan(['md' => 1]),
-            ToggleButton::make('is_shipping_charge_applicable')
-                ->label('Shipping Condition')
-                ->offColor('warning')
-                ->onColor('primary')
-                ->offLabel('Free Shipping')
-                ->onLabel('Shipping Charge Applicable')
-                ->default(true)
                 ->columnSpan(['md' => 1]),
             Forms\Components\Textarea::make('description')
                 ->required()

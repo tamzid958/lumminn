@@ -68,9 +68,7 @@ class OrderController extends Controller
 
         $order->total_amount = $orderItem['price'] * $orderItem['quantity'];
         $order->additional_amount = 0;
-        $order->discount_amount = DiscountProvider::discountAmount($product, $orderItem['quantity']);
-
-        $freeShipping = OrderServiceProvider::checkIfFreeShippingProduct($productId);
+        $order->discount_amount = 0;
 
         $shippingProviders = ShippingProvider::query()->where('slug', '<>', 'pickup');
 
@@ -85,10 +83,6 @@ class OrderController extends Controller
             "inside-dhaka" => $shipping_provider->inside_dhaka_charge,
             default => $shipping_provider->outside_dhaka_charge
         };
-
-        if ($freeShipping) {
-            $order->discount_amount += $order->shipping_amount;
-        }
 
         $order->pay_status = 'Pending';
 

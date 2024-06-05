@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('discounts', function (Blueprint $table) {
-            //
+        Schema::table('products', function (Blueprint $table) {
+            $table->dropColumn('is_shipping_charge_applicable');
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('discounts', function (Blueprint $table) {
-            //
+        Schema::table('products', function (Blueprint $table) {
+            $table->tinyInteger('is_shipping_charge_applicable')->default(0);
         });
     }
 };

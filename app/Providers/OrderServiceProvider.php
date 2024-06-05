@@ -46,14 +46,6 @@ class OrderServiceProvider
         })->filter()->toArray();
     }
 
-    public static function checkIfFreeShippingProduct(int $product_id): bool
-    {
-        return Product::query()
-            ->where('id', $product_id)
-            ->where('is_shipping_charge_applicable', false)
-            ->exists();
-    }
-
     public static function checkFakeOrder(string $ip): IpAddress
     {
         $alreadyStoredIp = IpAddress::query()->where('ip', $ip)->first();
@@ -70,15 +62,5 @@ class OrderServiceProvider
             $ipAddress->save();
             return $ipAddress;
         }
-    }
-
-    public static function checkIfAnyFreeShippingProduct(array $data): bool
-    {
-        $productIds = array_column($data['products'], 'id');
-
-        return Product::query()
-                ->whereIn('id', $productIds)
-                ->where('is_shipping_charge_applicable', false)
-                ->count() > 0;
     }
 }

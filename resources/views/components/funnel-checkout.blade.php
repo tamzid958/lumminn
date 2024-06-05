@@ -35,8 +35,6 @@
     }
 }
 
-$after_discount_price = DiscountProvider::priceAfterDiscount($product);
-
 $inside_dhaka_max_charge = ShippingProvider::query()->max('inside_dhaka_charge');
 $outside_dhaka_max_charge = ShippingProvider::query()->max('outside_dhaka_charge');
 
@@ -57,22 +55,9 @@ $outside_dhaka_max_charge = ShippingProvider::query()->max('outside_dhaka_charge
                                 src="{{ asset('storage/' . $product->main_photo) }}" alt="{{ $product->name }}" />
                             <div class="flex w-full flex-col px-4 py-4">
                                 <span class="font-semibold">{{ $product->name }}</span>
-                                @if ($after_discount_price >= $product->sale_price)
-                                    <p class="text-lg font-bold my-1">
-                                        {{ Number::currency($product->sale_price, in: 'BDT', locale: $locale) }}
-                                    </p>
-                                @else
-                                    <p class="my-1">
-                                        <span class="text-lg font-bold text-primary">
-                                            {{ Number::currency($after_discount_price, in: 'BDT', locale: $locale) }}
-                                        </span>
-                                        <br>
-                                        <span class="text-base line-through">
-                                            {{ Number::currency($product->sale_price, in: 'BDT', locale: $locale) }}
-                                        </span>
-                                    </p>
-                                @endif
-
+                                <p class="text-lg font-bold my-1">
+                                    {{ Number::currency($product->sale_price, in: 'BDT', locale: $locale) }}
+                                </p>
                             </div>
                         </div>
                         <a class="btn btn-neutral my-auto"
@@ -257,7 +242,7 @@ $outside_dhaka_max_charge = ShippingProvider::query()->max('outside_dhaka_charge
                                     </div>
                                     <div class="w-full">
                                         {{ __('1-2days') }}
-                                        {{ $product->is_shipping_charge_applicable ? '(' . Number::currency($inside_dhaka_max_charge, in: 'BDT', locale: $locale) . ')' : '' }}
+                                        {{ '(' . Number::currency($inside_dhaka_max_charge, in: 'BDT', locale: $locale) . ')' }}
                                     </div>
                                 </div>
                             </label>
@@ -273,7 +258,7 @@ $outside_dhaka_max_charge = ShippingProvider::query()->max('outside_dhaka_charge
                                     </div>
                                     <div class="w-full">
                                         {{ __('2-3days') }}
-                                        {{ $product->is_shipping_charge_applicable ? '(' . Number::currency($outside_dhaka_max_charge, in: 'BDT', locale: $locale) . ')' : '' }}
+                                        {{ '(' . Number::currency($outside_dhaka_max_charge, in: 'BDT', locale: $locale) . ')' }}
                                     </div>
                                 </div>
                             </label>
@@ -309,6 +294,8 @@ $outside_dhaka_max_charge = ShippingProvider::query()->max('outside_dhaka_charge
                         @endif
                     </ul>
 
+                    
+
 
                     <!-- Total -->
                     <div class="mt-6 border-t border-b border-secondary py-2">
@@ -319,14 +306,14 @@ $outside_dhaka_max_charge = ShippingProvider::query()->max('outside_dhaka_charge
                         <div class="flex items-center justify-between">
                             <p class="text-sm font-medium text-neutral">{{ __('shipping') }}</p>
                             <p class="font-semibold text-neutral" id='shipping_charge'>
-                                {{ __($product->is_shipping_charge_applicable ? 'will_be_calculated' : 'free_delivery') }}
+                                {{ __('will_be_calculated') }}
                             </p>
                         </div>
                     </div>
                     <div class="mt-6 flex items-center justify-between">
                         <p class="text-sm font-medium text-neutral">{{ __('total') }}</p>
                         <p class="text-2xl font-semibold text-neutral" id='total'>
-                            {{ $product->is_shipping_charge_applicable ? __('will_be_calculated') : Number::currency($product->sale_price, in: 'BDT', locale: $locale) }}
+                            {{ __('will_be_calculated') }}
                         </p>
                     </div>
                 </div>

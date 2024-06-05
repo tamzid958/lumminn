@@ -6,6 +6,8 @@ use App\Models\Enum\StockStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Overtrue\LaravelVersionable\Versionable;
 use Overtrue\LaravelVersionable\VersionStrategy;
@@ -28,7 +30,6 @@ class Product extends Model
         'description',
         'stock_status',
         'stock',
-        'is_shipping_charge_applicable',
         'main_photo',
         'photos',
         'video_link',
@@ -45,14 +46,13 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
-    protected function casts(): array|StockStatus
+    protected function casts(): array
     {
         return [
             'stock_status' => StockStatus::class,
             'photos' => 'array',
             'meta' => 'array',
             'production_cost_breakdown' => 'array',
-            'is_shipping_charge_applicable' => 'boolean'
         ];
     }
 }
