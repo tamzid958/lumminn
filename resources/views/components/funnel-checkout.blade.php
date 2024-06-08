@@ -351,11 +351,11 @@ $outside_dhaka_max_charge = ShippingProvider::query()->max('outside_dhaka_charge
 
     <script>
         document.addEventListener("DOMContentLoaded", function(event) {
-            getLocation();
+           /* getLocation();*/
             calculate();
         });
 
-        function getLocation() {
+   /*     function getLocation() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition((position) => {
                     const latitude = position.coords.latitude;
@@ -367,7 +367,7 @@ $outside_dhaka_max_charge = ShippingProvider::query()->max('outside_dhaka_charge
             } else {
                 document.getElementById("geo_location").value = "Geolocation is not supported";
             }
-        }
+        }*/
 
         document.getElementById("apply-coupon-code").addEventListener("click", function(event) {
             event.preventDefault();
