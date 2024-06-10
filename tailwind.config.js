@@ -7,15 +7,14 @@ export default {
         "./app/Livewire/**/**/*.php",
         './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
         // Add mary
-        "./vendor/robsontenorio/mary/src/View/Components/**/*.php",  
+        "./vendor/robsontenorio/mary/src/View/Components/**/*.php",
     ],
     theme: {
-        extend: {
-        },
+        extend: {},
 
     },
     daisyui: {
-        themes: ["lemonade"]
+        themes: ["autumn"]
     },
     plugins: [
         require("daisyui"),
