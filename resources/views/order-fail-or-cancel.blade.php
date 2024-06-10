@@ -1,5 +1,10 @@
 @extends('components.layouts.app', ['title' => 'Order Successful'])
 
+@php
+    $facebook_group_link =
+        App\Models\BasicConfiguration::query()->where('config_key', '=', 'facebook_group_link')->first()
+            ->config_value ?? null;
+@endphp
 
 @section('content')
     <div class="lg:px-20 xl:px-32 max-w-7xl mx-auto rounded-md card bg-base-200 pb-4">
@@ -13,6 +18,13 @@
             <div class="text-center">
                 <h3 class="md:text-2xl text-base text-gray-900 font-semibold text-center">{{ __('order_failed') }}</h3>
                 <p class="text-gray-600 my-2">{{ __('try_again') }}</p>
+                @isset($facebook_group_link)
+                    <div class="py-3 text-center">
+                        <a href="{{ $facebook_group_link }}" class="btn btn-secondary" target="_blank">
+                            {{ __('facebook_group') }}
+                        </a>
+                    </div>
+                @endisset
                 <div class="py-10 mt-5 text-center">
                     <a href="/" class="link-primary">
                         {{ __('go_back') }}

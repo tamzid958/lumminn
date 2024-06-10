@@ -15,6 +15,7 @@ use App\Utils\StringUtil;
 use Combindma\FacebookPixel\Facades\MetaPixel;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
@@ -54,11 +55,6 @@ class OrderController extends Controller
 
     public function create(Request $request)
     {
-        // Ensure the request method is POST
-        if ($request->method() !== "POST") {
-            return abort(429);
-        }
-
         // Convert phone number from Bangla to English
         $request['phone_number'] = StringUtil::convertBanglaToEnglishPhoneNumber($request->phone_number);
 
@@ -71,7 +67,6 @@ class OrderController extends Controller
             'payment_provider' => 'required|string',
             'quantity' => 'required|numeric|min:1|max:5',
             'product_id' => 'required|numeric',
-            'coupon_code' => 'string|nullable'
         ]);
 
         // Validate and invalidate order token
@@ -92,11 +87,8 @@ class OrderController extends Controller
         // Create the order item
         $this->createOrderItem($createdOrder->id, $request->input('product_id'), $request->input('quantity'));
 
-        // Register payment
-        $paymentProviderSlug = $this->registerPayment($createdOrder, $request->input('payment_provider'));
-
         // Handle the payment redirect
-        return $this->handlePaymentRedirect($createdOrder, $paymentProviderSlug);
+        return redirect($this->handlePaymentRedirect($createdOrder, $request->input('payment_provider')));
     }
 
     private function validateAndInvalidateToken($orderToken)
@@ -130,7 +122,7 @@ class OrderController extends Controller
             'pay_status' => 'Pending',
             'shipping_status' => 'On Hold',
             'shipping_class' => $this->getShippingClassLabel($request->input('shipping_class')),
-            'payment_provider_id' => $this->getPaymentProviderId($request->input('payment_provider')),
+            'payment_provider_id' => $this->getPaymentProvider($request->input('payment_provider'))->id,
             'ip_address_id' => $ipAddress->id,
         ];
     }
@@ -138,14 +130,14 @@ class OrderController extends Controller
     private function getShippingProvider($shippingClass)
     {
         $shippingProviders = ShippingProvider::where('slug', '<>', 'pickup');
-        $provider = $shippingClass === "inside-dhaka"
-            ? $shippingProviders->orderBy('inside_dhaka_charge')->first()
-            : $shippingProviders->orderBy('outside_dhaka_charge')->first();
-
-        $provider->charge = $shippingClass === "inside-dhaka"
-            ? $provider->inside_dhaka_charge
-            : $provider->outside_dhaka_charge;
-
+        if ($shippingClass === "inside-dhaka") {
+            $provider = $shippingProviders->orderBy('inside_dhaka_charge')->first();
+            $charge = $provider->inside_dhaka_charge;
+        } else {
+            $provider = $shippingProviders->orderBy('outside_dhaka_charge')->first();
+            $charge = $provider->outside_dhaka_charge;
+        }
+        $provider->charge = $charge;
         return $provider;
     }
 
@@ -169,12 +161,12 @@ class OrderController extends Controller
         return $shippingClass === "inside-dhaka" ? 'Inside Dhaka' : 'Outside Dhaka';
     }
 
-    private function getPaymentProviderId($paymentProvider)
+    private function getPaymentProvider($paymentProvider)
     {
         $defaultOnlinePayment = BasicConfiguration::where('config_key', 'online-payment')->value('config_value');
         return $paymentProvider === "online-payment"
-            ? PaymentProvider::where('slug', $defaultOnlinePayment)->value('id')
-            : PaymentProvider::where('slug', 'cash-on-delivery')->value('id');
+            ? PaymentProvider::where('slug', $defaultOnlinePayment)->first()
+            : PaymentProvider::where('slug', 'cash-on-delivery')->first();
     }
 
     private function createOrderItem($orderId, $productId, $quantity)
@@ -184,25 +176,22 @@ class OrderController extends Controller
         OrderItem::create($orderItem);
     }
 
-    private function registerPayment($order, $paymentProvider)
-    {
-        $paymentProviderInstance = PaymentServiceProvider::register($paymentProvider)->create();
-        $paymentProviderInstance->generateTransaction($order->toArray());
-        return $paymentProvider;
-    }
-
     private function handlePaymentRedirect($order, $paymentProviderSlug)
     {
+        $paymentProvider = $this->getPaymentProvider($paymentProviderSlug);
+        $paymentProviderInstance = PaymentServiceProvider::register($paymentProvider)->create();
+        $paymentProviderInstance->generateTransaction($order->toArray());
+        
         if ($paymentProviderSlug === 'cash-on-delivery') {
-            return redirect('/order/success/' . $order->invoice_id);
+            return '/order/success/' . $order->invoice_id;
         }
 
         $order = Order::find($order->id);
         if (!empty($order->gateway_response) && isset($order->gateway_response['GatewayPageURL'])) {
-            return redirect($order->gateway_response['GatewayPageURL']);
+            return $order->gateway_response['GatewayPageURL'];
         }
 
-        return redirect('/order/fail-or-cancel/' . $order->invoice_id);
+        return '/order/fail-or-cancel/' . $order->invoice_id;
     }
 
 }
