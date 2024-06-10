@@ -184,8 +184,9 @@ class OrderController extends Controller
         OrderItem::create($orderItem);
     }
 
-    private function registerPayment($order, $paymentProvider)
+    private function registerPayment($order, $paymentProviderSlug)
     {
+        $paymentProvider = $this->getPaymentProvider($paymentProviderSlug);
         $paymentProviderInstance = PaymentServiceProvider::register($paymentProvider)->create();
         $paymentProviderInstance->generateTransaction($order->toArray());
         return $paymentProvider;
