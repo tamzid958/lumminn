@@ -15,6 +15,7 @@ use App\Utils\StringUtil;
 use Combindma\FacebookPixel\Facades\MetaPixel;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
@@ -54,49 +55,48 @@ class OrderController extends Controller
 
     public function create(Request $request)
     {
-        // Ensure the request method is POST
-        if ($request->method() !== "POST") {
-            return abort(429);
+        try {
+            // Convert phone number from Bangla to English
+            $request['phone_number'] = StringUtil::convertBanglaToEnglishPhoneNumber($request->phone_number);
+
+            // Validate the request data
+            $request->validate([
+                'name' => 'required|string',
+                'phone_number' => 'required|numeric|digits:11',
+                'address' => 'required|string',
+                'shipping_class' => 'required|string',
+                'payment_provider' => 'required|string',
+                'quantity' => 'required|numeric|min:1|max:5',
+                'product_id' => 'required|numeric',
+            ]);
+
+            // Validate and invalidate order token
+            if (!$this->validateAndInvalidateToken($request->input('order_token'))) {
+                return redirect('/order/success_/' . uniqid());
+            }
+
+            // Check for fake order by IP address
+            $ipAddress = OrderServiceProvider::checkFakeOrder($request->ip());
+            if ($ipAddress->is_blocked) {
+                return redirect('/order/success_/' . uniqid());
+            }
+
+            // Prepare and create the order
+            $orderData = $this->prepareOrderData($request, $ipAddress);
+            $createdOrder = Order::create($orderData);
+
+            // Create the order item
+            $this->createOrderItem($createdOrder->id, $request->input('product_id'), $request->input('quantity'));
+
+            // Register payment
+            $paymentProviderSlug = $this->registerPayment($createdOrder, $request->input('payment_provider'));
+
+            // Handle the payment redirect
+            return $this->handlePaymentRedirect($createdOrder, $paymentProviderSlug);
+        } catch (Exception $e) {
+            Log::error('Order creation failed: ' . $e->getMessage());
+            return response()->json(['error' => $e], 500);
         }
-
-        // Convert phone number from Bangla to English
-        $request['phone_number'] = StringUtil::convertBanglaToEnglishPhoneNumber($request->phone_number);
-
-        // Validate the request data
-        $request->validate([
-            'name' => 'required|string',
-            'phone_number' => 'required|numeric|digits:11',
-            'address' => 'required|string',
-            'shipping_class' => 'required|string',
-            'payment_provider' => 'required|string',
-            'quantity' => 'required|numeric|min:1|max:5',
-            'product_id' => 'required|numeric',
-            'coupon_code' => 'string|nullable'
-        ]);
-
-        // Validate and invalidate order token
-        if (!$this->validateAndInvalidateToken($request->input('order_token'))) {
-            return redirect('/order/success_/' . uniqid());
-        }
-
-        // Check for fake order by IP address
-        $ipAddress = OrderServiceProvider::checkFakeOrder($request->ip());
-        if ($ipAddress->is_blocked) {
-            return redirect('/order/success_/' . uniqid());
-        }
-
-        // Prepare and create the order
-        $orderData = $this->prepareOrderData($request, $ipAddress);
-        $createdOrder = Order::create($orderData);
-
-        // Create the order item
-        $this->createOrderItem($createdOrder->id, $request->input('product_id'), $request->input('quantity'));
-
-        // Register payment
-        $paymentProviderSlug = $this->registerPayment($createdOrder, $request->input('payment_provider'));
-
-        // Handle the payment redirect
-        return $this->handlePaymentRedirect($createdOrder, $paymentProviderSlug);
     }
 
     private function validateAndInvalidateToken($orderToken)
