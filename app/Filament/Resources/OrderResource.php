@@ -136,6 +136,7 @@ class OrderResource extends Resource
                     ->modalDescription('Confirm the order by calling the customer')
                     ->fillForm(function (Order $record) {
                         $orderId = $record['id'];
+                        $currentCreatedAt = $record['created_at'];
 
                         $mandatoryOrderItems = OrderItem::with('product')
                             ->where('order_id', $orderId)
@@ -144,7 +145,7 @@ class OrderResource extends Resource
 
                         $shippingStatusCounts = Order::select('shipping_status', DB::raw('count(*) as total'))
                             ->where('phone_number', $record['phone_number'])
-                            ->whereNot('id', $orderId)
+                            ->where('created_at', '<', $currentCreatedAt)
                             ->groupBy('shipping_status')
                             ->get()
                             ->toArray();
