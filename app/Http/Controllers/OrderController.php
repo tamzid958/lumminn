@@ -88,11 +88,8 @@ class OrderController extends Controller
             // Create the order item
             $this->createOrderItem($createdOrder->id, $request->input('product_id'), $request->input('quantity'));
 
-            // Register payment
-            $paymentProviderSlug = $this->registerPayment($createdOrder, $request->input('payment_provider'));
-
             // Handle the payment redirect
-            return redirect($this->handlePaymentRedirect($createdOrder, $paymentProviderSlug));
+            return redirect($this->handlePaymentRedirect($createdOrder, $request->input('payment_provider')));
         } catch (Exception $e) {
             Log::error('Order creation failed: ' . $e->getMessage());
             return response()->json(['error' => $e->getMessage()], 500);
@@ -184,16 +181,12 @@ class OrderController extends Controller
         OrderItem::create($orderItem);
     }
 
-    private function registerPayment($order, $paymentProviderSlug)
+    private function handlePaymentRedirect($order, $paymentProviderSlug)
     {
         $paymentProvider = $this->getPaymentProvider($paymentProviderSlug);
         $paymentProviderInstance = PaymentServiceProvider::register($paymentProvider)->create();
         $paymentProviderInstance->generateTransaction($order->toArray());
-        return $paymentProvider;
-    }
-
-    private function handlePaymentRedirect($order, $paymentProviderSlug)
-    {
+        
         if ($paymentProviderSlug === 'cash-on-delivery') {
             return '/order/success/' . $order->invoice_id;
         }
