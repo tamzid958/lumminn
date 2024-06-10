@@ -130,7 +130,7 @@ class OrderController extends Controller
             'pay_status' => 'Pending',
             'shipping_status' => 'On Hold',
             'shipping_class' => $this->getShippingClassLabel($request->input('shipping_class')),
-            'payment_provider_id' => $this->getPaymentProviderId($request->input('payment_provider')),
+            'payment_provider_id' => $this->getPaymentProvider($request->input('payment_provider'))->id,
             'ip_address_id' => $ipAddress->id,
         ];
     }
@@ -169,12 +169,12 @@ class OrderController extends Controller
         return $shippingClass === "inside-dhaka" ? 'Inside Dhaka' : 'Outside Dhaka';
     }
 
-    private function getPaymentProviderId($paymentProvider)
+    private function getPaymentProvider($paymentProvider)
     {
         $defaultOnlinePayment = BasicConfiguration::where('config_key', 'online-payment')->value('config_value');
         return $paymentProvider === "online-payment"
-            ? PaymentProvider::where('slug', $defaultOnlinePayment)->value('id')
-            : PaymentProvider::where('slug', 'cash-on-delivery')->value('id');
+            ? PaymentProvider::where('slug', $defaultOnlinePayment)->first()
+            : PaymentProvider::where('slug', 'cash-on-delivery')->first();
     }
 
     private function createOrderItem($orderId, $productId, $quantity)
