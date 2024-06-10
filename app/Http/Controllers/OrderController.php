@@ -95,7 +95,7 @@ class OrderController extends Controller
             return redirect($this->handlePaymentRedirect($createdOrder, $paymentProviderSlug));
         } catch (Exception $e) {
             Log::error('Order creation failed: ' . $e->getMessage());
-            return response()->json(['error' => $e], 500);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
@@ -138,14 +138,14 @@ class OrderController extends Controller
     private function getShippingProvider($shippingClass)
     {
         $shippingProviders = ShippingProvider::where('slug', '<>', 'pickup');
-        $provider = $shippingClass === "inside-dhaka"
-            ? $shippingProviders->orderBy('inside_dhaka_charge')->first()
-            : $shippingProviders->orderBy('outside_dhaka_charge')->first();
-
-        $provider->charge = $shippingClass === "inside-dhaka"
-            ? $provider->inside_dhaka_charge
-            : $provider->outside_dhaka_charge;
-
+        if ($shippingClass === "inside-dhaka") {
+            $provider = $shippingProviders->orderBy('inside_dhaka_charge')->first();
+            $charge = $provider->inside_dhaka_charge;
+        } else {
+            $provider = $shippingProviders->orderBy('outside_dhaka_charge')->first();
+            $charge = $provider->outside_dhaka_charge;
+        }
+        $provider->charge = $charge;
         return $provider;
     }
 
