@@ -7,5 +7,5 @@
 
 
 @section('content')
-    <x-funnel-checkout :product='$product'/>
+    <x-funnel-checkout :product='$product' :order_token='$order_token' />
 @endsection

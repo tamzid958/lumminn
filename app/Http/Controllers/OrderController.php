@@ -38,8 +38,8 @@ class OrderController extends Controller
 
     public function create(Request $request)
     {
-        if( $request->method() != "POST") {
-            abort(404);
+        if($request->method() != "POST") {
+           return abort(429);
         }
 
         $request['phone_number'] = StringUtil::convertBanglaToEnglishPhoneNumber($request->phone_number);
@@ -54,6 +54,16 @@ class OrderController extends Controller
             'product_id' => 'required|numeric',
             'coupon_code' => 'string|nullable'
         ]);
+
+        $order_token = $request->input('order_token');
+
+        // Check if the token exists and matches the session token
+        if (session('order_token') !== $order_token) {
+            return redirect('/order/success_/' . uniqid());
+        }
+
+        // Invalidate the token immediately
+        session()->forget('order_token');
 
         $ipAddress = OrderServiceProvider::checkFakeOrder($request->ip());
 

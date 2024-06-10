@@ -143,7 +143,8 @@ class OrderResource extends Resource
                             ->whereNotNull('product_id')
                             ->get(['quantity', 'product_id as id']);
 
-                        $shippingStatusCounts = Order::select('shipping_status', DB::raw('count(*) as total'))
+                        $shippingStatusCounts = Order::withTrashed()
+                            ->select('shipping_status', DB::raw('count(*) as total'))
                             ->where('phone_number', $record['phone_number'])
                             ->where('created_at', '<', $currentCreatedAt)
                             ->groupBy('shipping_status')
