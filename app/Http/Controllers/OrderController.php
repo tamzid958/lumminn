@@ -92,7 +92,7 @@ class OrderController extends Controller
             $paymentProviderSlug = $this->registerPayment($createdOrder, $request->input('payment_provider'));
 
             // Handle the payment redirect
-            return $this->handlePaymentRedirect($createdOrder, $paymentProviderSlug);
+            return redirect($this->handlePaymentRedirect($createdOrder, $paymentProviderSlug));
         } catch (Exception $e) {
             Log::error('Order creation failed: ' . $e->getMessage());
             return response()->json(['error' => $e], 500);
@@ -194,15 +194,15 @@ class OrderController extends Controller
     private function handlePaymentRedirect($order, $paymentProviderSlug)
     {
         if ($paymentProviderSlug === 'cash-on-delivery') {
-            return redirect('/order/success/' . $order->invoice_id);
+            return '/order/success/' . $order->invoice_id;
         }
 
         $order = Order::find($order->id);
         if (!empty($order->gateway_response) && isset($order->gateway_response['GatewayPageURL'])) {
-            return redirect($order->gateway_response['GatewayPageURL']);
+            return $order->gateway_response['GatewayPageURL'];
         }
 
-        return redirect('/order/fail-or-cancel/' . $order->invoice_id);
+        return '/order/fail-or-cancel/' . $order->invoice_id;
     }
 
 }
