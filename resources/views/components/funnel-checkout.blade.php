@@ -304,7 +304,7 @@ $outside_dhaka_max_charge = ShippingProvider::query()->max('outside_dhaka_charge
                             <div class="flex">
                                 <input type="text" placeholder="{{ __('coupon_code') }}" name="coupon_code"
                                        class="input input-sm flex-grow mr-2" id="coupon_code"/>
-                                <button type="button" class="btn btn-sm btn-primary text-primary-content"
+                                <button type="button" class="btn btn-sm btn-primary text-white"
                                         id="apply-coupon-code">
                                     <span class=" loading-spinner loading-sm hidden"
                                           id='apply-coupon-code-loading'></span>

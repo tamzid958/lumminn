@@ -14,7 +14,7 @@ export default {
 
     },
     daisyui: {
-        themes: ["light"]
+        themes: ["lemonade"]
     },
     plugins: [
         require("daisyui"),
