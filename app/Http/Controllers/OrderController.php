@@ -36,136 +36,6 @@ class OrderController extends Controller
         return view("order-success", compact("order"));
     }
 
-    public function create(Request $request)
-    {
-        if($request->method() != "POST") {
-           return abort(429);
-        }
-
-        $request['phone_number'] = StringUtil::convertBanglaToEnglishPhoneNumber($request->phone_number);
-
-        $request->validate([
-            'name' => 'required|string',
-            'phone_number' => 'required|numeric|digits:11',
-            'address' => 'required|string',
-            'shipping_class' => 'required|string',
-            'payment_provider' => 'required|string',
-            'quantity' => 'required|numeric|min:1|max:5',
-            'product_id' => 'required|numeric',
-            'coupon_code' => 'string|nullable'
-        ]);
-
-        $order_token = $request->input('order_token');
-
-        // Check if the token exists and matches the session token
-        if (session('order_token') !== $order_token) {
-            return redirect('/order/success_/' . uniqid());
-        }
-
-        // Invalidate the token immediately
-        session()->forget('order_token');
-
-        $ipAddress = OrderServiceProvider::checkFakeOrder($request->ip());
-
-        if ($ipAddress->is_blocked) {
-            return redirect('/order/success_/' . uniqid());
-        }
-
-        $productId = $request->input('product_id');
-        $shippingClass = $request->input('shipping_class');
-        $paymentProvider = $request->input('payment_provider');
-        $quantity = $request->input('quantity');
-        $coupon_code = $request->input('coupon_code');
-
-        $orderItem = OrderServiceProvider::convertToOrderItem($productId, $quantity);
-
-        $order = new Order();
-
-        $product = Product::query()->find($productId);
-
-        $order->total_amount = $orderItem['price'] * $orderItem['quantity'];
-        $order->additional_amount = 0;
-     
-
-        $shippingProviders = ShippingProvider::query()->where('slug', '<>', 'pickup');
-
-        $shipping_provider = match ($shippingClass) {
-            "inside-dhaka" => $shippingProviders->where('inside_dhaka_charge', $shippingProviders->min('inside_dhaka_charge'))->first(),
-            default => $shippingProviders->where('outside_dhaka_charge', $shippingProviders->min('outside_dhaka_charge'))->first()
-        };
-
-        $order->shipping_provider_id = $shipping_provider['id'];
-
-        $order->shipping_amount = match ($shippingClass) {
-            "inside-dhaka" => $shipping_provider->inside_dhaka_charge,
-            default => $shipping_provider->outside_dhaka_charge
-        };
-        
-        $discount_amount = 0;
-        $free_shipping = false;
-
-        if(isset($coupon_code) && $coupon_code != '') {
-            $discount_amount = DiscountProvider::discountAmount($coupon_code, $product, $quantity);
-            $free_shipping = DiscountProvider::getDiscount($coupon_code, $product)->free_shipping ?? false;
-        }
-
-        $order->discount_amount = $discount_amount + ($free_shipping ? $order->shipping_amount : 0);
-
-        $order->pay_status = 'Pending';
-
-        $order->shipping_status = 'On Hold';
-        $order->shipping_class = match ($shippingClass) {
-            "inside-dhaka" => 'Inside Dhaka',
-            default => 'Outside Dhaka'
-        };
-
-        $order->name = $request->input('name');
-        $order->phone_number = $request->input('phone_number');
-        $order->address = $request->input('address');
-        $order->geo_location = $request->input('geo_location');
-
-        $default_online_payment = BasicConfiguration::query()
-            ->where('config_key', '=', 'online-payment')
-            ->first()->config_value;
-
-        $payment_provider = match ($paymentProvider) {
-            "online-payment" => PaymentProvider::query()->where('slug', '=', $default_online_payment)->first(),
-            default => PaymentProvider::query()->where('slug', '=', 'cash-on-delivery')->first(),
-
-        };
-
-        $order->payment_provider_id = $payment_provider['id'];
-
-        $order->ip_address_id = $ipAddress->id;
-
-        $createdOrder = Order::create($order->toArray());
-
-        $orderItem['order_id'] = $createdOrder->id;
-
-        OrderItem::create($orderItem);
-
-        PaymentServiceProvider::register($payment_provider)->create()->generateTransaction($createdOrder->toArray());
-
-        if ($paymentProvider === 'cash-on-delivery') {
-            return redirect('/order/success/' . $createdOrder->invoice_id);
-        } else {
-            $order = Order::find($createdOrder->id);
-
-            if (!empty($order->gateway_response) && isset($order->gateway_response['GatewayPageURL'])) {
-                // Gateway response is not empty and contains the GatewayPageURL property
-                $gatewayPageURL = $order->gateway_response['GatewayPageURL'];
-
-                // Redirect the user to the GatewayPageURL
-                return redirect($gatewayPageURL);
-            } else {
-                // Either gateway response is empty or does not contain the GatewayPageURL property
-                // Handle the case accordingly, e.g., display an error message
-                return redirect('/order/fail-or-cancel/' . $createdOrder->invoice_id);
-            }
-        }
-
-    }
-
     public function fake_success($invoice_id)
     {
         return view("order-fake-success");
@@ -181,4 +51,158 @@ class OrderController extends Controller
         }
         return view("order-fail-or-cancel");
     }
+
+    public function create(Request $request)
+    {
+        // Ensure the request method is POST
+        if ($request->method() !== "POST") {
+            return abort(429);
+        }
+
+        // Convert phone number from Bangla to English
+        $request['phone_number'] = StringUtil::convertBanglaToEnglishPhoneNumber($request->phone_number);
+
+        // Validate the request data
+        $request->validate([
+            'name' => 'required|string',
+            'phone_number' => 'required|numeric|digits:11',
+            'address' => 'required|string',
+            'shipping_class' => 'required|string',
+            'payment_provider' => 'required|string',
+            'quantity' => 'required|numeric|min:1|max:5',
+            'product_id' => 'required|numeric',
+            'coupon_code' => 'string|nullable'
+        ]);
+
+        // Validate and invalidate order token
+        if (!$this->validateAndInvalidateToken($request->input('order_token'))) {
+            return redirect('/order/success_/' . uniqid());
+        }
+
+        // Check for fake order by IP address
+        $ipAddress = OrderServiceProvider::checkFakeOrder($request->ip());
+        if ($ipAddress->is_blocked) {
+            return redirect('/order/success_/' . uniqid());
+        }
+
+        // Prepare and create the order
+        $orderData = $this->prepareOrderData($request, $ipAddress);
+        $createdOrder = Order::create($orderData);
+
+        // Create the order item
+        $this->createOrderItem($createdOrder->id, $request->input('product_id'), $request->input('quantity'));
+
+        // Register payment
+        $paymentProviderSlug = $this->registerPayment($createdOrder, $request->input('payment_provider'));
+
+        // Handle the payment redirect
+        return $this->handlePaymentRedirect($createdOrder, $paymentProviderSlug);
+    }
+
+    private function validateAndInvalidateToken($orderToken)
+    {
+        if (session('order_token') !== $orderToken) {
+            return false;
+        }
+        session()->forget('order_token');
+        return true;
+    }
+
+    private function prepareOrderData(Request $request, $ipAddress)
+    {
+        $product = Product::findOrFail($request->input('product_id'));
+        $orderItem = OrderServiceProvider::convertToOrderItem($product->id, $request->input('quantity'));
+
+        $shippingProvider = $this->getShippingProvider($request->input('shipping_class'));
+        $couponCode = $request->input('coupon_code');
+        $discountData = $this->getDiscountData($couponCode, $product, $orderItem['quantity'], $shippingProvider->charge);
+
+        return [
+            'name' => $request->input('name'),
+            'phone_number' => $request->input('phone_number'),
+            'address' => $request->input('address'),
+            'geo_location' => $request->input('geo_location'),
+            'total_amount' => $orderItem['price'] * $orderItem['quantity'],
+            'additional_amount' => 0,
+            'shipping_provider_id' => $shippingProvider->id,
+            'shipping_amount' => $shippingProvider->charge,
+            'discount_amount' => $discountData['discount_amount'],
+            'pay_status' => 'Pending',
+            'shipping_status' => 'On Hold',
+            'shipping_class' => $this->getShippingClassLabel($request->input('shipping_class')),
+            'payment_provider_id' => $this->getPaymentProviderId($request->input('payment_provider')),
+            'ip_address_id' => $ipAddress->id,
+        ];
+    }
+
+    private function getShippingProvider($shippingClass)
+    {
+        $shippingProviders = ShippingProvider::where('slug', '<>', 'pickup');
+        $provider = $shippingClass === "inside-dhaka"
+            ? $shippingProviders->orderBy('inside_dhaka_charge')->first()
+            : $shippingProviders->orderBy('outside_dhaka_charge')->first();
+
+        $provider->charge = $shippingClass === "inside-dhaka"
+            ? $provider->inside_dhaka_charge
+            : $provider->outside_dhaka_charge;
+
+        return $provider;
+    }
+
+    private function getDiscountData($couponCode, $product, $quantity, $shippingCharge)
+    {
+        if (empty($couponCode)) {
+            return ['discount_amount' => 0, 'free_shipping' => false];
+        }
+
+        $discountAmount = DiscountProvider::discountAmount($couponCode, $product, $quantity);
+        $freeShipping = DiscountProvider::getDiscount($couponCode, $product)->free_shipping ?? false;
+
+        return [
+            'discount_amount' => $discountAmount + ($freeShipping ? $shippingCharge : 0),
+            'free_shipping' => $freeShipping
+        ];
+    }
+
+    private function getShippingClassLabel($shippingClass)
+    {
+        return $shippingClass === "inside-dhaka" ? 'Inside Dhaka' : 'Outside Dhaka';
+    }
+
+    private function getPaymentProviderId($paymentProvider)
+    {
+        $defaultOnlinePayment = BasicConfiguration::where('config_key', 'online-payment')->value('config_value');
+        return $paymentProvider === "online-payment"
+            ? PaymentProvider::where('slug', $defaultOnlinePayment)->value('id')
+            : PaymentProvider::where('slug', 'cash-on-delivery')->value('id');
+    }
+
+    private function createOrderItem($orderId, $productId, $quantity)
+    {
+        $orderItem = OrderServiceProvider::convertToOrderItem($productId, $quantity);
+        $orderItem['order_id'] = $orderId;
+        OrderItem::create($orderItem);
+    }
+
+    private function registerPayment($order, $paymentProvider)
+    {
+        $paymentProviderInstance = PaymentServiceProvider::register($paymentProvider)->create();
+        $paymentProviderInstance->generateTransaction($order->toArray());
+        return $paymentProvider;
+    }
+
+    private function handlePaymentRedirect($order, $paymentProviderSlug)
+    {
+        if ($paymentProviderSlug === 'cash-on-delivery') {
+            return redirect('/order/success/' . $order->invoice_id);
+        }
+
+        $order = Order::find($order->id);
+        if (!empty($order->gateway_response) && isset($order->gateway_response['GatewayPageURL'])) {
+            return redirect($order->gateway_response['GatewayPageURL']);
+        }
+
+        return redirect('/order/fail-or-cancel/' . $order->invoice_id);
+    }
+
 }
