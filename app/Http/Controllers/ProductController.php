@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Number;
 use Illuminate\View\View;
 use Combindma\FacebookPixel\Facades\MetaPixel;
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
@@ -31,7 +32,10 @@ class ProductController extends Controller
         } catch (Exception $e) {
         }
 
-        return view('product', compact('product'));
+        $order_token = Str::random(40);
+        session(['order_token' => $order_token]);
+
+        return view('product', compact('product', 'order_token'));
     }
 
     public function calculate(Request $request)

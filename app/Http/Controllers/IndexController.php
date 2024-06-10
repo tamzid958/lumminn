@@ -8,6 +8,7 @@ use Exception;
 use Illuminate\View\View;
 use Combindma\FacebookPixel\Facades\MetaPixel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class IndexController extends Controller
 {
@@ -28,6 +29,9 @@ class IndexController extends Controller
         } catch (Exception $e) {
         }
 
-        return view('index', compact('product'));
+        $order_token = Str::random(40);
+        session(['order_token' => $order_token]);
+
+        return view('index', compact('product', 'order_token'));
     }
 }
