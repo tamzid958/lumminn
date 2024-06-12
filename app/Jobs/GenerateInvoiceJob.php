@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\Invoice;
 use App\Models\OrderItem;
+use App\Utils\StringUtil;
 use Exception;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
@@ -62,9 +63,9 @@ class GenerateInvoiceJob implements ShouldQueue
 
             $packingReceipts[] = [
                 'id' => $order->id,
-                'name' => $order->name,
+                'name' => StringUtil::unicodeToBijoy($order->name),
                 'phone_number' => $order->phone_number,
-                'address' => $order->address,
+                'address' => StringUtil::unicodeToBijoy($order->address),
                 'shipping_id' => $order->shipping_id,
                 'shipping_provider_name' => $order->shippingProvider ? $order->shippingProvider->name : '',
                 'due_amount' => $order->pay_amount,

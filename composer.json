@@ -25,6 +25,7 @@
         "leandrocfe/filament-apex-charts": "^3.1",
         "malzariey/filament-daterangepicker-filter": "^2.6",
         "mansoor/filament-versionable": "^0.0.8",
+        "mirazmac/bangla-string": "^1.1",
         "ramsey/uuid": "^4.7",
         "robsontenorio/mary": "^1.30",
         "shuvroroy/filament-spatie-laravel-health": "^2.0",

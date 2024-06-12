@@ -14,6 +14,7 @@ use App\Models\OrderItem;
 use App\Models\PaymentProvider;
 use App\Models\Product;
 use App\Models\ShippingProvider;
+use App\Utils\StringUtil;
 use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Form;
@@ -277,9 +278,9 @@ class OrderResource extends Resource
 
                                 return [
                                     'id' => $record['id'],
-                                    'name' => $record['name'],
+                                    'name' => StringUtil::unicodeToBijoy($record['name']),
                                     'phone_number' => $record['phone_number'],
-                                    'address' => $record['address'],
+                                    'address' => StringUtil::unicodeToBijoy($record['address']),
                                     'shipping_id' => $record['shipping_id'],
                                     'shipping_provider_name' => ShippingProvider::find($record['shipping_provider_id'])->name,
                                     'due_amount' => $record['pay_amount'],
