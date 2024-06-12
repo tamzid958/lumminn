@@ -63,9 +63,9 @@ class GenerateInvoiceJob implements ShouldQueue
 
             $packingReceipts[] = [
                 'id' => $order->id,
-                'name' => StringUtil::unicodeToBijoy($order->name),
+                'name' =>  StringUtil::unicodeToBijoy($order->name),
                 'phone_number' => $order->phone_number,
-                'address' => StringUtil::unicodeToBijoy($order->address),
+                'address' =>  StringUtil::unicodeToBijoy($order->address),
                 'shipping_id' => $order->shipping_id,
                 'shipping_provider_name' => $order->shippingProvider ? $order->shippingProvider->name : '',
                 'due_amount' => $order->pay_amount,

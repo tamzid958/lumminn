@@ -2,7 +2,7 @@
 
 namespace App\Utils;
 
-use MirazMac\BanglaString\Translator\AvroToBijoy\Translator;
+use MirazMac\BanglaString\Translator\BijoyToAvro\Translator;
 
 class StringUtil
 {
@@ -60,19 +60,19 @@ class StringUtil
         }
     }
 
-    public static function unicodeToBijoy(string $srcString): array
+    public static function unicodeToBijoy(string $srcString): string
     {
         $translator = new Translator();
         $english = [];
         $pointer = -100;
         $temp = "";
- 
+
         // Iterate through the string and collect English words
         $length = strlen($srcString);
         for ($i = 0; $i < $length; $i++) {
             $char = $srcString[$i];
             $asciiValue = ord($char);
- 
+
             if ($asciiValue < 128 && $asciiValue != 32) {
                 if ($pointer + 1 == $i) {
                     $temp .= $char;
@@ -83,23 +83,34 @@ class StringUtil
                 $english[$pointer - strlen($temp) + 1] = $temp;
             }
         }
- 
+
         $start = 0;
-        $returnString = [];
+        $returnString = '';
         foreach ($english as $key => $value) {
             $end = $key;
             $bengaliSegment = substr($srcString, $start, $end - $start);
-            $translatedSegment = $translator->translate($bengaliSegment);
-            $returnString[] = [0, $translatedSegment];
-            $returnString[] = [1, $value];
+            if (!empty($bengaliSegment)) {
+                $translatedSegment = $translator->translate($bengaliSegment);
+                $returnString .= $translatedSegment;
+            }
+            $returnString .= $value;
             $start = $end + strlen($value);
         }
- 
+
+        // If there are any remaining Bengali segments after the last English word
+        if ($start < $length) {
+            $remainingSegment = substr($srcString, $start);
+            if (!empty($remainingSegment)) {
+                $returnString .= $translator->translate($remainingSegment);
+            }
+        }
+
         // If no segments were added, translate the entire string
         if (empty($returnString)) {
-            $returnString[] = [0, $translator->translate($srcString)];
+            $returnString = $translator->translate($srcString);
         }
- 
+
         return $returnString;
     }
+
 }
