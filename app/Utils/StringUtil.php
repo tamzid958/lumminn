@@ -2,6 +2,8 @@
 
 namespace App\Utils;
 
+use MirazMac\BanglaString\Translator\AvroToBijoy\Translator;
+
 class StringUtil
 {
     static function convertBanglaToEnglishPhoneNumber($phoneNumber)
@@ -56,5 +58,48 @@ class StringUtil
             // If it doesn't, return the phone number as is
             return $phoneNumber;
         }
+    }
+
+    public static function unicodeToBijoy(string $srcString): array
+    {
+        $translator = new Translator();
+        $english = [];
+        $pointer = -100;
+        $temp = "";
+ 
+        // Iterate through the string and collect English words
+        $length = strlen($srcString);
+        for ($i = 0; $i < $length; $i++) {
+            $char = $srcString[$i];
+            $asciiValue = ord($char);
+ 
+            if ($asciiValue < 128 && $asciiValue != 32) {
+                if ($pointer + 1 == $i) {
+                    $temp .= $char;
+                } else {
+                    $temp = $char;
+                }
+                $pointer = $i;
+                $english[$pointer - strlen($temp) + 1] = $temp;
+            }
+        }
+ 
+        $start = 0;
+        $returnString = [];
+        foreach ($english as $key => $value) {
+            $end = $key;
+            $bengaliSegment = substr($srcString, $start, $end - $start);
+            $translatedSegment = $translator->translate($bengaliSegment);
+            $returnString[] = [0, $translatedSegment];
+            $returnString[] = [1, $value];
+            $start = $end + strlen($value);
+        }
+ 
+        // If no segments were added, translate the entire string
+        if (empty($returnString)) {
+            $returnString[] = [0, $translator->translate($srcString)];
+        }
+ 
+        return $returnString;
     }
 }
